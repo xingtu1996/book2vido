@@ -1,0 +1,5 @@
+# 开发依赖：在 requirements.txt 之上追加（测试 / 静态检查）
+-r requirements.txt
+
+pytest>=7.4
+ruff>=0.6

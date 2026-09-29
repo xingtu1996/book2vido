@@ -1,4 +1,7 @@
+# 运行依赖（与 pyproject.toml [project].dependencies 一一对应；改一处要改两处）
+# 走 `pip install -e .` 时本文件不会被 pip 读到 —— 它是给「不装包、直接跑源码」
+# 以及 CI / Docker 这类 `pip install -r` 场景准备的。
 pypdf
+pyyaml
 Pillow
 edge-tts
-pyyaml

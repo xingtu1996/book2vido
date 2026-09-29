@@ -16,6 +16,39 @@ dependencies = [
     "edge-tts",
 ]
 
+# `pip install .` 之后得到的 `book2vido` 命令。
+# 实现在 cli.py（转发到 __main__.py:main），与 `python -m book2vido` 走同一条代码路径。
+[project.scripts]
+book2vido = "book2vido.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "ruff>=0.6",
+]
+
 [tool.setuptools]
 package-dir = { "" = "src" }
-packages = ["book2vido"]
+
+# ⚠️ 不能用 `packages = ["book2vido"]` 写死：那样 `book2vido.gui` 子包**不会被装进去**
+# （实测：装完 `python -c "import book2vido.gui"` → ModuleNotFoundError），而 GUI 是本项目的
+# 主用形态之一。改成 find 后，以后新增子包也不用再回来改这里。
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["book2vido*"]
+
+[tool.pytest.ini_options]
+# 本项目的守护脚本沿用了 `verify_*.py` 命名（见 tests/README.md），
+# 不在 pytest 默认的 `test_*.py` 收集规则里 —— 不配这一行，`pytest tests/` 会
+# 「0 条用例、退出码 5」，看着像通过其实一条没跑（CI 里最危险的那种绿）。
+python_files = ["test_*.py", "verify_*.py"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+extend-exclude = ["dist", "doc", ".backups", "packaging"]
+
+[tool.ruff.lint]
+# E501（行长）默认含在 E 里，这里显式忽略：本项目注释多为整段中文说明，
+# 强行折行会破坏「注释跟着代码读」的效果，且 CONTRIBUTING 未设行长约束。
+ignore = ["E501", "E402"]

@@ -37,6 +37,9 @@ PKG = pathlib.Path(__file__).resolve().parents[1] / "src" / "book2vido"
 # 叶子层：被广泛依赖，必须自己不依赖任何包内模块（否则会成环）
 LEAF_MODULES = ("paths", "concepts", "models")
 
+# 入口模块：允许用绝对导入（它们要先注入 sys.path，见 cli.py / __main__.py 顶部注释）
+ENTRY_MODULES = ("__main__", "cli")
+
 # 方向禁令：(上层, 下层) —— 上层不得依赖下层
 FORBIDDEN = [
     ("scriptwriter", "icons"),   # 生成层 → 资产层（档 1 拉直的弯）
@@ -126,15 +129,17 @@ def main() -> int:
     print(f"   · 依赖 icons 的模块：{icons_users}")
 
     # E. 只有入口用绝对导入
+    # `cli` 与 `__main__` 同为入口：前者是 `[project.scripts]` 的落点，只做转发。
+    # 两者都必须走绝对导入 —— 它们要在 `sys.path` 注入**之后**才能 import 包内模块。
     importers_abs = []
     for p in sorted(PKG.glob("*.py")):
         src = p.read_text(encoding="utf-8")
-        if "from book2vido" in src and p.stem != "__main__":
+        if "from book2vido" in src and p.stem not in ENTRY_MODULES:
             importers_abs.append(p.stem)
     if importers_abs:
         fails.append(f"E 非入口模块使用了绝对导入：{importers_abs}（统一用相对导入）")
     else:
-        print("✓ E 导入风格统一（仅 __main__ 用绝对导入，刻意）")
+        print(f"✓ E 导入风格统一（仅 {' / '.join(sorted(ENTRY_MODULES))} 用绝对导入，刻意）")
 
     print()
     if fails:
