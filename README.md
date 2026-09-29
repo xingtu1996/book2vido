@@ -1,5 +1,9 @@
 # book2vido · 文本→视频 零成本流水线
 
+[![CI](https://github.com/xingtu1996/book2vido/actions/workflows/ci.yml/badge.svg)](https://github.com/xingtu1996/book2vido/actions/workflows/ci.yml)
+[![Release](https://github.com/xingtu1996/book2vido/actions/workflows/release.yml/badge.svg)](https://github.com/xingtu1996/book2vido/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 [English](README_EN.md) · **简体中文**（本仓文档中文优先，英文版为国际入口自述）
 
 **不要钱，有书，有电脑就行。**
@@ -224,6 +228,16 @@ python tests/verify_prompt.py
 | 全部文档（**篇数不在此写死**） | [`doc/README.md`](doc/README.md) 总索引 |
 
 **目录结构 / 项目文件树** 见 [`AGENTS.md`](AGENTS.md)；**参与开发前必读错题库** [`doc/lessons/README.md`](doc/lessons/README.md) —— 本项目**同一类缺陷已复发多次**，那份「复发判据速查」就是防它的。
+
+## 内容流水线三件套 · 行途出品
+
+同一套理念（零成本 · 全本地 · 不花一分钱），一篇文章的三种去处：
+
+| | 仓库 | 输入 → 输出 | 一句话 |
+|---|---|---|---|
+| ✍️ 写/排 | [墨排 mopai · md2wechat](https://github.com/xingtu1996/md2wechat) | Markdown → 微信公众号排版 | 零依赖确定性排版引擎，12 主题，先把文章排好再分发 |
+| 🎬 看 | **book2vido（本仓）** | 书/长文 → 竖屏短视频 | 你正在看的仓库：本地 LLM 分镜 + 信息卡画面 + 配音，全链本地 |
+| 🎙️ 听 | [article2pod](https://github.com/xingtu1996/article2pod) | 文章 → 双人访谈播客 | book2vido 的派生项目：删掉画面环节，双音色 TTS，同一篇文章「听」的版本 |
 
 ## 项目状态与开源协议
 
