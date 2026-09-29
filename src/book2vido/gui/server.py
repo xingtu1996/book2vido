@@ -13,13 +13,11 @@ from __future__ import annotations
 
 import argparse
 import json
-import shutil
 import socket
 import subprocess
 import sys
 import threading
 import time
-import urllib.request
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -27,17 +25,14 @@ from urllib.parse import parse_qs, urlparse
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from book2vido import outline as outline_mod
-from book2vido import pipeline
-from book2vido.config import load
 from book2vido.paths import project_root
 
-GUI_DIR = Path(__file__).parent
-CONFIG_PATH = str(project_root() / "config.yaml")
+# 共享状态下沉到 gui/state.py：handlers/env.py 与 handlers/tasks.py 也要用，
+# 而它们不能 import server（server 会 import handlers → 成环）。
+from book2vido.gui.state import GUI_DIR, _install_jobs, _install_lock  # noqa: F401
 
-# ── Install job state ──
-_install_jobs: dict = {}
+CONFIG_PATH = str(project_root() / "config.yaml")
 _current_doc = {"path": "", "text": ""}  # 当前上传文档，供 chat 用
-_install_lock = threading.Lock()
 
 
 # ── Environment checks ──
@@ -45,7 +40,7 @@ _install_lock = threading.Lock()
 
 # ── Handlers (split into modules) ──
 from book2vido.gui.handlers.env import (
-    _check_ollama, _check_ffmpeg, _get_brew_path, _check_env, _run_install
+    _check_env, _run_install
 )
 from book2vido.gui.handlers.tasks import _run_pipeline, _jobs, _job_lock
 
@@ -73,11 +68,12 @@ class GuiHandler(BaseHTTPRequestHandler):
         try:
             self._do_GET_inner()
         except Exception as e:
-            import traceback, sys
+            import traceback
+            import sys
             traceback.print_exc(file=sys.stderr)
             try:
                 self._json({"ok": False, "error": str(e)}, 500)
-            except:
+            except Exception:
                 pass
 
     def _do_GET_inner(self):
@@ -91,9 +87,11 @@ class GuiHandler(BaseHTTPRequestHandler):
 
         # Static assets
         if path == "/style.css":
-            self._file(GUI_DIR / "style.css", "text/css; charset=utf-8"); return
+            self._file(GUI_DIR / "style.css", "text/css; charset=utf-8")
+            return
         if path == "/app.js":
-            self._file(GUI_DIR / "app.js", "application/javascript; charset=utf-8"); return
+            self._file(GUI_DIR / "app.js", "application/javascript; charset=utf-8")
+            return
 
         # Environment check (full dashboard version)
         if path == "/api/check-env":
@@ -105,7 +103,8 @@ class GuiHandler(BaseHTTPRequestHandler):
             qs = parse_qs(parsed.query)
             fpath = qs.get("path", [""])[0]
             if not fpath or not Path(fpath).exists():
-                self._json({"ok": False, "error": "File not found"}); return
+                self._json({"ok": False, "error": "File not found"})
+                return
             try:
                 doc = outline_mod.build(fpath)
                 chapters = []
@@ -215,7 +214,7 @@ class GuiHandler(BaseHTTPRequestHandler):
                         )
                         import json as _json
                         dur = float(_json.loads(r.stdout)["format"]["duration"])
-                    except:
+                    except Exception:
                         dur = 0
                     videos.append({
                         "name": v.stem,
@@ -242,7 +241,8 @@ class GuiHandler(BaseHTTPRequestHandler):
             fname = path.split("/api/video/", 1)[1]
             vpath = Path.home() / "Movies" / "Book2Vido" / fname
             if not vpath.exists():
-                self._json({"error": "not found"}, 404); return
+                self._json({"error": "not found"}, 404)
+                return
             self.send_response(200)
             self.send_header("Content-Type", "video/mp4")
             self.send_header("Content-Length", str(vpath.stat().st_size))
@@ -257,11 +257,12 @@ class GuiHandler(BaseHTTPRequestHandler):
         try:
             self._do_POST_inner()
         except Exception as e:
-            import traceback, sys
+            import traceback
+            import sys
             traceback.print_exc(file=sys.stderr)
             try:
                 self._json({"ok": False, "error": str(e)}, 500)
-            except:
+            except Exception:
                 pass
 
     def _do_POST_inner(self):
@@ -277,7 +278,8 @@ class GuiHandler(BaseHTTPRequestHandler):
             # 零依赖 multipart 解析（Python 3.13 已移除 cgi 模块）
             content_type = self.headers.get("Content-Type", "")
             if "multipart/form-data" not in content_type:
-                self._json({"ok": False, "error": "Expected multipart"}); return
+                self._json({"ok": False, "error": "Expected multipart"})
+                return
             
             # 提取 boundary
             boundary = content_type.split("boundary=")[1].strip('"')
@@ -304,7 +306,8 @@ class GuiHandler(BaseHTTPRequestHandler):
                         file_data = part[header_end+4:-2]  # 去掉末尾的 \r\n
             
             if not fname or not file_data:
-                self._json({"ok": False, "error": "No file found"}); return
+                self._json({"ok": False, "error": "No file found"})
+                return
             
             save_path = upload_dir / fname
             with open(save_path, "wb") as f:
@@ -342,9 +345,11 @@ class GuiHandler(BaseHTTPRequestHandler):
             body = json.loads(self.rfile.read(length))
             question = body.get("message", "")
             if not question:
-                self._json({"ok": False, "error": "No question"}); return
+                self._json({"ok": False, "error": "No question"})
+                return
             if not _current_doc["text"]:
-                self._json({"ok": False, "error": "请先上传一个文档"}); return
+                self._json({"ok": False, "error": "请先上传一个文档"})
+                return
 
             # 调 Ollama 流式
             import urllib.request
@@ -427,7 +432,8 @@ class GuiHandler(BaseHTTPRequestHandler):
             chapters = body.get("chapters", [])
             voice = body.get("voice", None)
             if not fpath or not Path(fpath).exists():
-                self._json({"ok": False, "error": "File not found"}); return
+                self._json({"ok": False, "error": "File not found"})
+                return
 
             job_id = f"job_{int(time.time())}"
             with _job_lock:
@@ -449,7 +455,8 @@ class GuiHandler(BaseHTTPRequestHandler):
         if path.startswith("/api/install/"):
             component = path.split("/api/install/", 1)[1]
             if component not in ("ollama", "model", "ffmpeg"):
-                self._json({"ok": False, "error": "Unknown component"}); return
+                self._json({"ok": False, "error": "Unknown component"})
+                return
 
             install_id = f"inst_{int(time.time())}"
             with _install_lock:
@@ -471,25 +478,27 @@ class GuiHandler(BaseHTTPRequestHandler):
 
 
 def start_server(port: int = 8765, open_browser: bool = True):
-    """Start the GUI server. Fixed port, kill old process first."""
-    # 启动前先杀旧的 book2vido.gui 进程
-    import subprocess
-    # 不 pkill 自己了，手动清理
-    import time; time.sleep(0.5)
-    
-    # 固定端口，不自动找下一个
-    actual_port = port
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind(("127.0.0.1", actual_port))
-        s.close()
-    except OSError:
-        print(f"Port {port} still in use, trying to kill...")
-        subprocess.run(["pkill", "-9", "-f", "book2vido.gui"], capture_output=True)
-        import time; time.sleep(2)
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind(("127.0.0.1", actual_port))
-        s.close()
+    """Start the GUI server.
+
+    自动探测空闲端口：从 `port` 起顺延尝试（最多 20 个），避免与本机已占用端口冲突。
+    此前写死 8765 且用 `pkill -9 -f book2vido.gui` 兜底——但 8765 常被其他常驻服务
+    （如行途工作台）占用，pkill 杀不掉占用者，第二次 bind 仍失败。改为客户端式探测，
+    谁占着就让位，互不误杀。
+    """
+    actual_port = None
+    for candidate in range(port, port + 20):
+        probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try:
+            probe.bind(("127.0.0.1", candidate))
+            actual_port = candidate
+            break
+        except OSError:
+            pass
+        finally:
+            probe.close()
+    if actual_port is None:
+        actual_port = port  # 探测全失败（极端情况），回退原端口由其自行报错
 
     server = ThreadingHTTPServer(("127.0.0.1", actual_port), GuiHandler)
     url = f"http://127.0.0.1:{actual_port}"

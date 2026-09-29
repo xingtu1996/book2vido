@@ -36,8 +36,11 @@ PY="${PYTHON:-python3}"
 command -v "$PY" >/dev/null 2>&1 || die "找不到 python3。macOS：brew install python@3.12 ｜ Linux：apt install python3-venv"
 PY_VERSION="$("$PY" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")')"
 PY_OK="$("$PY" -c 'import sys; print(1 if sys.version_info >= (3, 10) else 0)')"
-say "    python3 = $PY_VERSION（$("$PY" -c 'import sys; print(sys.executable)')）"
-[ "$PY_OK" = "1" ] || die "Python 版本过低（$PY_VERSION）。本项目 requires-python >= 3.10"
+# ⚠️ 必须写 `${PY_VERSION}` 而不是 `$PY_VERSION`：后面紧跟的是全角括号，
+#    bash 把多字节字符也算进变量名 —— `$PY_VERSION（` 会被当成一个不存在的变量，
+#    在 `set -u` 下直接 "unbound variable"（本项目踩过，见这份脚本的提交记录）。
+say "    python3 = ${PY_VERSION}（$("$PY" -c 'import sys; print(sys.executable)')）"
+[ "$PY_OK" = "1" ] || die "Python 版本过低（${PY_VERSION}）。本项目 requires-python >= 3.10"
 
 # ── 2. venv ───────────────────────────────────────────────────────
 if [ "$USE_VENV" = "1" ]; then

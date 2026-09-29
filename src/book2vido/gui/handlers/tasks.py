@@ -5,8 +5,10 @@ import time
 import threading
 from pathlib import Path
 
-from book2vido import pipeline
 from book2vido.config import load
+# GUI_DIR 在 gui/state.py（不在 server.py）—— 本模块被 server import，反向 import 会成环。
+# 少了这一行，起子进程那步会抛 `NameError: name 'GUI_DIR' is not defined`。
+from book2vido.gui.state import GUI_DIR
 from book2vido.paths import project_root
 
 CONFIG_PATH = str(project_root() / "config.yaml")
@@ -94,7 +96,9 @@ def _run_pipeline(job_id: str, input_path: str, chapter_indices: list, voice: st
 
         if len(chapter_indices) == 0 or chapter_indices == [0]:
             # 用子进程跑 pipeline，避免 GUI 后台线程的 Broken pipe 问题
-            import subprocess, sys, os
+            import subprocess
+            import sys
+            import os
             py = sys.executable
             env = dict(os.environ)
             env["PYTHONPATH"] = str(GUI_DIR.parent.parent)  # src/

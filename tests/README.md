@@ -39,6 +39,21 @@ PY=$HOME/.workbuddy/binaries/python/envs/default/bin/python
 for t in deps icons prompt cache segmenter; do $PY tests/verify_$t.py || echo "🔴 $t"; done
 ```
 
+## 在 pytest / CI 里
+
+`verify_*.py` 不在 pytest 默认的收集规则里，**不配 `python_files` 就一条都跑不到**
+（表现为「0 条用例、退出码 5」，看着像通过）。现在 `pyproject.toml` 已经配了，
+并且 `tests/test_verify_scripts.py` 会把**离线可跑**的那 5 条（deps / icons /
+prompt / cache / segmenter）当子进程跑一遍、断言退出码 0：
+
+```bash
+pytest tests/ -q          # 11 passed
+```
+
+`env` / `gate` / `offline` / `narrator_concurrency` **不进 CI**：它们分别要
+ollama 在跑、要真书、要完整出片、要联网 TTS —— 在 CI 上必然红，而红了不代表代码坏了。
+这四条按上面的方式**按需单独跑**。
+
 `gate` 需要真书、`offline` 慢（要跑完整出片），这两条**按需单独跑**。
 
 ## 写新守护脚本的三条

@@ -76,6 +76,81 @@ bash packaging/build_app.sh          # 产出 dist/Book2Vido.app（约 130 MB）
 
 ⚠️ **这个包目前还不能交给「没有任何技术背景的人」** —— `vendor/` 里还缺 `ffmpeg`，用户机器上会直接停住（**作者本机有 Homebrew，所以本地永远测不出来**）。构建脚本已加**可分发性门禁**：缺 ffmpeg 时默认拒绝出包并打出 `❌ 不可分发`。这是"一键安装"落地前最后一块，缺口清单与修法见 [`doc/12-交付形态与许可决策.html`](doc/12-交付形态与许可决策.html)。
 
+## 给同事：5 分钟跑起来
+
+从「电脑里什么都没有」到「拿到第一条 mp4」。三条命令，中间不用做任何判断。
+
+### 前置条件
+
+| 依赖 | 必需？ | 缺了会怎样 | 怎么装 |
+|---|---|---|---|
+| **Python ≥ 3.10** | ✅ 必需 | 装不了包 | macOS `brew install python@3.12` ｜ Linux `apt install python3-venv` |
+| **git** | ✅ 必需 | 拉不下代码 | macOS 自带 ｜ Linux `apt install git` |
+| **ffmpeg** | ✅ 必需 | 画面和声音拼不起来，**出不了片** | `brew install ffmpeg` ｜ Linux `apt install ffmpeg` |
+| **ollama + qwen3:8b** | ⚪ 可选 | 分镜自动降级成规则版：**能出片**，但句子偏碎 | `brew install ollama && ollama pull qwen3:8b` |
+| **rsvg-convert** | ⚪ 可选 | 图标自动降级成「关键词首字大字」，**出片不受影响** | `brew install librsvg` |
+
+> 联网：TTS 用 edge-tts（免费匿名）。**断网也能出片** —— 把 `config.yaml` 里的
+> `tts.provider` 改成 `say`，就完全不出本机。
+
+### 三条命令
+
+```bash
+# 1) 拿代码
+git clone git@github.com:xingtu1996/book2vido.git && cd book2vido
+
+# 2) 装（建 venv → 装包 → 体检外部依赖，缺什么会直接把安装命令打给你）
+bash scripts/install.sh
+
+# 3) 出片（用仓库自带的样例，不用自己找素材）
+source .venv/bin/activate
+book2vido run --input samples/产品自述_book2vido_20260916.md --out ~/Movies/first.mp4
+```
+
+⚠️ **仓库里没有 PDF 样书**（版权原因没入库，`samples/books/` 是 gitignore 的）。
+上面第 3 条用的是仓库自带的 Markdown 样例，clone 下来就有。想用自己的书：
+把任意 PDF / Markdown 丢进去换掉 `--input` 即可。
+
+### 真跑一遍长什么样（2026-09-29 实测，全新 clone 的目录）
+
+```console
+$ book2vido run --input samples/产品自述_book2vido_20260916.md --out /tmp/fresh_out.mp4
+    · 正文切片：609 字（上限 2500） → 本地模型（think=True）…
+    · 画面：渲染 12 张卡…
+    · 配音：12 句并发（workers=12）…
+    · 合成：FFmpeg concat…
+=== book2vido 成本日志（零公司资源）===
+输出      : /tmp/fresh_out.mp4
+口播句数  : 12
+耗时      : 91.9 s
+缓存      : miss
+单条成本  : ≈ ¥0.00046（仅电费）
+```
+
+产物：**32.5 s / 605 KB** 的 1080×1920 竖屏 mp4，端到端 **91.9 s**（M1 Pro 16GB）。
+同一条命令再跑一次是 **48.3 s / 887 KB、120.9 s** —— 分镜由本地模型生成，
+**时长和句数每次都不一样**，这是设计使然，不是故障。
+
+### 常见报错对照表
+
+| 你看到的 | 真正的原因 | 一条命令解决 |
+|---|---|---|
+| `book2vido: command not found` | venv 没激活 | `source .venv/bin/activate`（或用全路径 `.venv/bin/book2vido`） |
+| `🔴 输入文件不存在：xxx` | 路径写错 / 相对路径的当前目录不对 | `ls` 确认；在**仓库根**执行 |
+| 报 ffmpeg 相关 / 卡在「合成」 | 没装 ffmpeg | `brew install ffmpeg`；或用 `BOOK2VIDO_FFMPEG=/path/to/ffmpeg` 指定 |
+| 句子很碎、像关键词罗列 | ollama 没起 → 分镜降级成规则版 | `ollama serve &` 再确认 `curl localhost:11434/api/tags` 有响应 |
+| `ollama` 命令找不到（但装过） | Homebrew 前缀不在非交互 shell 的 PATH 里 | `source .venv/bin/activate` 后重试；仍不行就用 `/opt/homebrew/bin/ollama` |
+| 画面里中文是方块 / 缺字 | 系统没匹配到中文字体 | `config.yaml` 里 `visual.font` 填字体绝对路径 |
+| 配音听起来是机器念的 | edge-tts 连不上，自动回退到 macOS `say` | 联网重试；或离线场景直接设 `tts.provider: say` |
+| `ModuleNotFoundError: book2vido.gui` | 装的是旧版（`packages` 写死过，子包没进包） | `pip install -e .` 重装（当前 `pyproject.toml` 已修） |
+| 一条片都没出，提示「料不足以支撑口播」 | 输入太短（几百字撑不起 12 句） | 换更长的输入；或调小 `config.yaml` 的 `limits.max_sentences` |
+
+想确认环境到底缺什么，跑体检脚本（必选项任一失败 → 退出码 1）：
+
+```bash
+python tests/verify_env.py
+```
+
 ## 快速开始（开发者）
 
 ```bash
@@ -91,7 +166,7 @@ pip install -e .
 python -m book2vido fetch-icons
 
 # 3) 出片
-python -m book2vido run --input ../book2vido/关键对话.pdf --out samples/sample.mp4
+python -m book2vido run --input samples/产品自述_book2vido_20260916.md --out samples/sample.mp4
 ```
 
 断网 / 无 `rsvg-convert`：图标层自动降级为「关键词首字大字」版式，**不会中断出片**。
@@ -155,6 +230,7 @@ python tests/verify_prompt.py
 | 项 | 状态 |
 |---|---|
 | 仓库 | 公开 |
+| CI | GitHub Actions：Python 3.10 / 3.11 / 3.12 矩阵，跑 `ruff check` + `pytest`（`.github/workflows/ci.yml`）；打 `v*` tag 时另出 dmg artifact |
 | `LICENSE` | MIT License — Use it, modify it, share it. 署名：行途 / xingtu1996 |
 | 不变的部分 | 内容模板 / 工作流 / 宣发 SOP 一律不进本仓库 |
 

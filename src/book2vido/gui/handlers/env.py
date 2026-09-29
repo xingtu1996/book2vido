@@ -1,6 +1,13 @@
-import json, shutil, subprocess, time, urllib.request
+import json
+import shutil
+import subprocess
+import time
+import urllib.request
 from pathlib import Path
 
+# ⚠️ 安装任务状态在 gui/state.py（不在 server.py）—— 本模块被 server import，
+#    反向 import server 会成环。少了这一行，`_install_lock` 在运行时是 NameError。
+from book2vido.gui.state import _install_jobs, _install_lock
 from book2vido.paths import project_root
 
 def _check_ollama() -> dict:
@@ -153,7 +160,7 @@ def _run_install(component: str, install_id: str):
                             pct_str = line.split("%")[0].split()[-1]
                             pct = float(pct_str)
                             set_progress(min(95, 20 + pct * 0.7), f"Downloading {pct:.0f}%")
-                        except:
+                        except Exception:
                             pass
             proc.wait()
             if proc.returncode == 0:

@@ -95,7 +95,8 @@ class PillowProvider:
         # 主题决定整套色板；`accent` 仅在 custom 主题下生效（见下）。
         # 为什么不让 accent 直接覆盖：单个色值撑不起一套体系，改一个不配套会撞对比度。
         if theme == "custom":
-            self.pal = dict(THEMES["blue"]); self.pal["accent"] = accent
+            self.pal = dict(THEMES["blue"])
+            self.pal["accent"] = accent
         elif theme in THEMES:
             self.pal = dict(THEMES[theme])
         else:
