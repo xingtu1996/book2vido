@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>book2vido · 产品化路线看板</title>
+<style>
+  :root{
+    --blue:#056DE8; --ink:#1d1d1f; --ink2:#424245; --ink3:#6e6e73;
+    --line:#e5e5e7; --bg:#ffffff; --bg2:#fafafa; --red:#c7362f; --amber:#a86800;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:56px 32px 96px}
+  header{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:8px}
+  h1{font-size:29px;line-height:1.35;margin:0 0 10px;letter-spacing:-.4px;font-weight:600}
+  .meta{color:var(--ink3);font-size:13px}
+  .meta b{color:var(--ink2);font-weight:500}
+  h2{font-size:19px;margin:52px 0 6px;letter-spacing:-.2px;font-weight:600}
+  h2 .num{color:var(--blue);font-weight:600;margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15px;margin:26px 0 8px;font-weight:600}
+  p{margin:10px 0}
+  .lead{color:var(--ink2)}
+  .sub{color:var(--ink3);font-size:13.5px;margin:0 0 18px}
+  code{font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg2);
+       border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--ink2)}
+  strong{font-weight:600}
+
+  /* 时间线 */
+  .tl{border-left:2px solid var(--line);margin:20px 0 0;padding:0 0 0 22px;list-style:none}
+  .tl li{position:relative;padding:0 0 20px}
+  .tl li::before{content:"";position:absolute;left:-29px;top:9px;width:9px;height:9px;
+    border-radius:50%;background:#fff;border:2px solid var(--blue)}
+  .tl .t{font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+  .tl .h{font-weight:600;margin:1px 0 3px}
+  .tl .d{color:var(--ink2);font-size:14px}
+
+  /* 引言块 */
+  .quotes{display:grid;gap:12px;margin-top:16px}
+  .q{border:1px solid var(--line);border-left:3px solid var(--ink);border-radius:0 8px 8px 0;
+     padding:13px 16px;background:var(--bg2)}
+  .q .who{font-size:12px;color:var(--ink3);letter-spacing:.3px}
+  .q .txt{margin:4px 0 0;font-size:14.5px;color:var(--ink)}
+  .q .why{margin:7px 0 0;font-size:13px;color:var(--ink3)}
+  .q .why b{color:var(--ink2);font-weight:600}
+
+  /* 问答卡 */
+  .qa{border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin:16px 0}
+  .qa .ask{font-weight:600;font-size:16px;margin:0}
+  .qa .ask span{color:var(--ink3);font-weight:400;font-size:13px;display:block;margin-top:3px}
+  .qa .facts{margin:14px 0 0;padding-left:0;list-style:none}
+  .qa .facts li{position:relative;padding-left:18px;margin:7px 0;color:var(--ink2);font-size:14px}
+  .qa .facts li::before{content:"—";position:absolute;left:0;color:var(--ink3)}
+  .verdict{margin:16px 0 0;padding:12px 16px;background:#f2f7fe;border:1px solid #d5e6fb;
+    border-radius:8px;font-size:14.5px}
+  .verdict b{color:var(--blue)}
+
+  /* 选项 */
+  .opts{display:grid;gap:14px;margin-top:16px}
+  .opt{border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+  .opt.pick{border-color:var(--blue);border-width:2px;background:#fbfdff}
+  .opt .top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .opt .tag{font-size:12px;font-weight:600;letter-spacing:.5px;padding:2px 8px;border-radius:20px;
+    background:var(--bg2);color:var(--ink3);border:1px solid var(--line)}
+  .opt.pick .tag{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .opt .name{font-weight:600;font-size:16px}
+  .opt .rows{margin:12px 0 0;font-size:14px;color:var(--ink2)}
+  .opt .rows div{margin:5px 0;padding-left:52px;position:relative}
+  .opt .rows div>.k{position:absolute;left:0;color:var(--ink3);font-size:12.5px}
+  .opt .rows code{font-size:12.5px}
+  .cost{color:var(--red)}
+
+  /* 表格 */
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+  th{font-size:12.5px;color:var(--ink3);font-weight:500;letter-spacing:.3px;border-bottom:1px solid var(--ink)}
+  td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr.hi td{background:#f2f7fe}
+  .ok{color:#0a7a3d;font-weight:600}
+  .warn{color:var(--amber);font-weight:600}
+
+  /* 列表 */
+  ul.plain{list-style:none;padding:0;margin:14px 0}
+  ul.plain li{position:relative;padding-left:20px;margin:9px 0;color:var(--ink2)}
+  ul.plain li::before{content:"·";position:absolute;left:6px;color:var(--blue);font-weight:700}
+  ul.plain li b{color:var(--ink);font-weight:600}
+
+  .note{margin-top:40px;padding:18px 20px;border:1px solid var(--line);border-radius:10px;
+    background:var(--bg2);font-size:13.5px;color:var(--ink3)}
+  .note b{color:var(--ink2)}
+  .flag{display:inline-block;font-size:11.5px;padding:1px 7px;border-radius:4px;
+    background:#fdf6e7;color:var(--amber);border:1px solid #f0e0bd;font-weight:600;vertical-align:1px}
+  @media print{body{font-size:12px}.wrap{padding:0 0 20px;max-width:none}h2{margin-top:30px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>book2vido · 产品化路线看板</h1>
+  <div class="meta">
+    <b>日期</b> 2026-09-15 ｜ <b>状态</b> 决策草稿，待拍板 ｜ <b>上游</b> 群聊一次需求（当晚出 demo）
+    　<span class="flag">本文件已脱敏</span>
+  </div>
+</header>
+
+<p class="lead" style="margin-top:22px">
+这本书的项目起源不是一次立项，是<b>一句抱怨</b>：字太多看不下去。当晚就还了一个能跑的 demo。
+这份看板把三件事存下来——<b>起源</b>、<b>群聊里冒出来的商业化信号</b>、<b>随之而来的三个架构问题</b>，
+最后给出一条我推荐的路线和它的代价。
+</p>
+
+<!-- ========== 1 ========== -->
+<h2><span class="num">01</span>起源：从一句抱怨到当晚 demo</h2>
+<p class="sub">时间锚点取自群聊记录，2026-09-15 傍晚。</p>
+
+<ul class="tl">
+  <li>
+    <div class="t">18:07</div>
+    <div class="h">需求原点：不是"要视频"，是"字太多看不下去"</div>
+    <div class="d">运营侧提出的原始诉求是<b>阅读疲劳</b>：「有没有能生成短剧的 AI，字太多根本看不下去」。
+      这条区分很重要——产品本质是<b>信息降维</b>（文字 → 视听），视频只是当前选的载体，不是目的。</div>
+  </li>
+  <li>
+    <div class="t">18:07</div>
+    <div class="h">第一版 demo 已经发出去了</div>
+    <div class="d">技术侧当晚丢出成片：「完全本地运行，丢书给他，直接给你吐视频」。
+      附带的自我评价也很诚实：<b>「只不过这质量……也不知道你看的进去么」</b>。</div>
+  </li>
+  <li>
+    <div class="t">18:12</div>
+    <div class="h">定位被一句话说清</div>
+    <div class="d">「他底层还是 AI，不过是小智能体模型，在你本地环境运行，要吃内存啥的，生成视频需要一些时间。
+      但是能解决你<b>想看视频、听声音、快速提炼观点</b>，这样的看书方式。」</div>
+  </li>
+  <li>
+    <div class="t">18:18</div>
+    <div class="h">slogan 定稿 + 分工确认</div>
+    <div class="d">「<b>30 秒 666kb，书中观点的极限表达（不要钱，有书，有电脑就行）</b>」——
+      自称这是"已经想好了的产品 slogan"。同一时段确认了二人分工：<b>一个技术、一个运营</b>。</div>
+  </li>
+  <li>
+    <div class="t">18:18</div>
+    <div class="h">商业化的第一次自我拉扯</div>
+    <div class="d">先说「还能卖钱呢，上架 App Store 这种」，紧接着自己收回来：
+      「管他呢，反正就是能做出<b>身边少数几个爱不释手的 APP</b> 就行，后面再看看商业化能不能运营一下」。</div>
+  </li>
+</ul>
+
+<!-- ========== 2 ========== -->
+<h2><span class="num">02</span>商业化信号：三条，但都不是"现在就做"</h2>
+<p class="sub">原话保留，人物以角色代称。</p>
+
+<div class="quotes">
+  <div class="q">
+    <div class="who">运营侧</div>
+    <p class="txt">「有技术有运营，可以搞」</p>
+    <p class="why"><b>读法</b>：这是本次唯一一次"合作可行性"判断。它成立的前提是两个人真的各自能补上对方缺的那一半——
+      不是"有个想法"。目前看前提成立。</p>
+  </div>
+  <div class="q">
+    <div class="who">技术侧</div>
+    <p class="txt">「我咋感觉这个产品做出来，研究一下，还能卖钱呢。上架 app store 这种。」</p>
+    <p class="why"><b>读法</b>：方向直觉，不是决策。它把"能卖"和"上架 App Store"绑在了一起，而这两件事可以拆开。</p>
+  </div>
+  <div class="q">
+    <div class="who">技术侧（半分钟后自己收回来）</div>
+    <p class="txt">「管他呢，反正就是能做出身边少数几个爱不释手的 APP 就行，后面再看看商业化啥的是不是能运营一下。」</p>
+    <p class="why"><b>读法</b>：这句话里的验收标准比上面那句成熟得多——
+      <b>n = 5~10 个真人愿意持续用</b>，是一个<b>当下就能验</b>的标准，不需要上架。</p>
+  </div>
+</div>
+
+<!-- ========== 3 ========== -->
+<h2><span class="num">03</span>三个架构问题：先回答能定死的</h2>
+<p class="sub">三问都来自同一次群聊，且都能用现有代码与实测数据回答，不需要"以后再说"。</p>
+
+<div class="qa">
+  <p class="ask">Q1　手机端和电脑端，是通用一个模型，还是各用各的？<span>——先看有没有本地算力</span></p>
+  <ul class="facts">
+    <li>本地模型 <code>qwen3:8b</code> 权重 <b>5.2 GB</b>，本机 <b>16 GB</b> 内存实测可跑；手机端没有 Ollama，
+      也没有等价的内存预算给它。</li>
+    <li>「手机本地跑小模型」这条路在质量上必然退化到不可用——同一任务把 <code>think</code> 关掉（算力需求降低）
+      结果是"快 2 倍但句子明显变碎"。<b>模型变小是同一类退化。</b></li>
+    <li>书和 PDF 都在电脑侧，手机侧<b>没有生成场景</b>。</li>
+  </ul>
+  <div class="verdict">结论：不是"两端各用不同模型"，是<b>一个内核、两种消费</b>——电脑生成，手机看片。
+    真要做移动端生成，走"用户自带 API Key 打远端"，而不是往手机里塞小模型。</div>
+</div>
+
+<div class="qa">
+  <p class="ask">Q2　做全平台的话，语言架构是不是都不一样？<span>——现状已经是三层分离</span></p>
+  <ul class="facts">
+    <li>现有结构：<b>Python 内核</b>（跨平台）＋ <b>平台二进制</b>（Ollama / FFmpeg，两者都有官方多平台版）＋
+      <b>薄壳</b>（macOS <code>.app</code> 115 MB，自检 7/7 绿）。</li>
+    <li><code>binpaths.py</code> 已经把二进制路径抽成一层，原先 4 处硬编码（ffmpeg / ffprobe / rsvg / DYLD）已清掉——
+      这是跨平台最脏的活，已经做完了。</li>
+  </ul>
+  <div class="verdict">结论：不存在"架构不一样"。一套内核 + 各平台各自的二进制与壳。
+    真正的分岔<b>只有一条：这一端有没有本地算力</b>。</div>
+  <table>
+    <thead><tr><th>平台</th><th>本地算力</th><th>改造量</th><th>判断</th></tr></thead>
+    <tbody>
+      <tr class="hi"><td>macOS</td><td>有</td><td class="n">已通</td><td><span class="ok">已可用</span></td></tr>
+      <tr><td>Windows</td><td>有</td><td class="n">估算 1–3 天</td><td>打包脚本 + 拖拽/路径适配</td></tr>
+      <tr><td>Linux</td><td>有</td><td class="n">估算 1 天</td><td>可忽略（无用户）</td></tr>
+      <tr><td>iOS / Android</td><td><b>无</b></td><td class="n">属真重构</td><td><span class="warn">跑不了 Ollama / FFmpeg，除非走远端 API</span></td></tr>
+    </tbody>
+  </table>
+  <p class="sub" style="margin:0">Windows / Linux 的工期为<b>估算</b>，尚未实测，不作为承诺。</p>
+</div>
+
+<div class="qa">
+  <p class="ask">Q3　支持传自己的 API Key、接三方 AI（类似闪电说）？<span>——地基已经在了</span></p>
+  <ul class="facts">
+    <li>架构里已有 Provider 抽象：<code>scriptwriter.LLMProvider</code> /
+      <code>OllamaProvider</code> / <code>RuleFallbackProvider</code>；
+      <code>narrator.TTSProvider</code> / <code>EdgeTTSProvider</code> / <code>SayProvider</code>。</li>
+    <li>装配点只有一处：<code>providers.py:26-35</code> 按 <code>cfg</code> 里的 provider 名造对象。</li>
+    <li>所以<b>接三方 = 新增一个类 + 一个分支</b>。这套抽象当初是为"没模型时能降级跑"做的，
+      正好就是"接三方"的地基——不用改上层任何逻辑。</li>
+  </ul>
+  <div class="verdict">建议照抄闪电说被验证过的<b>三条信任路径</b>叙事：
+    ①本地模型（免费、隐私，声音和数据不出机器）②自接 Key（你的 Key 直连服务商，不经过我们）
+    ③我们的转发 / 会员（早期<b>不做</b>）。它在官网上敢写"接自己的模型，一直免费"，
+    这句话本身就是它的信任来源。</div>
+  <p style="margin-top:14px;font-size:14px;color:var(--ink2)">
+    <b>但要分清两件事</b>：用户自带的 Key 是用户的自由；<b>我们自己的代码里绝不能出现任何公司 Key</b>——
+    这条已有红线，且有 AC-15 的关键词扫描守门。
+  </p>
+</div>
+
+<!-- ========== 4 ========== -->
+<h2><span class="num">04</span>推荐路线：内容优先，产品后置</h2>
+<p class="sub">先给结论，再给代价。</p>
+
+<div class="opts">
+  <div class="opt pick">
+    <div class="top"><span class="tag">推荐</span><span class="name">A · 内容优先</span></div>
+    <div class="rows">
+      <div><span class="k">做什么</span>把项目本身做成 3–5 篇内容（公众号长文 + 贴图 + 视频号），
+        用「半分钟 / 不到 1MB / 不要钱」当钩子；App 只作为文章末尾给朋友的下载链接。</div>
+      <div><span class="k">成本</span><span class="ok">0 元</span>（不含时间）</div>
+      <div><span class="k">收益</span>账号增长——<b>你现在最缺的东西</b>。</div>
+      <div><span class="k">风险</span>选题对但渠道弱，可能不涨粉。</div>
+    </div>
+  </div>
+
+  <div class="opt">
+    <div class="top"><span class="tag">可并行</span><span class="name">B · 产品优先（小圈子）</span></div>
+    <div class="rows">
+      <div><span class="k">做什么</span>Mac 版先给 5–10 个人用，收反馈，不谈上架。用"身边几个爱不释手"当验收。</div>
+      <div><span class="k">成本</span>维护时间（每次系统升级都要跟着修）</div>
+      <div><span class="k">风险</span>没人真用则时间白投。判据：<b>有没有 ≥3 人主动天天开</b>。</div>
+    </div>
+  </div>
+
+  <div class="opt">
+    <div class="top"><span class="tag">不建议现在做</span><span class="name">C · 上架 App Store</span></div>
+    <div class="rows">
+      <div><span class="k">成本</span><span class="cost">$99/年 + 审核 + 隐私政策合规 + 跨平台维护 + 客服</span></div>
+      <div><span class="k">风险</span>把一个冷启动账号最稀缺的资源（你的时间）投进一个<b>零线索渠道</b>。</div>
+      <div><span class="k">另</span>上架 = 显性副业收入，与在职状态的红线直接冲突（见 §05）。</div>
+    </div>
+  </div>
+</div>
+
+<h3>为什么推荐 A：四条理由，都锚在现状上</h3>
+<ul class="plain">
+  <li><b>账号阶段</b>：公众号仍在冷启动，近期靠大会带来 25 个新粉（此前 20）。
+    <b>这个阶段该买的是"被看见的次数"，不是"上架"。</b></li>
+  <li><b>验收标准已经是对的</b>："身边少数几个爱不释手的 APP"——n = 5~10 个真人，
+    不需要上架就能验。上架反而把验收推迟了几周。</li>
+  <li><b>在职状态</b>：上架即显性副业收入，劳动合同 / 竞业条款风险；
+    且项目与职业身份的关联信息一旦公开，就是可定位的指纹。</li>
+  <li><b>项目天然是内容</b>：「我把一本书半分钟变成能看完的视频，零成本、全本地跑」——
+    这是"工具 + 反直觉数字 + 可复现"的爆款结构。项目本身就是最好的素材。</li>
+</ul>
+
+<h3>A 的代价，以及怎么补</h3>
+<ul class="plain">
+  <li><b>代价一</b>：工具型内容容易引来同行，而不是普通读者。
+    <b>补法</b>：钩子用"这本书讲了什么"，不要用"我用了什么技术"。</li>
+  <li><b>代价二</b>：正文若写成技术汇报，普通人看不下去——那正好和产品要解决的问题自相矛盾。
+    <b>补法</b>：文章主角是<b>书里的观点</b>，工具只是容器（利他 &gt; 炫技）。</li>
+</ul>
+
+<!-- ========== 5 ========== -->
+<h2><span class="num">05</span>红线清单（商业化之前必须先过这四关）</h2>
+<ul class="plain">
+  <li><b>脱敏</b>：本看板及后续一切对外物料，不含真实姓名、雇主名称、内部项目代号。本文件已按此处理。</li>
+  <li><b>在职</b>：上架、收款、公开招募等商业化动作暂停，直到边界明确。</li>
+  <li><b>Key</b>：行途内容生产不接公司任何 LLM / API Key（已有 AC-15 扫描守门）。</li>
+  <li><b>合伙</b>：技术 × 运营目前是<b>口头约定</b>。真要走商业化，第一件该定下来的
+    <b>不是代码，是"谁的账号上架、收入怎么分、不做了怎么退"</b>。</li>
+</ul>
+
+<!-- ========== 6 ========== -->
+<h2><span class="num">06</span>顺带发现：slogan 的数字对不上实测</h2>
+<p class="sub">slogan 是要对外说的，数字必须扛得住核。</p>
+<table>
+  <thead><tr><th>产物</th><th class="n">时长实测</th><th class="n">体积实测</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td><code>samples/g/ch01.mp4</code></td><td class="n">29.3 s</td><td class="n">556 KB</td><td>—</td></tr>
+    <tr><td><code>samples/g/ch03.mp4</code></td><td class="n">34.0 s</td><td class="n">615 KB</td><td>—</td></tr>
+    <tr><td><code>samples/t2v_ch03.mp4</code></td><td class="n">36.7 s</td><td class="n">671 KB</td><td>当前样例</td></tr>
+    <tr><td><code>samples/g/ch05.mp4</code></td><td class="n">38.9 s</td><td class="n">709 KB</td><td>—</td></tr>
+    <tr class="hi"><td><b>区间</b></td><td class="n"><b>29.3 – 38.9 s</b></td><td class="n"><b>556 – 709 KB</b></td><td>「666 KB」落在区间内；「30 秒」只有 1/4 达标</td></tr>
+  </tbody>
+</table>
+<p style="font-size:14px;color:var(--ink2)">
+  <b>建议口径</b>：改「<b>半分钟，不到 1 MB</b>」或「<b>30 秒上下 / 700 KB 以内</b>」——
+  两个都扛得住核，也更好念。数字型 slogan 一旦被实测打脸，损耗的是整条内容的可信度。
+</p>
+<p style="font-size:14px;color:var(--ink2)">
+  另：<code>samples/g/</code> 是 <code>--chapters 1,3,5</code> 的<b>真实多章产物</b>（三条均合法：h264 1080×1920 + aac），
+  不是垃圾文件。但目录名没有含义，建议改名为多章能力证据保留。
+</p>
+
+<!-- ========== 7 ========== -->
+<h2><span class="num">07</span>待拍板</h2>
+<table>
+  <thead><tr><th>#</th><th>事项</th><th>我的建议</th></tr></thead>
+  <tbody>
+    <tr><td class="n">1</td><td>路线选 A / B / C</td><td><b>A</b>（可与 B 并行，不建议 C）</td></tr>
+    <tr><td class="n">2</td><td>slogan 口径是否从「30 秒 666kb」改为扛得住核的写法</td><td>建议改</td></tr>
+    <tr><td class="n">3</td><td><code>samples/g/</code> 保留（改名）还是清理</td><td>保留改名</td></tr>
+    <tr><td class="n">4</td><td>两个 <code>xingtu</code> 根目录，记忆以哪个为准</td><td>沿用上轮待裁决项</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <b>脱敏与留档说明</b>：本文件为项目知识库留档，群聊参与者以角色代称（运营侧 / 技术侧），
+  不含姓名与雇主信息；对外发布时可整体公开。<br>
+  <b>数字来源</b>：时长 / 体积为 <code>ffprobe</code> 实测；模型 5.2 GB 取自 <code>ollama list</code>；
+  本机内存 16 GB 取自 <code>sysctl hw.memsize</code>；跨平台工期为估算，已单独标注。
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T2V-002 交付看板 · 目录索引与按需生成</title>
+<style>
+  :root{
+    --blue:#056DE8; --blue-soft:#EAF2FE; --ink:#0B0B0C; --ink-2:#3C3C43;
+    --ink-3:#86868B; --line:#E6E6EA; --bg:#FFFFFF; --bg-2:#FAFAFB;
+    --ok:#0A8F4D; --ok-soft:#E9F7F0; --warn:#B8730A; --warn-soft:#FDF4E3;
+    --bad:#C4322B; --bad-soft:#FCEDEC;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+       font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:56px 28px 96px}
+
+  /* ── header ── */
+  header{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:36px}
+  .kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+          margin-bottom:12px;font-weight:600}
+  h1{margin:0 0 10px;font-size:30px;letter-spacing:-.02em;line-height:1.25;font-weight:700}
+  .sub{color:var(--ink-2);font-size:14.5px;margin:0}
+  .meta{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-size:12px;padding:3px 10px;border:1px solid var(--line);border-radius:20px;
+        color:var(--ink-2);background:var(--bg-2)}
+  .chip.ok{background:var(--ok-soft);border-color:#BFE3D2;color:var(--ok);font-weight:600}
+
+  h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+     margin:52px 0 16px;font-weight:700}
+  h2:first-of-type{margin-top:0}
+
+  /* ── KPI ── */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+  .kpi{border:1px solid var(--line);border-radius:12px;padding:18px 20px;background:var(--bg)}
+  .kpi .label{font-size:12.5px;color:var(--ink-3);margin-bottom:8px}
+  .kpi .val{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+  .kpi .val.big{color:var(--blue)}
+  .kpi .from{font-size:12.5px;color:var(--ink-3);margin-top:7px}
+  .kpi .from s{color:var(--bad);text-decoration-thickness:1px}
+
+  /* ── table ── */
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);
+     font-weight:700;background:var(--bg-2)}
+  td.num{font-family:var(--mono);font-size:13px;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+
+  /* ── AC grid ── */
+  .acgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:8px}
+  .ac{border:1px solid var(--line);border-left:3px solid var(--ok);border-radius:7px;
+      padding:9px 12px;font-size:13px;background:var(--bg-2);display:flex;gap:9px;align-items:baseline}
+  .ac .id{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);flex:0 0 auto}
+  .ac.fixed{border-left-color:var(--warn);background:var(--warn-soft)}
+  .ac .tag{font-size:10.5px;color:var(--warn);font-weight:700;margin-left:auto;flex:0 0 auto}
+
+  /* ── defect cards ── */
+  .def{border:1px solid var(--line);border-radius:12px;padding:0;margin-bottom:14px;overflow:hidden}
+  .def .hd{display:flex;align-items:center;gap:11px;padding:14px 18px;background:var(--bg-2);
+           border-bottom:1px solid var(--line)}
+  .def .sev{font-size:10.5px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:5px;
+            background:var(--warn-soft);color:var(--warn);flex:0 0 auto}
+  .def .sev.p0{background:var(--bad-soft);color:var(--bad)}
+  .def .ttl{font-weight:600;font-size:15px}
+  .def .bd{padding:16px 18px}
+  .def dl{margin:0;display:grid;grid-template-columns:78px 1fr;gap:7px 14px;font-size:13.5px}
+  .def dt{color:var(--ink-3);font-size:12.5px;padding-top:2px}
+  .def dd{margin:0;color:var(--ink-2)}
+  code{font-family:var(--mono);font-size:12.5px;background:var(--bg-2);
+       border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--ink)}
+  .hl{color:var(--bad);font-weight:600}
+  .ok-t{color:var(--ok);font-weight:600}
+
+  /* ── callout ── */
+  .note{border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 9px 9px 0;
+        padding:15px 20px;font-size:14px;color:var(--ink-2);margin-top:16px}
+  .note b{color:var(--ink)}
+  .ask{border:1px solid #BFE3D2;background:var(--ok-soft);border-radius:12px;padding:18px 22px;margin-top:12px}
+  .ask h3{margin:0 0 10px;font-size:15px}
+  .ask ol{margin:0;padding-left:20px;font-size:14px;color:var(--ink-2)}
+  .ask li{margin-bottom:7px}
+  .ask li:last-child{margin-bottom:0}
+
+  /* ── flow ── */
+  .flow{display:flex;flex-wrap:wrap;gap:7px;align-items:center;font-size:12.5px}
+  .flow .n{border:1px solid var(--line);border-radius:7px;padding:6px 11px;background:var(--bg-2);
+           font-family:var(--mono);font-size:12px}
+  .flow .n.new{border-color:#BFD6F7;background:var(--blue-soft);color:var(--blue);font-weight:600}
+  .flow .a{color:var(--ink-3)}
+
+  footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);
+         font-size:12.5px;color:var(--ink-3)}
+  @media (max-width:640px){
+    .wrap{padding:32px 18px 64px} h1{font-size:23px}
+    .def dl{grid-template-columns:1fr;gap:2px 0}
+    .def dt{padding-top:8px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">T2V-002 交付看板 · book2vido</div>
+    <h1>目录索引与按需生成</h1>
+    <p class="sub">把「整本书拍平后只取前 12 句」升级为「读目录 → 按章点播 → 每章一条片，重跑不重算」。</p>
+    <div class="meta">
+      <span class="chip ok">AC 16 / 16 通过</span>
+      <span class="chip">specs 驱动 · 深度 standard</span>
+      <span class="chip">耗时 47 分钟</span>
+      <span class="chip">4 单元并行实现</span>
+      <span class="chip">零公司 API key</span>
+      <span class="chip">≈¥0（仅电费）</span>
+    </div>
+  </header>
+
+  <h2>关键指标</h2>
+  <div class="kpis">
+    <div class="kpi">
+      <div class="label">全命中重跑</div>
+      <div class="val big">0.502 s</div>
+      <div class="from">旧 <s>19.9 s</s> → <b>提速 40×</b>（要求 ≤2s）</div>
+    </div>
+    <div class="kpi">
+      <div class="label">改一句分镜后重跑</div>
+      <div class="val big">13.0 s</div>
+      <div class="from">旧 <s>19.9 s 且改动被丢弃</s>（要求 ≤15s）</div>
+    </div>
+    <div class="kpi">
+      <div class="label">TTS 12 句并发</div>
+      <div class="val big">2.04 s</div>
+      <div class="from">旧 <s>28.9 s 串行 / 10 成功</s> → 12/12</div>
+    </div>
+    <div class="kpi">
+      <div class="label">目录解析</div>
+      <div class="val">22 章 / 93 条</div>
+      <div class="from">348 页《关键对话》· 顶层 22 + 小节 71，带精确页码</div>
+    </div>
+  </div>
+
+  <h2>模块与依赖</h2>
+  <div class="flow">
+    <span class="n">extractor</span><span class="a">→</span>
+    <span class="n new">outline</span><span class="a">→</span>
+    <span class="n new">segmenter</span><span class="a">→</span>
+    <span class="n">scriptwriter</span><span class="a">→</span>
+    <span class="n">visualizer</span><span class="a">/</span>
+    <span class="n">narrator</span><span class="a">→</span>
+    <span class="n">compositor</span>
+    <span class="a">｜</span>
+    <span class="n new">models</span>
+    <span class="a">(契约塔尖)</span>
+    <span class="n new">cache</span>
+    <span class="n new">providers</span>
+    <span class="n">pipeline</span>
+  </div>
+  <div class="note">
+    <b>新增 5 个模块</b>（蓝底），共 16 个。所有模块 ≤200 行（除纯映射表 <code>icons.py</code> 按 spec 豁免）。
+    <br><b>为什么拆出 <code>providers.py</code></b>：AC-16 的超行数只是症状，病根是 pipeline 同时承担
+    「造 provider」与「排顺序」两件事——拆开后 pipeline 236 → 193 行。
+  </div>
+
+  <h2>三层缓存：分键是核心</h2>
+  <table>
+    <thead><tr><th>产物</th><th>键（决定它的输入）</th><th>用户改了…</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>章文本 <code>text.txt</code></td>
+        <td class="num">书字节 + 章号 + max_chars + <b>算法版本</b></td>
+        <td>改 <code>text.txt</code>（换素材）</td>
+        <td>重跑模型 <span class="ok-t">语义正确</span></td>
+      </tr>
+      <tr>
+        <td>分镜 <code>script.json</code></td>
+        <td class="num">书字节 + model + think + 句数 + 章节输入文本</td>
+        <td>改 <code>script.json</code>（润色口播）</td>
+        <td><b>命中并保留改动</b>，LLM 不跑</td>
+      </tr>
+      <tr>
+        <td>成片 <code>chNN.mp4</code></td>
+        <td class="num"><b>sha256(分镜规范化 JSON)</b> + 音色 + 配色 + 尺寸</td>
+        <td>改配色 / 改分镜</td>
+        <td>只重渲染下游 <span class="ok-t">≈13s</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <b>成片键挂「分镜内容指纹」而不是输入键</b>——这是实施期抓到的设计缺陷：<code>script_key</code> 由
+    <b>输入文本</b>推导，手改 <code>script.json</code> 不改它，于是会命中<b>旧分镜渲染出的成片</b>，
+    用户的改动被<b>静默丢弃</b>。
+  </div>
+
+  <h2>16 条验收标准</h2>
+  <div class="acgrid">
+    <div class="ac"><span class="id">AC-1</span>outline.json 93 条</div>
+    <div class="ac"><span class="id">AC-2</span>list 两级树 22 章</div>
+    <div class="ac"><span class="id">AC-3</span>三层兜底链</div>
+    <div class="ac"><span class="id">AC-4</span>文本不越界</div>
+    <div class="ac fixed"><span class="id">AC-5</span>越界明确报错<span class="tag">先修后验</span></div>
+    <div class="ac"><span class="id">AC-6</span>单章失败不阻塞</div>
+    <div class="ac fixed"><span class="id">AC-7</span>长章均匀采样<span class="tag">先修后验</span></div>
+    <div class="ac"><span class="id">AC-8</span>TTS 并发 ≤5s</div>
+    <div class="ac"><span class="id">AC-9</span>重试/降并发/不静默</div>
+    <div class="ac"><span class="id">AC-10</span>缓存三层语义</div>
+    <div class="ac fixed"><span class="id">AC-11</span>改一句 ≤15s<span class="tag">先修后验</span></div>
+    <div class="ac"><span class="id">AC-12</span>MediaClip 契约</div>
+    <div class="ac"><span class="id">AC-13</span>models 零同包 import</div>
+    <div class="ac"><span class="id">AC-14</span>旧 CLI 行为不变</div>
+    <div class="ac"><span class="id">AC-15</span>零 key / 离线可出片</div>
+    <div class="ac"><span class="id">AC-16</span>模块 ≤200 行</div>
+  </div>
+  <div class="note">
+    黄底 3 条是<b>先修后验</b>——验证时先改了缺陷才达标。另：AC-15 的「真断网出片」只做了代码审计，
+    未真断网实测，已在报告中标注为未验证项。
+  </div>
+
+  <h2>本轮抓到的 5 个缺陷</h2>
+
+  <div class="def">
+    <div class="hd"><span class="sev p0">严重</span><span class="ttl">手改分镜被静默丢弃</span></div>
+    <div class="bd"><dl>
+      <dt>现象</dt><dd>改了 <code>script.json</code> 里的一句话，重跑却还是老视频，而且<b>不报错</b>。</dd>
+      <dt>真因</dt><dd><code>video_key</code> 挂的是 <code>script_key</code>（由<b>输入文本</b>推导）。手改输出文件不改输入 → 命中<b>旧分镜渲染的成片</b>。</dd>
+      <dt>修法</dt><dd>改挂 <code>sha256(分镜规范化 JSON)</code> 指纹 → 改一句只重渲染下游，LLM 不跑。</dd>
+      <dt>实测</dt><dd>日志出现「分镜：缓存命中…跳过模型」+「画面：渲染」→ <span class="ok-t">只重跑下游，8.5~13s</span></dd>
+    </dl></div>
+  </div>
+
+  <div class="def">
+    <div class="hd"><span class="sev">中</span><span class="ttl">「全命中」却要等 19.9 秒</span></div>
+    <div class="bd"><dl>
+      <dt>现象</dt><dd>缓存全命中，理论上应该秒回，实际墙钟 19.9s。</dd>
+      <dt>真因</dt><dd>命中路径<b>仍解析全书</b>：<code>extract_pages</code> 5.9s + <code>outline.build</code> 6.0s = 11.9s 白干。只算了「要不要重做」，没算「命中时顺手做了多少无用功」。</dd>
+      <dt>修法</dt><dd>大纲优先读 <code>outline.json</code> + 章切片落 <code>text.txt</code> + <code>lazy_pages()</code> 把抽页<b>推迟到真正需要时</b>。</dd>
+      <dt>实测</dt><dd><s>19.9s</s> → <span class="ok-t">0.502s（40×）</span></dd>
+    </dl></div>
+  </div>
+
+  <div class="def">
+    <div class="hd"><span class="sev">中</span><span class="ttl">文档里承诺的「人工可改口子」是假的</span></div>
+    <div class="bd"><dl>
+      <dt>现象</dt><dd>代码注释与设计文档都写「<code>outline.json</code> 落盘 = 人工可改的口子」，实际手改<b>完全不生效</b>。</dd>
+      <dt>真因</dt><dd>每次跑都 <code>build()</code> 重建，<code>save()</code> 落的文件<b>白存</b>。与上一个缺陷是同一类。</dd>
+      <dt>修法</dt><dd>改为优先 <code>load()</code>；手改即生效。日志会打印「大纲：缓存命中…（读 outline.json，手改生效）」。</dd>
+      <dt>实测</dt><dd><code>render_tree(build)</code> ≡ <code>render_tree(load)</code>：93 条 / 22 顶层 / <b>页码范围逐条相同</b>，读缓存不引入漂移。</dd>
+    </dl></div>
+  </div>
+
+  <div class="def">
+    <div class="hd"><span class="sev">中</span><span class="ttl">长章切片的「章尾」被悄悄切掉</span></div>
+    <div class="bd"><dl>
+      <dt>现象</dt><dd>长章均匀采样首/中/尾，但<b>章节最后 12 个字始终不在</b>切片里。</dd>
+      <dt>真因</dt><dd>三段各 833 字 = 2499，加 2 个省略分隔符（各 4 字）= 2507 &gt; 2500 → 兜底 <code>text[:2500]</code> <b>从尾部切</b>，恰好切掉尾段存在的意义。</dd>
+      <dt>修法</dt><dd>预算先扣分隔符 + 段间换行计入预算；并加 <code>segmenter.VERSION</code>（<b>改算法必须 +1</b>），否则旧切片被静默复用、改进等于没做。</dd>
+      <dt>实测</dt><dd><b>全 22 章</b>逐章通过：长章 2498 字，首 / 正中 / <b>末 12 字</b>全部命中。</dd>
+    </dl></div>
+  </div>
+
+  <div class="def">
+    <div class="hd"><span class="sev p0">严重</span><span class="ttl"><code>--chapter 0</code> 静默走整本出片</span></div>
+    <div class="bd"><dl>
+      <dt>现象</dt><dd><code>--chapter 0</code> <b>没有任何输出、没有报错、退出码 0</b>——却跑了一条整本书的片子。</dd>
+      <dt>真因</dt><dd><code>bool(a.chapter or ...)</code>：<code>bool(0) is False</code> → 被判成「没给章参数」→ 走 T2V-001 老路径。</dd>
+      <dt>修法</dt><dd>改用 <code>is not None</code> 显式区分「没给」与「给了 0」；顺带 <code>--chapters ''</code> 明确报错、输入文件不存在由 20 行 traceback 改为一句人话。</dd>
+      <dt>实测</dt><dd><code>0 / -1 / 999</code> → 退出码 1 + 明确越界信息；<code>abc / ''</code> → 退出码 2 + 明确提示。</dd>
+    </dl></div>
+  </div>
+
+  <div class="note">
+    <b>模式识别（本轮最大收获）</b>：5 个缺陷里 <b>4 个同属一类</b>——「键 / 缓存 / 落盘文件」这类
+    <b>看不见的契约</b>。它们<b>不报错、只静默走错分支或静默不生效</b>，happy path 全绿。
+    加上此前的项目级案例（术语改一处、信息图 HTML 改了 PNG 没重渲染），这类缺陷已构成<b>模式</b>，
+    故已沉淀为 skill <code>hidden-contract-audit</code>。
+  </div>
+
+  <h2>产物清单</h2>
+  <table>
+    <thead><tr><th>产物</th><th>位置</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>验收报告</td><td class="num">specs/2026091518-…/verification-report.md</td><td>AC 逐条 + 7 项对抗性核查 + 缺陷清单</td></tr>
+      <tr><td>变更日志</td><td class="num">CHANGELOG.md</td><td>新建，8 条修复 + 性能对比表</td></tr>
+      <tr><td>交接文档</td><td class="num">HANDOFF.md</td><td>T2V-002 状态快照、已知限制、5 个缺陷</td></tr>
+      <tr><td>样例成片</td><td class="num">samples/t2v_ch03.mp4</td><td>第 3 章（p68-92）独立成片，1080×1920，36.7s</td></tr>
+      <tr><td>可分发应用</td><td class="num">dist/Book2Vido.app</td><td>115 MB，自检 7/7 绿，包内源码与仓库哈希逐一致</td></tr>
+      <tr><td>规格五件套</td><td class="num">specs/2026091518-…/</td><td>00~05 + laws + execution-log（205 行事件流）</td></tr>
+    </tbody>
+  </table>
+
+  <h2>需要你拍板的两件事</h2>
+  <div class="ask">
+    <h3>① Phase 6 提交</h3>
+    <ol>
+      <li><code>git init</code> + 本地提交——可直接做（未 push，不出内网）。</li>
+      <li><b><code>git push</code> / 建 GitHub 仓——属对外动作，等你明确批准。</b></li>
+      <li>顺带：<code>dist/Book2Vido.app.bak-*</code> 三个旧产物（约 350MB）是否删除？（构建脚本的清理动作会触发安全阈值拦截，我没有绕过，改为改名让位。）</li>
+    </ol>
+  </div>
+  <div class="ask">
+    <h3>② 发现一处基建异常：工作区记忆有两个根</h3>
+    <ol>
+      <li>本次会话实际读取的记忆在 <code>~/工作室/xingtu/.workbuddy/memory/</code>（被注入的 <code>MEMORY.md</code> §12 只在该目录存在）。</li>
+      <li>而你 2026-09-13 定的「唯一根 = <code>~/xingtu</code>」指向另一边——该目录的 <code>MEMORY.md</code> 仅 54 行、缺 §12。</li>
+      <li>两者 inode 不同（<code>247990722</code> / <code>271057424</code>），确为两个独立目录。<b>本次记忆按会话实际读取位置落，请你裁决以哪个为准。</b></li>
+    </ol>
+  </div>
+
+  <footer>
+    book2vido · T2V-002 ｜ 生成于 2026-09-15 19:45 ｜
+    全程零公司 API key（本地 Ollama + 免费 edge-tts + 本地 FFmpeg），成本 ≈¥0（仅电费）
+  </footer>
+
+</div>
+</body>
+</html>

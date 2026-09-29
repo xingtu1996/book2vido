@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book2Vido · 长文转短视频</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="page">
+
+  <div class="brand">
+    <h1>Book2Vido</h1>
+    <div class="slogan">长文/厚书 → 本地模型浓缩精华 → 半分钟竖屏短视频</div>
+  </div>
+
+  <div class="env-bar">
+    <div class="env-item">
+      <div class="env-dot" id="dot-ollama"></div>
+      <span class="env-name">Ollama</span>
+      <span class="env-status" id="status-ollama">检查中…</span>
+    </div>
+    <div class="env-item">
+      <div class="env-dot" id="dot-model"></div>
+      <span class="env-name">本地模型</span>
+      <span class="env-status" id="status-model">检查中…</span>
+    </div>
+    <div class="env-item">
+      <div class="env-dot" id="dot-ffmpeg"></div>
+      <span class="env-name">FFmpeg</span>
+      <span class="env-status" id="status-ffmpeg">检查中…</span>
+    </div>
+    </div>
+  </div>
+
+  <!-- 配音选择区 -->
+  <div class="card" style="padding:12px 16px;margin-bottom:12px;">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span style="font-size:13px;font-weight:600;color:#1a1a1a;">🎙️ 选择配音：</span>
+      <div id="voiceList" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <span style="font-size:12px;color:#999;">加载中...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card progress-card" id="progressCard" style="display:none;">
+    <div class="progress-row">
+      <span class="progress-label" id="progressLabel">准备中...</span>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <span class="progress-eta" id="progressEta"></span>
+    </div>
+  </div>
+
+  <div class="main-grid">
+
+    <div class="card">
+      <div class="card-title">📚 目录</div>
+      <div class="chapter-list" id="chapterList">
+        <div class="empty-hint">上传文件后自动显示目录</div>
+      </div>
+      <button class="btn-primary" id="generateBtn" disabled>生成全书总览 →</button>
+    </div>
+
+    <div class="card video-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div class="card-title" style="margin:0;">🎬 视频播放</div>
+        <button class="btn-upload" id="uploadBtn" style="padding:6px 12px;font-size:12px;">📄 上传</button>
+        <input type="file" id="fileInput" accept=".pdf,.md,.txt" style="display:none">
+      </div>
+      <div class="video-container" id="videoContainer">
+        <div class="video-placeholder" id="videoPlaceholder">
+          <div class="placeholder-icon">🎬</div>
+          <div class="placeholder-text">上传文件后，视频会在这里播放</div>
+        </div>
+        <video id="videoPlayer" controls style="display:none; width:100%; border-radius:8px;"></video>
+        <button class="btn-close-video" id="closeVideoBtn" style="display:none;">×</button>
+      </div>
+      <button class="btn-secondary" id="downloadBtn" style="display:none; margin-top:8px;">⬇️ 下载视频</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 历史输出</div>
+      <div class="history-list" id="historyList">
+        <div class="empty-hint">还没有生成过视频，上传文件试试吧～</div>
+      </div>
+      <button class="btn-text" id="openFolderBtn">📂 打开文件夹</button>
+    </div>
+
+  </div>
+
+  <div class="card chat-card" id="chatCard">
+    <div class="card-title">💬 跟本地模型聊聊这本书</div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg ai">请先上传文件，我才能和你聊这本书～</div>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" class="chat-input" id="chatInput" placeholder="问问这本书讲了啥..." disabled>
+      <button class="btn-primary" id="chatSend" style="width:auto; margin-top:0;" disabled>发送</button>
+    </div>
+    <div class="chat-quick">
+      <button onclick="quickAsk('这本书主要讲了什么？')">这本书讲了啥</button>
+      <button onclick="quickAsk('核心观点有哪些？')">核心观点</button>
+      <button onclick="quickAsk('帮我总结一下重点')">总结重点</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

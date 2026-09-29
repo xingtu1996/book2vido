@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Book2Vido 布局 Mockup</title>
+<style>
+:root {
+  --accent: #1a1a1a;
+  --bg: #F5F5F5;
+  --card: #FFFFFF;
+  --border: #E0E0E0;
+  --text: #1a1a1a;
+  --gray: #7A8087;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f0f0f0;
+  color: var(--text);
+  padding: 0;
+}
+.page { max-width: 1200px; margin: 20px auto; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+
+/* 品牌 */
+.brand { margin-bottom: 16px; }
+.brand h1 { font-size: 22px; margin-bottom: 4px; }
+.brand .slogan { font-size: 15px; color: #666; font-weight: 500; }
+
+/* 环境条 */
+.env-bar {
+  display: flex; gap: 20px;
+  padding: 10px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.env-item { display: flex; align-items: center; gap: 6px; }
+.env-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
+.env-status { color: var(--gray); }
+
+/* 紧凑布局：无卡片边框（大卡片已经包裹了） */
+.card {
+  background: transparent;
+  padding: 12px 0;
+  margin-bottom: 0;
+}
+.card-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+
+/* 上传区 */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+.upload-icon { font-size: 28px; margin-bottom: 8px; }
+.upload-text { font-size: 14px; font-weight: 500; }
+.upload-hint { font-size: 12px; color: var(--gray); margin-top: 4px; }
+
+/* 中间两栏：视频 + 目录 */
+.main-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr 220px;
+  gap: 12px;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* 视频区 */
+.video-area { min-height: 360px; }
+.video-box {
+  background: #1a1a1a;
+  border-radius: 8px;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 13px;
+}
+/* 历史 */
+.history-item {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.history-play { color: #1a1a1a; font-weight: 500; }
+
+/* 目录区 */
+.chapter-item {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 100%;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+/* 聊天区（底部） */
+.chat-messages {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+.chat-msg {
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  max-width: 70%;
+  font-size: 13px;
+}
+.chat-msg.ai { background: var(--card); border: 1px solid var(--border); }
+.chat-msg.user { background: #1a1a1a; color: white; margin-left: auto; }
+.chat-input-row { display: flex; gap: 8px; }
+.chat-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+}
+.chat-quick { display: flex; gap: 6px; margin-top: 8px; }
+.chat-quick button {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  font-size: 11px;
+}
+
+/* 标注 */
+.label {
+  position: absolute;
+  background: #F2644F;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="brand">
+    <h1>Book2Vido</h1>
+    <div class="slogan">长文/厚书 → 本地模型浓缩精华 → 半分钟竖屏短视频</div>
+  </div>
+
+  <div class="env-bar">
+    <div class="env-item"><div class="env-dot"></div>Ollama <span class="env-status">Running</span></div>
+    <div class="env-item"><div class="env-dot"></div>本地模型 <span class="env-status">qwen3:8b</span></div>
+    <div class="env-item"><div class="env-dot"></div>FFmpeg <span class="env-status">Installed</span></div>
+    <div style="margin-left:auto;">
+      <button style="background:#1a1a1a; color:white; border:none; padding:6px 14px; border-radius:6px; font-size:12px; cursor:pointer;">📄 上传文件</button>
+    </div>
+
+  </div>
+
+  <!-- 进度条 -->
+  <div style="background:#fafafa; border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:12px;">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <div style="font-size:11px; color:var(--gray); white-space:nowrap;">进度</div>
+      <div style="flex:1; height:6px; background:#eee; border-radius:3px; overflow:hidden;">
+        <div style="width:65%; height:100%; background:#1a1a1a;"></div>
+      </div>
+      <div style="font-size:10px; color:var(--gray); white-space:nowrap;">写口播稿 · 剩 1:20</div>
+    </div>
+  </div>
+
+  <!-- 中间：视频 + 目录 -->
+  <div class="main-grid">
+
+    <!-- 左：目录（独立窄栏） -->
+    <div class="card" style="background:#fafafa; border:1px solid var(--border); border-radius:12px; padding:16px; margin-right:8px;">
+      <div class="card-title">目录</div>
+      <div style="font-size:13px; padding:8px 4px; border-bottom:1px solid var(--border);">1. README</div>
+      <div style="font-size:13px; padding:8px 4px; border-bottom:1px solid var(--border);">2. 第一章 概述</div>
+      <div style="font-size:13px; padding:8px 4px; border-bottom:1px solid var(--border);">3. 第二章 核心概念</div>
+      <div style="font-size:13px; padding:8px 4px;">4. 第三章 实践</div>
+      <button class="btn-primary" style="margin-top:12px;">生成全书总览 →</button>
+    </div>
+
+    <!-- 中：视频播放 -->
+    <div class="card video-area" style="background:#fafafa; border:1px solid var(--border); border-radius:12px; padding:16px;">
+      <div class="card-title">视频播放</div>
+      <div class="video-box" style="background:#1a1a1a; border-radius:8px; min-height:320px; display:flex; align-items:center; justify-content:center; color:#666; font-size:13px;">
+        🎬 视频在这里播放
+      </div>
+    </div>
+
+    <!-- 右：历史输出（独立窄栏） -->
+    <div class="card" style="background:#fafafa; border:1px solid var(--border); border-radius:12px; padding:16px; margin-left:8px;">
+      <div class="card-title">历史输出</div>
+      <div class="history-item">
+        <div>
+          <div style="font-weight:500;">README</div>
+          <div style="font-size:10px; color:var(--gray);">09-21 · 634KB</div>
+        </div>
+        <span class="history-play">▶</span>
+      </div>
+      <div class="history-item">
+        <div>
+          <div style="font-weight:500;">关键对话</div>
+          <div style="font-size:10px; color:var(--gray);">09-16 · 585KB</div>
+        </div>
+        <span class="history-play">▶</span>
+      </div>
+      <div style="margin-top:8px; font-size:11px; color:var(--gray); text-align:center; cursor:pointer;">📂 打开文件夹</div>
+    </div>
+
+  </div>
+
+  <!-- 底部：聊天区 -->
+  <div class="card" style="background:#fafafa; border:1px solid var(--border); border-radius:12px; padding:16px; margin-top:12px;">
+    <div class="card-title">跟本地模型聊聊这本书</div>
+    <div class="chat-messages">
+      <div class="chat-msg ai">文档已加载，你可以直接问我这本书讲了什么～</div>
+      <div class="chat-msg user">这本书讲了啥？</div>
+      <div class="chat-msg ai">这是一本关于 AI 工程化的书，核心讲了如何把模型从研究推向生产……</div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" placeholder="问问这本书讲了啥...">
+      <button class="btn-primary" style="width:auto; margin-top:0; padding:10px 20px;">发送</button>
+    </div>
+    <div class="chat-quick">
+      <button>这本书讲了啥</button>
+      <button>核心观点</button>
+      <button>总结重点</button>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

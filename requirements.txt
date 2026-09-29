@@ -1,0 +1,4 @@
+pypdf
+Pillow
+edge-tts
+pyyaml

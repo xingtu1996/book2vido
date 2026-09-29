@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行途 · 本地模型台 | Ollama</title>
+<style>
+  :root{
+    --blue:#056DE8; --blue-soft:#EAF2FE; --bg:#F5F7FA; --card:#FFFFFF;
+    --text:#16181D; --muted:#6B7280; --line:#E4E7EC; --good:#0E9F6E; --warn:#D97706;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,"Helvetica Neue",sans-serif;
+    background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column;
+    font-size:14px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  header{
+    background:var(--card); border-bottom:1px solid var(--line);
+    padding:12px 20px; display:flex; align-items:center; gap:16px; flex:0 0 auto;
+  }
+  .brand{font-weight:600; letter-spacing:.3px; font-size:15px;}
+  .brand em{font-style:normal; color:var(--blue);}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);display:inline-block;margin-right:6px;}
+  .dot.on{background:var(--good);} .dot.off{background:#DC2626;} .dot.warn{background:var(--warn);}
+  header select{
+    font:inherit; padding:5px 10px; border:1px solid var(--line); border-radius:6px;
+    background:var(--card); color:var(--text); outline:none;
+  }
+  header .status{font-size:12px; color:var(--muted); margin-left:auto; display:flex; align-items:center;}
+  main{flex:1 1 auto; display:flex; min-height:0;}
+  /* 左：对话 */
+  .chat-col{flex:1 1 auto; display:flex; flex-direction:column; min-width:0;}
+  #log{flex:1 1 auto; overflow-y:auto; padding:22px 26px; display:flex; flex-direction:column; gap:16px;}
+  .msg{max-width:760px; width:fit-content;}
+  .msg .role{font-size:11px; color:var(--muted); letter-spacing:.8px; margin-bottom:5px;}
+  .msg .body{
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:11px 14px; white-space:pre-wrap; word-break:break-word;
+  }
+  .msg.user{margin-left:auto; text-align:right;}
+  .msg.user .role{text-align:right;}
+  .msg.user .body{background:var(--blue-soft); border-color:#CFE0FB; text-align:left;}
+  .msg.err .body{background:#FEF2F2; border-color:#FECACA; color:#991B1B;}
+  .think{
+    margin-top:8px; border-left:2px solid var(--line); padding:6px 10px;
+    color:var(--muted); font-size:12.5px; white-space:pre-wrap;
+    background:#FAFBFC; border-radius:0 6px 6px 0; display:none;
+  }
+  .think.open{display:block;}
+  .think-title{font-size:11px; letter-spacing:.8px; color:var(--muted); cursor:pointer; user-select:none; margin-top:8px;}
+  .think-title:hover{color:var(--blue);}
+  .metrics{
+    margin-top:7px; font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums;
+    display:flex; flex-wrap:wrap; gap:12px;
+  }
+  .metrics b{color:var(--blue); font-weight:600;}
+  .empty{color:var(--muted); text-align:center; margin:auto; max-width:460px; line-height:2;}
+  .empty code{background:var(--card); border:1px solid var(--line); padding:1px 6px; border-radius:4px; font-size:12.5px;}
+  /* 输入区 */
+  .composer{background:var(--card); border-top:1px solid var(--line); padding:12px 20px 16px; flex:0 0 auto;}
+  .composer .row{display:flex; gap:10px; align-items:flex-end;}
+  textarea{
+    flex:1 1 auto; resize:none; font:inherit; padding:11px 13px; border:1px solid var(--line);
+    border-radius:9px; outline:none; min-height:46px; max-height:170px; background:#FCFCFD; color:var(--text);
+  }
+  textarea:focus{border-color:var(--blue); background:var(--card);}
+  button{
+    font:inherit; border:1px solid var(--line); background:var(--card); color:var(--text);
+    padding:11px 18px; border-radius:9px; cursor:pointer; white-space:nowrap;
+  }
+  button:hover{border-color:#C9CDD4;}
+  button.primary{background:var(--blue); border-color:var(--blue); color:#fff; font-weight:500;}
+  button.primary:hover{background:#0559C4;}
+  button:disabled{opacity:.45; cursor:not-allowed;}
+  /* 右：性能面板 */
+  .side{
+    flex:0 0 306px; background:var(--card); border-left:1px solid var(--line);
+    padding:18px; overflow-y:auto;
+  }
+  .side h2{font-size:11px; letter-spacing:1.2px; color:var(--muted); font-weight:600; margin:0 0 12px;}
+  .side h2+.grid{margin-bottom:24px;}
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:9px;}
+  .stat{background:#FAFBFC; border:1px solid var(--line); border-radius:8px; padding:9px 10px;}
+  .stat .k{font-size:10.5px; color:var(--muted); letter-spacing:.4px;}
+  .stat .v{font-size:17px; font-weight:600; font-variant-numeric:tabular-nums; margin-top:2px;}
+  .stat .v small{font-size:11px; font-weight:400; color:var(--muted); margin-left:2px;}
+  .stat.hl .v{color:var(--blue);}
+  .field{margin-bottom:14px;}
+  .field label{display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted); margin-bottom:5px;}
+  .field label span{color:var(--text); font-variant-numeric:tabular-nums; font-weight:500;}
+  input[type=range]{width:100%; accent-color:var(--blue);}
+  .field select{width:100%; font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--text);}
+  .switch{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text); cursor:pointer; margin-bottom:14px;}
+  .switch input{accent-color:var(--blue); width:15px; height:15px;}
+  .hint{font-size:11.5px; color:var(--muted); line-height:1.75; margin-top:6px;}
+  .side hr{border:0; border-top:1px solid var(--line); margin:18px 0;}
+  .bar{height:4px; background:var(--line); border-radius:2px; overflow:hidden; margin:3px 0 16px;}
+  .bar i{display:block; height:100%; background:var(--blue); width:0%; transition:width .18s linear;}
+  @media (max-width:1000px){ .side{display:none;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">行途 <em>· 本地模型台</em></div>
+  <select id="model"></select>
+  <div class="status"><span class="dot" id="dot"></span><span id="conn">连接中…</span></div>
+</header>
+
+<main>
+  <div class="chat-col">
+    <div id="log">
+      <div class="empty" id="empty">
+        本地推理，零云端调用。<br>
+        直接提问，或先看右下角「思考模式」的差别。<br><br>
+        <code>ollama serve</code> 未启动时这里会提示。
+      </div>
+    </div>
+    <div class="composer">
+      <div class="row">
+        <textarea id="input" rows="1" placeholder="输入问题，Enter 发送 / Shift+Enter 换行"></textarea>
+        <button class="primary" id="send">发送</button>
+        <button id="stop" disabled>停止</button>
+        <button id="clear">清空</button>
+      </div>
+    </div>
+  </div>
+
+  <aside class="side">
+    <h2>实时性能</h2>
+    <div class="bar"><i id="pbar"></i></div>
+    <div class="grid">
+      <div class="stat hl"><div class="k">首字延迟 TTFT</div><div class="v" id="m_ttft">—</div></div>
+      <div class="stat hl"><div class="k">解码速度</div><div class="v" id="m_dtps">—</div></div>
+      <div class="stat"><div class="k">预填充</div><div class="v" id="m_ptps">—</div></div>
+      <div class="stat"><div class="k">模型加载</div><div class="v" id="m_load">—</div></div>
+      <div class="stat"><div class="k">输出 token</div><div class="v" id="m_otok">—</div></div>
+      <div class="stat"><div class="k">输入 token</div><div class="v" id="m_itok">—</div></div>
+      <div class="stat"><div class="k">思考 token</div><div class="v" id="m_ttok">—</div></div>
+      <div class="stat"><div class="k">总耗时</div><div class="v" id="m_wall">—</div></div>
+    </div>
+    <div class="hint" id="engine">—</div>
+    <button id="unload" style="width:100%;margin-top:10px;">卸载模型 · 释放内存</button>
+
+    <hr>
+    <h2>参数</h2>
+    <label class="switch"><input type="checkbox" id="think"> 思考模式（qwen3 thinking）</label>
+    <div class="field">
+      <label>temperature <span id="v_temp">0.7</span></label>
+      <input type="range" id="temp" min="0" max="1.5" step="0.1" value="0.7">
+    </div>
+    <div class="field">
+      <label>num_predict（输出上限）</label>
+      <select id="npred">
+        <option value="256">256</option>
+        <option value="512" selected>512</option>
+        <option value="1024">1024</option>
+        <option value="2048">2048</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>num_ctx（上下文窗口）</label>
+      <select id="nctx">
+        <option value="2048">2048</option>
+        <option value="4096" selected>4096</option>
+        <option value="8192">8192</option>
+        <option value="16384">16384</option>
+      </select>
+    </div>
+    <div class="hint">
+      关掉思考模式，qwen3 输出会快很多、但推理质量下降；
+      做内容初筛/短句改写建议关闭，做复杂推理建议打开。
+    </div>
+    <div class="hint" id="fyi"></div>
+  </aside>
+</main>
+
+<script>
+const OLLAMA = "http://localhost:11434";
+const $ = (id) => document.getElementById(id);
+const log = $("log");
+
+let history = [];
+let ctrl = null;
+let tStart = 0, tFirst = 0, timer = null;
+
+/* ---------- 连接状态机（四态，不是「连上 / 没连上」两态）----------
+   为什么必须四态：直接双击打开本 HTML 时，页面的 Origin 是 null，
+   Ollama 的跨域白名单不含 null —— 请求被浏览器拦下。
+   此时**服务其实是好的**，但两态写法只会显示「未连接」，
+   于是用户跑去把已经在跑的 ollama 再启动一遍，白折腾一轮。
+
+   区分办法（已实测）：no-cors 探针只要求「网络可达」，不需要 CORS 放行。
+     no-cors 成功 + 正常请求失败  → 服务在跑，被跨域策略拦（blocked）
+     no-cors 失败 + 正常请求失败  → 服务真没跑（down）
+     no-cors 成功 + 正常请求成功  → ok
+   实测坐标：file:// → live 可达/请求被拦、dead 双失败；http://localhost:* → live 双成功。 */
+const CMD_FULL = "bash tools/start_webui.sh";
+const CMD_SERVE = "ollama serve";
+const CMD_PULL = "ollama pull qwen3:8b";
+const WELCOME = '本地推理，零云端调用。<br>直接提问，或先看右下角「思考模式」的差别。<br><br>'
+  + '服务未就绪时，这里会给出启动引导。';
+
+let state = "init";                  // init | ok | empty | blocked | down
+let pollTimer = null;
+
+const esc = (s) => String(s).replace(/[&<>"]/g,
+  (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function cmdRow(text, tag) {
+  return `<div class="cmd"><span class="tag">${esc(tag || "")}</span>`
+    + `<code>${esc(text)}</code>`
+    + `<button class="copy" data-cmd="${esc(text)}">复制</button></div>`;
+}
+
+function clearGuide(restoreWelcome) {
+  const g = $("guide");
+  if (g) g.remove();
+  if (restoreWelcome && !log.querySelector(".msg") && !$("empty")) {
+    const e = document.createElement("div");
+    e.className = "empty"; e.id = "empty"; e.innerHTML = WELCOME;
+    log.appendChild(e);
+  }
+}
+
+function showGuide(html) {
+  const cur = $("guide");
+  // 状态没变就不重建：否则 2 秒一次的轮询会把「已复制 ✓」的反馈冲掉
+  if (cur && cur.dataset.state === state) return;
+  if (cur) cur.remove();
+  const e = $("empty");
+  if (e) e.remove();
+  const d = document.createElement("div");
+  d.id = "guide";
+  d.className = "guide" + (state === "down" ? " down" : "");
+  d.dataset.state = state;
+  d.innerHTML = html;
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+}
+
+/* 发送键的可用性只有一个来源：连接状态 + 是否正在生成 */
+function refreshSend() {
+  const notReady = state !== "ok";
+  $("send").disabled = notReady || !!ctrl;
+  $("input").placeholder = notReady
+    ? "本地模型服务未就绪 —— 按左侧引导启动后再试"
+    : "输入问题，Enter 发送 / Shift+Enter 换行";
+}
+
+function syncModelSelect(models) {
+  const sel = $("model");
+  const keep = sel.value;
+  sel.innerHTML = models.map((m) =>
+    `<option value="${esc(m.name)}">${esc(m.name)} · ${(m.size / 1e9).toFixed(1)}GB · ${esc(m.details.quantization_level || "")}</option>`
+  ).join("") || `<option>（无模型）</option>`;
+  // ⚠️ 重填 innerHTML 会把用户选的模型**静默重置为第一个**。
+  //    本机只装 1 个模型时永远看不出来；装了 2 个以上就是「提问用的不是你选的模型」。
+  if (keep && models.some((m) => m.name === keep)) sel.value = keep;
+}
+
+function guideHTML() {
+  const acts = `<div class="acts">
+      <button class="primary" data-act="recheck">重新检测</button>
+      <span class="hint" id="recheck-hint">未就绪时每 2 秒自动重试</span>
+    </div>`;
+  if (state === "down") {
+    return `
+      <h3>本地模型服务未启动</h3>
+      <p><code>localhost:11434</code> 没有任何响应 —— Ollama 没在跑。</p>
+      ${cmdRow(CMD_FULL, "推荐")}
+      ${cmdRow(CMD_SERVE, "或")}
+      ${acts}
+      <div class="why">
+        <b>为什么不能在这个页面上点一下就启动？</b><br>
+        浏览器不允许网页启动你电脑上的进程 —— 这是安全边界（否则任何网站都能悄悄运行本地程序）。
+        所以只能把命令交给你执行，由页面负责「执行完之后自动接上」。<br>
+        <code>start_webui.sh</code> 会同时处理 Ollama 和这个页面的服务；
+        只跑 <code>ollama serve</code> 的话，需要从 <code>http://localhost</code> 打开本页（见下）。
+      </div>`;
+  }
+  if (state === "blocked") {
+    const why = location.protocol === "file:"
+      ? `<b>你是直接双击打开这个 HTML 的</b>：<code>file://</code> 页面的 Origin 是 <code>null</code>，
+         而 Ollama 的跨域白名单不含 <code>null</code>，所以请求被浏览器拦下。`
+      : `页面来源 <code>${esc(location.origin)}</code> 不在 Ollama 的跨域白名单里
+         （可用 <code>OLLAMA_ORIGINS</code> 放行）。`;
+    return `
+      <h3>服务在跑，但浏览器把请求拦下了</h3>
+      <p>已探测到 <code>localhost:11434</code> <b>有响应</b> —— 服务是好的，问题在打开方式。</p>
+      <p>${why}</p>
+      ${cmdRow(CMD_FULL, "修复")}
+      <p>这条命令会用 <code>http://localhost</code> 重新打开本页 —— 跨域白名单恰好认这个来源。</p>
+      ${acts}
+      <div class="why"><b>别去重启 Ollama</b> —— 它已经在跑了，重启解决不了这个问题。</div>`;
+  }
+  return `
+    <h3>服务正常，但一个模型都没装</h3>
+    <p>Ollama 在跑，但 <code>/api/tags</code> 返回空列表。</p>
+    ${cmdRow(CMD_PULL, "第一步")}
+    ${acts}
+    <div class="why">qwen3:8b 约 5.2GB（8.2B / Q4_K_M）。下载完页面会自动刷出模型，不用手动刷新。</div>`;
+}
+
+async function probe(manual) {
+  let reachable = false;
+  try {
+    await fetch(OLLAMA + "/api/tags", { mode: "no-cors", cache: "no-store" });
+    reachable = true;                     // opaque 响应读不到内容，但足以证明服务活着
+  } catch (e) { /* 网络层就失败 = 服务没跑 */ }
+
+  let data = null;
+  if (reachable) {
+    try {
+      const r = await fetch(OLLAMA + "/api/tags", { cache: "no-store" });
+      data = await r.json();
+    } catch (e) { /* 可达但被跨域策略拦 */ }
+  }
+
+  const models = (data && data.models) || [];
+  state = data ? (models.length ? "ok" : "empty") : (reachable ? "blocked" : "down");
+  render(models, manual);
+  schedule();
+}
+
+function render(models, manual) {
+  if (state === "ok") {
+    $("dot").className = "dot on";
+    $("conn").textContent = `已连接 · ${models.length} 个模型`;
+    const f = models[0];
+    $("engine").textContent =
+      `已装 ${models.length} 个模型 · ${f.details.parameter_size} · ctx ${f.details.context_length}`;
+    $("fyi").textContent = `Ollama ${OLLAMA.replace("http://", "")} · 数据不出本机`;
+    clearGuide(true);
+  } else {
+    $("dot").className = "dot " + (state === "down" ? "off" : "warn");
+    $("conn").textContent = { down: "未连接", blocked: "被浏览器拦截", empty: "无模型" }[state] || "未连接";
+    $("engine").textContent = {
+      down: "Ollama 未运行（见左侧引导）",
+      blocked: "服务可达，但请求被跨域策略拦下",
+      empty: "服务正常，但没有已安装的模型",
+    }[state] || "—";
+    showGuide(guideHTML());
+  }
+  syncModelSelect(state === "ok" || state === "empty" ? models : []);
+  const hint = $("recheck-hint");
+  if (hint && manual) hint.textContent = "刚检测过";
+  refreshSend();
+}
+
+function schedule() {
+  clearTimeout(pollTimer);
+  // 未就绪时快轮询：用户在终端敲完命令，这里 2 秒内自动接上，不必手动刷新页面
+  pollTimer = setTimeout(probe, state === "ok" ? 15000 : 2000);
+}
+
+/* ---------- 渲染 ---------- */
+function addMsg(role, text, cls) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg " + (cls || (role === "user" ? "user" : ""));
+  wrap.innerHTML = `<div class="role">${role === "user" ? "你" : "qwen3"}</div>`;
+  const body = document.createElement("div");
+  body.className = "body";
+  body.textContent = text;
+  wrap.appendChild(body);
+  log.appendChild(wrap);
+  log.scrollTop = log.scrollHeight;
+  return { wrap, body };
+}
+
+/* ---------- 指标 ---------- */
+function resetMetrics() {
+  ["m_ttft","m_dtps","m_ptps","m_load","m_otok","m_itok","m_ttok","m_wall"]
+    .forEach(k => $(k).textContent = "—");
+  $("pbar").style.width = "0%";
+}
+function liveTimer() {
+  timer = setInterval(() => {
+    const s = (performance.now() - tStart) / 1000;
+    $("m_wall").innerHTML = s.toFixed(1) + ` <small>s</small>`;
+    // 进度条：用输出速度粗估，封顶 95%
+    $("pbar").style.width = Math.min(95, s * 4) + "%";
+  }, 120);
+}
+const ms = (ns) => (ns / 1e6).toFixed(0);
+const sec = (ns) => (ns / 1e9).toFixed(2);
+const tps = (tok, ns) => ns > 0 ? (tok / (ns / 1e9)).toFixed(1) : "0";
+
+/* ---------- 发送 ---------- */
+async function send() {
+  const text = $("input").value.trim();
+  if (!text || ctrl) return;
+  const model = $("model").value;
+  if (!model || model.startsWith("（")) return;
+
+  $("input").value = "";
+  $("empty") && $("empty").remove();
+  addMsg("user", text);
+  history.push({ role: "user", content: text });
+
+  resetMetrics();
+  const { wrap, body } = addMsg("assistant", "");
+  wrap.querySelector(".role").textContent = model;
+
+  const thinkTitle = document.createElement("div");
+  thinkTitle.className = "think-title";
+  const thinkBox = document.createElement("div");
+  thinkBox.className = "think";
+  const metricLine = document.createElement("div");
+  metricLine.className = "metrics";
+
+  ctrl = new AbortController();
+  $("send").disabled = true; $("stop").disabled = false;
+  tStart = performance.now(); tFirst = 0;
+  liveTimer();
+
+  let out = "", thinkStr = "", done = null;
+  try {
+    const res = await fetch(OLLAMA + "/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      signal: ctrl.signal,
+      body: JSON.stringify({
+        model,
+        messages: history,
+        stream: true,
+        think: $("think").checked,
+        options: {
+          temperature: parseFloat($("temp").value),
+          num_predict: parseInt($("npred").value),
+          num_ctx: parseInt($("nctx").value)
+        }
+      })
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status + " " + (await res.text()).slice(0, 200));
+
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = "";
+    while (true) {
+      const { done: fin, value } = await reader.read();
+      if (fin) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split("\n");
+      buf = lines.pop();
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        const d = JSON.parse(line);
+        const m = d.message || {};
+        if (m.thinking) {
+          if (!tFirst) { tFirst = performance.now() - tStart; }
+          thinkStr += m.thinking;
+          thinkBox.textContent = thinkStr;
+          log.scrollTop = log.scrollHeight;
+        }
+        if (m.content) {
+          if (!tFirst) { tFirst = performance.now() - tStart; }
+          out += m.content;
+          body.textContent = out;
+          log.scrollTop = log.scrollHeight;
+        }
+        if (d.done) done = d;
+      }
+    }
+  } catch (e) {
+    if (e.name === "AbortError") {
+      out += out ? "\n\n[已中止]" : "[已中止]";
+      body.textContent = out;
+    } else {
+      wrap.classList.add("err");
+      body.textContent = "调用失败：" + e.message +
+        "\n\n检查：① ollama serve 是否在跑 ② 模型是否已 pull ③ 端口 11434 是否被占";
+    }
+  } finally {
+    clearInterval(timer);
+    ctrl = null;
+    $("send").disabled = false; $("stop").disabled = true;
+
+    const wall = (performance.now() - tStart) / 1000;
+    if (thinkStr) {
+      thinkTitle.textContent = `思考过程（${thinkStr.length} 字）· 点击展开`;
+      thinkTitle.onclick = () => {
+        thinkBox.classList.toggle("open");
+        thinkTitle.textContent = (thinkBox.classList.contains("open") ? "思考过程（点击收起）" : `思考过程（${thinkStr.length} 字）· 点击展开`);
+      };
+      wrap.insertBefore(thinkTitle, body.nextSibling);
+      wrap.insertBefore(thinkBox, thinkTitle.nextSibling);
+    }
+
+    if (done) {
+      const dt = tps(done.eval_count, done.eval_duration);
+      $("m_ttft").innerHTML = (tFirst / 1000).toFixed(2) + ` <small>s</small>`;
+      $("m_dtps").innerHTML = dt + ` <small>tok/s</small>`;
+      $("m_ptps").innerHTML = tps(done.prompt_eval_count, done.prompt_eval_duration) + ` <small>tok/s</small>`;
+      $("m_load").innerHTML = sec(done.load_duration || 0) + ` <small>s</small>`;
+      $("m_otok").textContent = done.eval_count ?? "—";
+      $("m_itok").textContent = done.prompt_eval_count ?? "—";
+      $("m_ttok").textContent = thinkStr ? "≈" + Math.round(thinkStr.length / 2) : "0";
+      $("m_wall").innerHTML = wall.toFixed(2) + ` <small>s</small>`;
+      $("pbar").style.width = "100%";
+      metricLine.innerHTML =
+        `首字 <b>${(tFirst/1000).toFixed(2)}s</b>` +
+        ` · 解码 <b>${dt} tok/s</b>` +
+        ` · 预填充 <b>${ms(done.prompt_eval_duration)}ms</b>` +
+        ` · 加载 <b>${sec(done.load_duration||0)}s</b>` +
+        ` · 输出 <b>${done.eval_count}</b> tok` +
+        ` · 总计 <b>${wall.toFixed(2)}s</b>`;
+      wrap.appendChild(metricLine);
+    }
+    out = out.replace(/\n\n\[已中止\]$/, "");
+    if (out) history.push({ role: "assistant", content: out });
+    log.scrollTop = log.scrollHeight;
+  }
+}
+
+/* ---------- 事件 ---------- */
+$("send").onclick = send;
+$("stop").onclick = () => ctrl && ctrl.abort();
+$("clear").onclick = () => {
+  history = []; log.innerHTML = ""; resetMetrics();
+  if (state === "ok") {
+    const e = document.createElement("div");
+    e.className = "empty"; e.id = "empty"; e.innerHTML = WELCOME;
+    log.appendChild(e);
+  } else {
+    render([], false);      // 未就绪时把引导卡找回来（clear 不能把引导也清掉）
+  }
+};
+$("temp").oninput = (e) => $("v_temp").textContent = e.target.value;
+$("input").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
+});
+$("input").addEventListener("input", (e) => {
+  e.target.style.height = "auto";
+  e.target.style.height = Math.min(170, e.target.scrollHeight) + "px";
+});
+$("unload").onclick = async () => {
+  const model = $("model").value;
+  const b = $("unload"); b.disabled = true; b.textContent = "释放中…";
+  try {
+    await fetch(OLLAMA + "/api/generate", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model, keep_alive: 0 })
+    });
+    b.textContent = "已释放 ✓（下次提问会重新加载）";
+  } catch (e) { b.textContent = "释放失败：" + e.message; }
+  setTimeout(() => { b.disabled = false; b.textContent = "卸载模型 · 释放内存"; }, 2200);
+};
+
+/* 引导卡里的按钮：在 #log 上委托一次，避免每次重建卡片都重新绑事件 */
+log.addEventListener("click", async (e) => {
+  const copyBtn = e.target.closest(".copy");
+  if (copyBtn) {
+    const t = copyBtn.dataset.cmd || "";
+    try {
+      await navigator.clipboard.writeText(t);
+    } catch (err) {
+      // file:// 或旧浏览器拿不到 clipboard API —— 退到 execCommand
+      const ta = document.createElement("textarea");
+      ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); ta.remove();
+    }
+    const old = copyBtn.textContent;
+    copyBtn.textContent = "已复制 ✓";
+    setTimeout(() => { copyBtn.textContent = old; }, 1500);
+    return;
+  }
+  const act = e.target.closest("[data-act]");
+  if (act && act.dataset.act === "recheck") {
+    act.disabled = true;
+    act.textContent = "检测中…";
+    await probe(true);
+    if ($("guide")) {          // 状态已恢复的话卡片会被移除，这里就不用还原文案了
+      act.disabled = false;
+      act.textContent = "重新检测";
+    }
+  }
+});
+
+// 打开即问：?q=你的问题 会自动发起一轮（方便分享/自测）
+const q0 = new URLSearchParams(location.search).get("q");
+probe().then(() => {
+  if (!q0 || state !== "ok") return;   // 服务没就绪就别发，引导卡已经给出来了
+  $("input").value = q0;
+  send();
+});
+</script>
+</body>
+</html>

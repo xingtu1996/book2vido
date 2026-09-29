@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>book2vido · 看效果</title>
+<style>
+  :root{
+    --blue:#056DE8; --blue-soft:#EAF2FE; --ink:#0B0B0C; --ink2:#5A5F66;
+    --line:#E8E9EC; --bg:#FFFFFF; --card:#FAFAFB;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"PingFang SC","Hiragino Sans GB","Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.65;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:56px 24px 80px}
+  header{border-bottom:2px solid var(--ink); padding-bottom:24px; margin-bottom:8px}
+  h1{font-size:30px; margin:0 0 10px; letter-spacing:-.02em}
+  .slogan{font-size:19px; color:var(--blue); font-weight:600; margin:0 0 14px}
+  .lede{color:var(--ink2); font-size:15px; margin:0}
+  .meta{display:flex; flex-wrap:wrap; gap:28px; margin:24px 0 0; padding:0; list-style:none}
+  .meta li{font-size:13px; color:var(--ink2)}
+  .meta b{display:block; font-size:20px; color:var(--ink); font-weight:600; letter-spacing:-.01em}
+  h2{font-size:16px; margin:56px 0 4px; padding-top:22px; border-top:1px solid var(--line)}
+  h2 .num{color:var(--blue)}
+  .hint{font-size:13px; color:var(--ink2); margin:6px 0 22px}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(232px,1fr)); gap:22px}
+  figure{margin:0}
+  .ph{
+    position:relative; background:#0B0B0C; border-radius:10px; overflow:hidden;
+    aspect-ratio:9/16; box-shadow:0 1px 2px rgba(0,0,0,.06),0 8px 22px rgba(0,0,0,.06);
+  }
+  .ph video{width:100%; height:100%; display:block; object-fit:contain; background:#0B0B0C}
+  figcaption{margin-top:10px}
+  .t{font-size:14px; font-weight:600}
+  .d{font-size:12px; color:var(--ink2); margin-top:2px}
+  .tag{
+    display:inline-block; font-size:11px; color:var(--blue); background:var(--blue-soft);
+    border-radius:4px; padding:1px 6px; margin-right:6px; vertical-align:1px;
+  }
+  .note{
+    background:var(--card); border:1px solid var(--line); border-left:3px solid var(--blue);
+    border-radius:6px; padding:14px 16px; font-size:13px; color:var(--ink2); margin:22px 0 0;
+  }
+  .note b{color:var(--ink)}
+  code{background:var(--card); border:1px solid var(--line); border-radius:4px; padding:1px 5px; font-size:12px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line); font-size:12px; color:var(--ink2)}
+  a{color:var(--blue); text-decoration:none}
+  a:hover{text-decoration:underline}
+  @media (max-width:560px){ .wrap{padding:32px 16px 60px} h1{font-size:24px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>book2vido · 看效果</h1>
+  <p class="slogan">不要钱，有书，有电脑就行。</p>
+  <p class="lede">把一本书 / 一篇长文，变成一条半分钟左右的竖屏短视频。全程跑在你自己电脑上。</p>
+  <ul class="meta">
+    <li><b>9</b>条成品片（本页可播放）</li>
+    <li><b>23.1–39.0 s</b>单条时长</li>
+    <li><b>518–708 KB</b>单条体积</li>
+    <li><b>≈¥0.0004</b>单条成本（电费）</li>
+    <li><b>1080×1920</b>竖屏 H.264</li>
+  </ul>
+</header>
+
+<div class="note">
+  <b>这一页是本仓库唯一「点一下就播」的地方。</b>
+  GitHub 的仓库视图不内联播放视频（点 mp4 只会给下载按钮），所以画廊主页用的是 GIF +
+  封面图；想在 GitHub 之外看完整片，把这个仓库下回去、双击本文件即可。
+  文件与视频都在本地，<b>不联网也能播</b>。
+</div>
+
+<h2><span class="num">01</span> · 核心闭环</h2>
+<p class="hint">一条 PDF → 12 张信息卡 + 配音 + 合成，全本地。</p>
+<div class="grid">
+  <figure>
+    <div class="ph"><video controls preload="metadata" poster="posters/01_完整闭环.jpg" src="videos/01_完整闭环.mp4"></video></div>
+    <figcaption><span class="t">完整闭环</span><div class="d">23.3s · 543 KB · 本地模型精炼 12 句</div></figcaption>
+  </figure>
+  <figure>
+    <div class="ph"><video controls preload="metadata" poster="posters/02_拖拽PDF出片.jpg" src="videos/02_拖拽PDF出片.mp4"></video></div>
+    <figcaption><span class="t">拖拽出片</span><div class="d">23.1s · 518 KB · .app 端到端，零依赖</div></figcaption>
+  </figure>
+  <figure>
+    <div class="ph"><video controls preload="metadata" poster="posters/09_自有素材泛化.jpg" src="videos/09_自有素材泛化.mp4"></video></div>
+    <figcaption><span class="t">自有素材泛化</span><div class="d">39.0s · 706 KB · 不限于书，任意长文</div></figcaption>
+  </figure>
+</div>
+
+<h2><span class="num">02</span> · 按章拆书</h2>
+<p class="hint">先读目录（348 页 → 93 条），再按需要只生成某几章。</p>
+<div class="grid">
+  <figure>
+    <div class="ph"><video controls preload="metadata" poster="posters/03_按章点播_第3章.jpg" src="videos/03_按章点播_第3章.mp4"></video></div>
+    <figcaption><span class="t">按章点播 · 第 3 章</span><div class="d">36.7s · 670 KB · 348 页里只出这一章</div></figcaption>
+  </figure>
+  <figure>
+    <div class="ph"><video controls preload="metadata" poster="posters/04_批量_第1章.jpg" src="videos/04_批量_第1章.mp4"></video></div>
+    <figcaption><span class="t">批量 · 第 1 章</span><div class="d">33.3s · 613 KB · 与下一条同一次命令</div></figcaption>
+  </figure>
+  <figure>
+    <div class="ph"><video controls preload="metadata" poster="posters/05_批量_第2章.jpg" src="videos/05_批量_第2章.mp4"></video></div>
+    <figcaption><span class="t">批量 · 第 2 章</span><div class="d">35.7s · 638 KB · <code>--chapters 6,7</code></div></figcaption>
+  </figure>
+</div>
+
+<h2><span class="num">03</span> · 批量快筛（--fast）</h2>
+<p class="hint">关掉模型思考模式，快约 2 倍，适合一次过筛多章。这三条是同一次命令的产出。</p>
+<div class="grid">
+  <figure>
+    <div class="ph"><video controls preload="metadata" poster="posters/06_快筛_赞誉.jpg" src="videos/06_快筛_赞誉.mp4"></video></div>
+    <figcaption><span class="t">快筛 · 赞誉</span><div class="d">29.3s · 555 KB · 目录第 1 条</div></figcaption>
+  </figure>
+  <figure>
+    <div class="ph"><video controls preload="metadata" poster="posters/07_快筛_第1版序.jpg" src="videos/07_快筛_第1版序.mp4"></video></div>
+    <figcaption><span class="t">快筛 · 第1版序</span><div class="d">34.0s · 614 KB · 目录第 3 条</div></figcaption>
+  </figure>
+  <figure>
+    <div class="ph"><video controls preload="metadata" poster="posters/08_快筛_前言.jpg" src="videos/08_快筛_前言.mp4"></video></div>
+    <figcaption><span class="t">快筛 · 前言</span><div class="d">38.9s · 708 KB · 目录第 5 条</div></figcaption>
+  </figure>
+</div>
+
+<h2><span class="num">04</span> · 两个容易搞错的编号</h2>
+<p class="hint">「第 3 章」有两套编号，本项目两套都在用。</p>
+<div class="note" style="margin-top:0">
+  <b>目录序号</b>（CLI 用的）：<code>list</code> 输出的第 N 条，<b>含赞誉 / 序言等非正文章节</b>。<br>
+  <b>书内章号</b>（人话）：书上印的「第 3 章」。<br><br>
+  实测：<code>--chapter 3</code> 拿到的是<b>第1版序</b>（p015-p019），<b>不是</b>第 3 章；
+  要第 3 章得用 <code>--chapter 8</code>。
+</div>
+
+<footer>
+  book2vido · 零成本文本转视频流水线 ｜ 本页为单文件、零依赖、离线可用<br>
+  图片与视频均为项目真实产物；《关键对话》相关样片内容仅用于本地/私有演示，公开前须替换。
+</footer>
+
+</div>
+</body>
+</html>

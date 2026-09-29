@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>book2vido · 交付形态与许可决策</title>
+<style>
+  :root{
+    --blue:#056DE8; --ink:#1d1d1f; --ink2:#424245; --ink3:#6e6e73;
+    --line:#e5e5e7; --bg:#ffffff; --bg2:#fafafa; --red:#c7362f; --amber:#a86800; --green:#0a7a3d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:56px 32px 96px}
+  header{border-bottom:2px solid var(--ink);padding-bottom:22px}
+  h1{font-size:29px;line-height:1.35;margin:0 0 10px;letter-spacing:-.4px;font-weight:600}
+  .meta{color:var(--ink3);font-size:13px}
+  .meta b{color:var(--ink2);font-weight:500}
+  h2{font-size:19px;margin:50px 0 6px;letter-spacing:-.2px;font-weight:600}
+  h2 .num{color:var(--blue);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15px;margin:26px 0 8px;font-weight:600}
+  p{margin:10px 0}
+  .lead{color:var(--ink2)}
+  .sub{color:var(--ink3);font-size:13.5px;margin:0 0 16px}
+  code{font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg2);
+    border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--ink2)}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12.5px;color:var(--ink3);font-weight:500;border-bottom:1px solid var(--ink)}
+  tr.hi td{background:#f2f7fe}
+  .ok{color:var(--green);font-weight:600}
+  .no{color:var(--red);font-weight:600}
+  .warn{color:var(--amber);font-weight:600}
+  .opt{border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:14px 0}
+  .opt.pick{border-color:var(--blue);border-width:2px;background:#fbfdff}
+  .opt .top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .opt .tag{font-size:12px;font-weight:600;padding:2px 8px;border-radius:20px;
+    background:var(--bg2);color:var(--ink3);border:1px solid var(--line)}
+  .opt.pick .tag{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .opt .name{font-weight:600;font-size:16px}
+  .opt .rows{margin:11px 0 0;font-size:14px;color:var(--ink2)}
+  .opt .rows div{margin:5px 0;padding-left:56px;position:relative}
+  .opt .rows div>.k{position:absolute;left:0;color:var(--ink3);font-size:12.5px}
+  ul.plain{list-style:none;padding:0;margin:14px 0}
+  ul.plain li{position:relative;padding-left:20px;margin:9px 0;color:var(--ink2)}
+  ul.plain li::before{content:"·";position:absolute;left:6px;color:var(--blue);font-weight:700}
+  ul.plain li b{color:var(--ink);font-weight:600}
+  .box{border:1px solid var(--line);border-left:3px solid var(--red);border-radius:0 8px 8px 0;
+    background:var(--bg2);padding:14px 18px;margin:16px 0;font-size:14px;color:var(--ink2)}
+  .box b{color:var(--ink)}
+  .note{margin-top:40px;padding:18px 20px;border:1px solid var(--line);border-radius:10px;
+    background:var(--bg2);font-size:13.5px;color:var(--ink3)}
+  .note b{color:var(--ink2)}
+  @media print{body{font-size:12px}.wrap{padding:0 0 20px;max-width:none}h2{margin-top:28px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>book2vido · 交付形态与许可决策</h1>
+  <div class="meta">
+    <b>日期</b> 2026-09-15 ｜ <b>状态</b> 决策草稿，待拍板 ｜ <b>面向</b> 「一键安装包 + 无技术背景用户」这一交付目标
+  </div>
+</header>
+
+<p class="lead" style="margin-top:22px">
+把「安装包能不能真交出去」和「源码到底开不开」两件事摊开。前者是工程问题（有确定答案），
+后者是商业判断（需要你拍板）——但它们**必须在同一个时点一起定**，
+因为交付形态一旦分发出去，许可就**不可收回**了。
+</p>
+
+<!-- ===== 01 ===== -->
+<h2><span class="num">01</span>交付形态：一键安装的缺口清单</h2>
+<p class="sub">
+  目标形态：一个安装包 → 双击 → 选 PDF → 等一会儿 → 得到一条视频。
+  <b>用户全程不接触命令行、不需要懂任何技术。</b>
+</p>
+
+<table>
+  <thead><tr><th style="width:52px">#</th><th>缺口</th><th>现状 / 影响</th><th style="width:126px">状态</th></tr></thead>
+  <tbody>
+    <tr class="hi">
+      <td>P0-1</td>
+      <td><b>ffmpeg 没随包</b></td>
+      <td>
+        <code>vendor/</code> 里只有 <code>ollama</code> 和 <code>rsvg-convert</code>。缺 ffmpeg → 用户机器上必然停住。
+        <b>根因是构建脚本静默降级</b>（<code>FFMPEG_SRC</code> 默认空 + 只 warn 不报错），
+        所以构建每次都"成功"——作者本机有 Homebrew，**本地测试永远是绿的**。
+      </td>
+      <td>门禁 <span class="ok">✅ 本轮已加</span><br>随包 <span class="no">❌ 待做</span></td>
+    </tr>
+    <tr>
+      <td>P0-2</td>
+      <td>首次运行要下 4.9GB 模型</td>
+      <td>原来只有一条通知，用户极可能以为死机。</td>
+      <td><span class="ok">✅ 本轮已改</span><br><span style="font-size:12.5px;color:var(--ink3)">说明时长 + 防睡眠中断</span></td>
+    </tr>
+    <tr>
+      <td>P0-3</td>
+      <td><b>处理中约 80 秒全静默</b></td>
+      <td>拖进去之后屏幕上什么都没发生，用户唯一的疑问是"卡住了吗"。</td>
+      <td><span class="ok">✅ 本轮已改</span><br><span style="font-size:12.5px;color:var(--ink3)">按阶段发系统通知</span></td>
+    </tr>
+    <tr>
+      <td>P0-4</td>
+      <td>双击只弹说明，要用户会「拖到图标上」</td>
+      <td>非技术用户普遍不会这一手，但都会「选文件」。</td>
+      <td><span class="ok">✅ 本轮已改</span><br><span style="font-size:12.5px;color:var(--ink3)">弹文件选择器，拖拽保留</span></td>
+    </tr>
+    <tr>
+      <td>P0-5</td>
+      <td>失败提示让用户「去终端执行 <code>brew install ffmpeg</code>」</td>
+      <td>对目标用户等于直接劝退。技术细节应该写日志，不该弹给用户。</td>
+      <td><span class="ok">✅ 本轮已改</span><br><span style="font-size:12.5px;color:var(--ink3)">人话给用户，细节进日志</span></td>
+    </tr>
+    <tr>
+      <td>P0-6</td>
+      <td>未签名 / 未公证</td>
+      <td>Gatekeeper 会拦下：「无法验证开发者」。用户需要会「右键-打开」绕过——<b>对目标用户这也是一道坎</b>。</td>
+      <td><span class="no">❌ 待做</span><br><span style="font-size:12.5px;color:var(--ink3)">需 Apple 开发者账号</span></td>
+    </tr>
+    <tr>
+      <td>P0-7</td>
+      <td>分发形态未定</td>
+      <td>现在给的是 <code>.app</code> 文件夹，用户得会解压、会拖进「应用程序」。</td>
+      <td><span class="no">❌ 待做</span><br><span style="font-size:12.5px;color:var(--ink3)">建议打 <code>.dmg</code></span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box">
+  <b>本轮修的都是"看得见/看不见"的问题，但 P0-1 只修了一半。</b>
+  门禁能保证「不再产出一个悄悄不能用的包」，但<b>让包真的能用</b>（把 ffmpeg 随包放进去）
+  还需要一个 static build 并核对它的许可（见 §02——Homebrew 版绑 18 个 dylib，不可分发）。
+</div>
+
+<!-- ===== 02 ===== -->
+<h2><span class="num">02</span>依赖许可审计（选协议之前必须先做这个）</h2>
+<p class="sub">
+  为什么先做这个：<b>你给自己代码选什么协议，管不了你随包分发别人的二进制。</b>
+  如果包里带了 GPL 的 ffmpeg，那这份分发包就有 GPL 的分发义务——**不管你自己的 LICENSE 写了什么**。
+</p>
+
+<table>
+  <thead><tr><th>组件</th><th>引入方式</th><th>许可</th><th>分发义务 / 风险</th></tr></thead>
+  <tbody>
+    <tr><td>Ollama</td><td>随包二进制</td><td>MIT</td><td>附许可文本。体积大但干净。</td></tr>
+    <tr class="hi">
+      <td>FFmpeg</td><td><b>待随包</b></td>
+      <td class="warn">取决于构建<br><span style="font-size:12.5px">Homebrew 版 = GPL-3.0</span></td>
+      <td><b>一旦随包必须二选一</b>：①用 GPL 版并履行 GPL 义务（附许可 + 提供对应源码）②找一个 LGPL 构建并满足其条件。<br><span style="font-size:12.5px;color:var(--ink3)">当前未随包，所以暂时没有义务——但 P0-1 要修，就会立刻产生这个义务。</span></td>
+    </tr>
+    <tr class="hi">
+      <td>edge-tts</td><td>pip 依赖</td>
+      <td class="warn">需核实</td>
+      <td><b>比许可更值得警惕的是它本身</b>：它调用微软 Edge 的在线语音服务，属非官方公开接口。商用与本项目的稳定性承诺都建立在它身上，这是**这条链上最脆弱的一环**。配置里已备 <code>say</code> 全本地回退。</td>
+    </tr>
+    <tr><td>pypdf</td><td>pip 依赖</td><td>BSD-3</td><td>附许可文本。</td></tr>
+    <tr><td>Pillow</td><td>pip 依赖</td><td>MIT-CMU（HPND）</td><td>附许可文本。</td></tr>
+    <tr><td>Python 运行时</td><td>随包</td><td>PSF</td><td>附许可文本（python-build-standalone 自带）。</td></tr>
+    <tr><td>rsvg-convert</td><td>随包二进制</td><td>LGPL-3.0（librsvg）</td><td>附许可文本；LGPL 还要求用户能替换该库——动态链接下通常满足，<b>需实测确认</b>。</td></tr>
+    <tr class="hi">
+      <td>Iconify 图标集</td><td>随包 PNG 缓存</td>
+      <td class="warn">各图标库不同<br><span style="font-size:12.5px">MIT / Apache-2.0 / CC-BY…</span></td>
+      <td><b>CC-BY 类要求署名</b>。缓存目录内有 <code>LICENSE</code>，但商用分发前必须**逐集核对并做署名**。这是最容易被漏掉的一项。</td>
+    </tr>
+    <tr><td>Qwen3-8B</td><td>运行时下载（<b>不随包</b>）</td><td>Apache-2.0</td><td>不随包 = 无分发义务。但要核对模型卡上的附加条款。</td></tr>
+    <tr class="hi">
+      <td>PingFang SC 等中文字体</td><td>运行时读系统字体</td>
+      <td>Apple 系统字体</td>
+      <td><b>不得随包分发。</b>当前实现是用用户机器上已有的系统字体 → 合规；<b>但绝不能为了"保证显示效果"把字体文件打进包里。</b></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box">
+  <b>标「需核实」的项不得当作已确认。</b>
+  正式对外分发前，逐项跑 <code>pip show</code> / <code>--version</code>、打开组件自带的 LICENSE 文件核对一遍，
+  把结论回填到这张表。<b>没核过的许可，等于没有许可。</b>
+</div>
+
+<!-- ===== 03 ===== -->
+<h2><span class="num">03</span>开源协议：四个选项</h2>
+<p class="sub">
+  一个容易被忽略的事实：<b>现在什么都没分发出去，所以此刻改协议的成本是零</b>；
+  一旦有人在 MIT 下拿到代码，就<b>收不回来</b>了。这是最便宜的决策时点。
+</p>
+
+<div class="opt pick">
+  <div class="top"><span class="tag">推荐 · 现在</span><span class="name">A · 私有仓，暂不授权源码</span></div>
+  <div class="rows">
+    <div><span class="k">做什么</span>仓库私有（就是你刚拍板的这条）；<code>LICENSE</code> 换成「保留所有权利 / 源码可见但不授权使用」。</div>
+    <div><span class="k">交付</span>只分发安装包。**内容分发不需要开源源码。**</div>
+    <div><span class="k">成本</span><span class="ok">0</span></div>
+    <div><span class="k">代价</span>少了一份"GitHub 作品集"资产。</div>
+  </div>
+</div>
+
+<div class="opt">
+  <div class="top"><span class="tag">将来</span><span class="name">B · 分层开源（引擎开 / 产品闭）</span></div>
+  <div class="rows">
+    <div><span class="k">做什么</span>Python 引擎层（抽取 / 分镜 / 画面 / 配音 / 合成 / 缓存）开源；打包脚本、图标资产、未来 UI 与品牌资源保留。</div>
+    <div><span class="k">协议</span>引擎层 Apache-2.0（专利授权明确、商用友好、便于被引用）。</div>
+    <div><span class="k">好处</span>拿到 IP 收益与潜在贡献，同时保住产品层的独占。</div>
+    <div><span class="k">注</span><b>这条与你 `CONSTITUTION.md` 铁律五原本的写法一致</b>（"引擎 MIT 开源"）。</div>
+  </div>
+</div>
+
+<div class="opt">
+  <div class="top"><span class="tag">谨慎</span><span class="name">C · 全开 MIT / Apache-2.0</span></div>
+  <div class="rows">
+    <div><span class="k">现状</span><b>磁盘上的 <code>LICENSE</code> 现在就是 MIT。</b></div>
+    <div><span class="k">好处</span>传播最大，最容易被别人拿去用。</div>
+    <div><span class="k">代价</span><b>永久放弃"独占商业化"</b>——任何人都能直接拿去卖。对一个"想卖钱"的念头来说，这是最贵的一条路。</div>
+  </div>
+</div>
+
+<div class="opt">
+  <div class="top"><span class="tag">将来</span><span class="name">D · 全开 AGPL-3.0 + 商业授权双轨</span></div>
+  <div class="rows">
+    <div><span class="k">逻辑</span>AGPL 让"拿去改一改做成云服务卖"这条路走不通，而你**自己**可以卖商业授权。</div>
+    <div><span class="k">好处</span>既开源、又保住收钱的口子。Grafana 一类走的这条路。</div>
+    <div><span class="k">代价</span>AGPL 会吓退一部分使用者与贡献者（尤其公司环境）。</div>
+  </div>
+</div>
+
+<h3>为什么推荐 A，而不是直接把 MIT 执行下去</h3>
+<ul class="plain">
+  <li><b>开源的主要收益，现在拿不到</b>：外部贡献者和生态需要"有用户"作为前提。n=1 的项目开源，换来的是无人问津加一份维护承诺。</li>
+  <li><b>一键安装包 + 内容分发不需要开源</b>：你要的交付形态是"给不懂技术的人一个包"，这条路和源码可见性无关。</li>
+  <li><b>公开不可逆，私有可逆</b>：不开源保留了"将来开"的期权；开了就放弃了"将来不开"的期权。**期权在不确定时更值钱。**</li>
+  <li><b>在职状态下的痕迹是永久的</b>：仓库里曾有文件含 <code>/Users/&lt;用户名&gt;</code> 绝对路径、另有文件字面写了 CodeMax。绝对路径已于 <b>2026-09-16</b> 全库清理（口径：<code>git grep -lE '/Users/[^/]+/'</code>）；<b>CodeMax 一项仍未处理</b>。私有无碍，公开就是可定位指纹。<b>引用这类计数前先重跑口径命令</b>——每写入一个相关文档，它就会变。</li>
+  <li><b>最少遗憾原则</b>：万一将来你决定开源，今天什么都没损失；万一你决定商业化，选 C 就损失掉了。</li>
+</ul>
+
+<!-- ===== 04 ===== -->
+<h2><span class="num">04</span>需要显式裁决的一处冲突</h2>
+<p class="sub">你的项目宪法里已经写过一次答案，而且和现在的想法不一致——这个必须你亲自拍。</p>
+
+<table>
+  <thead><tr><th>位置</th><th>原文口径</th><th>与本决策的关系</th></tr></thead>
+  <tbody>
+    <tr class="hi">
+      <td><code>CONSTITUTION.md</code> 铁律五</td>
+      <td>「引擎 MIT 开源；内容模板 / 工作流 / 宣发 SOP 闭源。护城河 = 极致省资源方法论 + 人设 + 素材库，不在技术拼装本身。」</td>
+      <td><b>与当前倾向冲突</b>。<br>铁律五的判断是"技术拼装不是护城河，所以可以开源"；<br>而新信息是"这个项目可能有商业化价值"。两者不是对错，是<b>信息变了</b>。</td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size:14px;color:var(--ink2)">
+  <b>我的建议</b>：把铁律五改成「<b>引擎层将来可按 Apache-2.0 / AGPL-3.0 分层开源；产品层与品牌资产保留；
+  在明确商业化边界之前，不公开分发源码。</b>」——这样既没有否定原判断（引擎确实不是护城河），
+  又给"想清楚"留出了时间。改宪法属于规则类变更，你点头我就直接落库并回写 CHANGELOG。
+</p>
+
+<!-- ===== 05 ===== -->
+<h2><span class="num">05</span>待拍板</h2>
+<table>
+  <thead><tr><th style="width:52px">#</th><th>事项</th><th>我的建议</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td>1</td><td>协议走 A / B / C / D</td><td><b>A（私有 + 保留所有权利）</b>，把 B/D 留给"想清楚之后"</td></tr>
+    <tr><td>2</td><td><code>LICENSE</code> 是否从 MIT 换掉</td><td>选 A 就要换（现在换成本为零，分发后就收不回）</td></tr>
+    <tr><td>3</td><td>宪法铁律五是否按 §04 改写</td><td>建议改（规则类，你说改我就落库 + 回写 CHANGELOG）</td></tr>
+    <tr><td>4</td><td>P0-1 随包 ffmpeg 怎么做</td><td>需要一个 static build 并核对许可；这是"一键安装"真正落地前的最后一块</td></tr>
+    <tr><td>5</td><td>公开前清理清单（绝对路径 / CodeMax 字面）</td><td>私有阶段不动，但登记为"公开前必做"</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <b>数字与事实来源</b>：P0-1 依据 <code>.app/Contents/Resources/vendor/</code> 实际内容列表与
+  <code>packaging/build_app.sh</code> 的可分发性门禁；体积与时长均为 <code>du</code> / <code>ffprobe</code> 实测；
+  许可字段中标注「需核实」者尚未逐项实测，不得当作用户可见的承诺。<br>
+  <b>本文件已脱敏</b>：不含姓名、雇主名称、内部项目代号。<code>§03</code> 中提到的绝对路径属"当前仓库现状描述"，非对外内容。
+</div>
+
+</div>
+</body>
+</html>

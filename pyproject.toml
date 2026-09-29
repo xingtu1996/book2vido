@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "book2vido"
+version = "0.1.0"
+description = "文本→视频 零成本流水线：把书 / 文章 / 长文变成能看完的短视频"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "pypdf",
+    "pyyaml",
+    "Pillow",
+    "edge-tts",
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+packages = ["book2vido"]

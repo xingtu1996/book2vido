@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>book2vido · 确定性与模型分工审计</title>
+<style>
+  :root{
+    --blue:#056DE8; --blue-soft:#EAF2FE; --blue-line:#C8DDFB;
+    --ink:#0B0B0C; --ink2:#5A5F66; --ink3:#8A9099;
+    --line:#E8E9EC; --bg:#FFFFFF; --card:#FAFAFB;
+    --red:#D93025; --red-soft:#FDECEA;
+    --amber:#B26A00; --amber-soft:#FFF4E0;
+    --green:#1E7A46; --green-soft:#E8F5EE;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"PingFang SC","Hiragino Sans GB","Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.7;
+  }
+  .wrap{max-width:1020px; margin:0 auto; padding:56px 28px 96px}
+  header{border-bottom:2px solid var(--ink); padding-bottom:22px}
+  .kicker{font-size:12px; letter-spacing:.14em; color:var(--blue); font-weight:600; text-transform:uppercase}
+  h1{font-size:31px; margin:10px 0 12px; letter-spacing:-.02em}
+  .lede{font-size:16px; color:var(--ink2); margin:0}
+  .meta{display:flex; flex-wrap:wrap; gap:36px; margin:26px 0 0; padding:0; list-style:none}
+  .meta li{font-size:12.5px; color:var(--ink3)}
+  .meta b{display:block; font-size:19px; color:var(--ink); font-weight:600; letter-spacing:-.01em}
+  h2{font-size:17px; margin:60px 0 6px; padding-top:24px; border-top:1px solid var(--line)}
+  h2 .num{color:var(--blue); margin-right:8px}
+  .hint{font-size:13px; color:var(--ink2); margin:8px 0 22px}
+  p{margin:0 0 14px}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px;
+       background:#F3F4F6; padding:1px 5px; border-radius:4px}
+  table{width:100%; border-collapse:collapse; margin:6px 0 8px; font-size:13.5px}
+  th{text-align:left; font-size:12px; color:var(--ink3); font-weight:600;
+     padding:9px 10px; border-bottom:1px solid var(--line); white-space:nowrap}
+  td{padding:10px; border-bottom:1px solid var(--line); vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td.yes{color:var(--blue); font-weight:700}
+  td.no{color:var(--ink3)}
+  .box{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 20px; margin:16px 0}
+  .box.blue{background:var(--blue-soft); border-color:var(--blue-line)}
+  .box .lbl{font-size:12px; color:var(--ink3); letter-spacing:.06em; margin:0 0 6px}
+  .box .big{font-size:26px; font-weight:600; letter-spacing:-.02em; margin:0}
+  .stat3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:20px 0}
+  .stat3 .box{margin:0}
+  pre{
+    background:#0B0B0C; color:#E6E8EB; padding:15px 17px; border-radius:9px;
+    overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12.5px; line-height:1.65; margin:12px 0
+  }
+  pre .c{color:#7C8794}
+  pre .g{color:#56D364}
+  pre .r{color:#FF7B72}
+  .find{border:1px solid var(--line); border-radius:11px; margin:18px 0; overflow:hidden}
+  .find .hd{display:flex; align-items:baseline; gap:10px; padding:14px 18px; border-bottom:1px solid var(--line); background:var(--card)}
+  .find .hd .ttl{font-size:15px; font-weight:600; flex:1}
+  .tag{font-size:11px; font-weight:700; padding:3px 9px; border-radius:99px; white-space:nowrap}
+  .tag.a{background:var(--red-soft); color:var(--red)}
+  .tag.b{background:var(--amber-soft); color:var(--amber)}
+  .tag.c{background:#F3F4F6; color:var(--ink2)}
+  .find .bd{padding:16px 18px}
+  .find .bd dl{margin:0; display:grid; grid-template-columns:76px 1fr; gap:10px 14px; font-size:13.5px}
+  .find .bd dt{color:var(--ink3); font-size:12px; padding-top:3px}
+  .find .bd dd{margin:0}
+  .find .bd dd ul{margin:0; padding-left:18px}
+  .find .bd dd li{margin:3px 0}
+  .ok{color:var(--green); font-weight:600}
+  .fix{border-left:3px solid var(--blue); padding-left:12px; margin-top:4px}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line);
+         font-size:12.5px; color:var(--ink3)}
+  .flow{display:grid; grid-template-columns:1fr auto 1fr; gap:0; align-items:stretch; margin:18px 0}
+  .flow .side{border:1px solid var(--line); border-radius:11px; padding:16px 18px}
+  .flow .side.a{border-color:var(--blue-line); background:var(--blue-soft)}
+  .flow .mid{display:flex; align-items:center; padding:0 16px; font-size:12px; color:var(--ink3); writing-mode:vertical-rl}
+  .flow h4{margin:0 0 10px; font-size:14px}
+  .flow ul{margin:0; padding-left:18px; font-size:13.5px}
+  .flow li{margin:4px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">book2vido · 内部审计</div>
+  <h1>确定性与模型的分工</h1>
+  <p class="lede">
+    一条流水线里，<strong>哪些环节该交给脚本，哪些才该交给模型</strong>——以及缓存为什么只是手段。
+    本页把这条判据写成可对照的尺子，并把实测发现的偏差逐条回挂证据。
+  </p>
+  <ul class="meta">
+    <li><b>7 : 1</b>脚本 : 模型（环境数）</li>
+    <li><b>4 层</b>缓存失效键</li>
+    <li><b>5 条</b>审计发现（2 条实测缺陷）</li>
+    <li><b>2026-09-15</b>审计日期</li>
+  </ul>
+</header>
+
+<h2><span class="num">01</span>判据：只看一件事——这一步有没有「歧义」</h2>
+<p class="hint">不是按「难不难」分，也不是按「贵不贵」分，而是按<strong>有没有唯一正确答案</strong>分。</p>
+
+<div class="flow">
+  <div class="side a">
+    <h4>有唯一答案 · 可验证 → 脚本</h4>
+    <ul>
+      <li>结果能被断言（页码对得上就是对的）</li>
+      <li>零 LLM、零幻觉、毫秒级</li>
+      <li>错了能复现、能写测试</li>
+      <li>成本 = 电费</li>
+    </ul>
+  </div>
+  <div class="mid">歧 义 在 哪 一 侧</div>
+  <div class="side">
+    <h4>要理解语义 · 要做取舍 → 模型</h4>
+    <ul>
+      <li>「哪句话最值得讲」没有标准答案</li>
+      <li>允许不确定，但必须<strong>关进笼子</strong></li>
+      <li>输出受约束：只收 JSON、只能选给定清单</li>
+      <li>成本 = 电费（本地模型）</li>
+    </ul>
+  </div>
+</div>
+
+<div class="box blue">
+  <p class="lbl">一句话</p>
+  <p class="big">模型负责「想出什么」，脚本负责「能不能过」。</p>
+</div>
+
+<h2><span class="num">02</span>全链路分工：7 个环节，只有 1 个用模型</h2>
+<p class="hint">这正是「零 LLM、零幻觉、毫秒级」能成立的原因——它不是某个模块的自夸，而是整条链路的默认状态。</p>
+
+<table>
+  <thead><tr><th>#</th><th>环节</th><th>手段</th><th>用模型</th><th>为什么</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>抽文本 <code>extractor</code></td><td>pypdf</td><td class="no">✕</td><td>PDF 解析是确定性的</td></tr>
+    <tr><td>2</td><td>章节树 <code>outline</code></td><td>书内书签 → 正则 → 整篇兜底</td><td class="no">✕</td><td>目录本来就印在书里，读它比猜它准</td></tr>
+    <tr><td>3</td><td>取料切片 <code>segmenter</code></td><td>规则 + 算法版本号</td><td class="no">✕</td><td>页码 → 文本范围是算术</td></tr>
+    <tr><td>4</td><td><strong>口播稿 / 分镜</strong> <code>scriptwriter</code></td><td><strong>本地 Ollama</strong></td><td class="yes">✓ 唯一</td><td>「压成 12 句、每句配标签」是要判断的事</td></tr>
+    <tr><td>5</td><td>信息卡画面 <code>visualizer</code></td><td>Pillow 代码画</td><td class="no">✕</td><td>版式固定，交给画图模型是浪费</td></tr>
+    <tr><td>6</td><td>配音 <code>narrator</code></td><td>edge-tts / macOS <code>say</code></td><td class="no">✕</td><td>文字转语音不需要理解</td></tr>
+    <tr><td>7</td><td>合成 <code>compositor</code></td><td>FFmpeg</td><td class="no">✕</td><td>拼接是字节操作</td></tr>
+  </tbody>
+</table>
+
+<p><strong>模型的输出必须被「关进笼子」</strong>，分镜环节的约束是三层：<code>concept</code> 只能从固定清单里选（不许自造词）、只收 JSON 数组、句长 ≤20 字且句数 ≤12。模型一旦越界，脚本侧直接丢弃重试或降级到规则版。</p>
+<p><strong>算力还要花在刀刃上</strong>：<code>think</code> 必须显式传参——本机实测同一任务 <code>think=true</code> 36s / 568 tok，<code>think=false</code> 18s / 152 tok，但句子质量明显下降。所以「批量初筛关思考、定稿开思考」是个显式阀门，而不是靠模型模板的隐式默认（隐式默认会在换模型/版本时<strong>静默改行为</strong>）。</p>
+
+<h2><span class="num">03</span>缓存是手段：按「失效条件」分层，越贵越上游、键越窄</h2>
+<p class="hint">缓存不是为了「快」，是为了<strong>让最贵的那一步（LLM）不必重跑</strong>。所以键的设计原则是：只放真正影响该产物内容的因子。</p>
+
+<table>
+  <thead><tr><th>层</th><th>产物</th><th>键含什么</th><th>故意不含什么</th><th>人改它生效吗</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><code>outline.json</code></td><td>书字节哈希</td><td>—</td><td class="ok">✓ 生效</td></tr>
+    <tr><td>2</td><td><code>text.txt</code></td><td>书哈希 + <code>segmenter.VERSION</code> + <code>max_chars</code></td><td>视觉 / 配音因子</td><td class="ok">✓ 生效</td></tr>
+    <tr><td>3</td><td><code>script.json</code></td><td>书哈希 + <code>model</code> + <code>think</code> + 句数 + 章文本哈希</td><td><strong>配色 / 音色 / 尺寸</strong></td><td class="ok">✓ 生效</td></tr>
+    <tr><td>4</td><td><code>ch&lt;NN&gt;.mp4</code></td><td>分镜<strong>内容指纹</strong> + 音色 + 配色 + 尺寸 + 图标号</td><td>模型参数</td><td class="ok">✓ 生效</td></tr>
+  </tbody>
+</table>
+
+<p>两处设计值得单独点出，因为它们都是「踩过才知道」的：</p>
+<ul>
+  <li><strong>第 3 层故意不含配色/音色</strong>：否则用户改一句配色，就会把最贵的 LLM 产物一起废掉、白跑一遍模型。这就是「缓存是手段」的字面含义。</li>
+  <li><strong>第 4 层挂的是分镜「内容指纹」，不是输入键</strong>：早期版本挂输入键，导致手改 <code>script.json</code> 后分镜读到了新内容、成片却命中了旧渲染——<strong>用户的改动被静默丢弃</strong>。改挂指纹后：改一句 → 只重渲染下游，模型不跑。</li>
+</ul>
+
+<div class="box">
+  <p class="lbl">纪律（写进铁律六）</p>
+  <p><strong>新增任何缓存，必须同时回答「人改它生效吗」。</strong>答不上来的，就是白存的死文件——落盘了、但没人能改、也没人会用。</p>
+</div>
+
+<h2><span class="num">04</span>实测证据：缓存到底有没有在工作</h2>
+<p class="hint">同一份素材（102 字 md），两条路径各跑两遍。<code>--fast</code> 关闭思考模式以压缩耗时。</p>
+
+<div class="stat3">
+  <div class="box">
+    <p class="lbl">run --chapter 首次</p>
+    <p class="big">53.5 s</p>
+    <p style="font-size:12.5px;color:var(--ink2);margin:6px 0 0"><code>缓存: miss</code> · 12 句</p>
+  </div>
+  <div class="box blue">
+    <p class="lbl">run --chapter 第二次</p>
+    <p class="big">0.0 s</p>
+    <p style="font-size:12.5px;color:var(--ink2);margin:6px 0 0"><code>缓存: hit</code> · 跳过模型省 ~36s</p>
+  </div>
+  <div class="box">
+    <p class="lbl">batch 第二次</p>
+    <p class="big" style="color:var(--red)">重跑</p>
+    <p style="font-size:12.5px;color:var(--ink2);margin:6px 0 0">输出与第一次<strong>逐字相同</strong></p>
+  </div>
+</div>
+
+<pre><span class="c"># A. run --chapter 1（新链路，缓存生效）</span>
+$ book2vido run --input tiny.md --chapter 1 --out a.mp4 --fast
+    · 分镜：102 字 → 本地模型（think=False）…
+    · 画面：渲染 12 张卡…
+    · 配音：12 句并发（workers=12）…
+    · 合成：FFmpeg concat…
+耗时      : 53.5 s       缓存      : miss
+
+$ book2vido run --input tiny.md --chapter 1 --out a2.mp4 --fast
+    · 分镜：<span class="g">缓存命中 12 句（跳过模型，省 ~36s）</span>
+    · 成片：<span class="g">缓存命中 → a2.mp4</span>
+耗时      : 0.0 s        缓存      : hit
+
+<span class="c"># B. batch（同一素材，第 1 次与第 2 次输出完全一致）</span>
+$ book2vido batch --batch ./src_in --out out --fast      <span class="c"># 第 1 次</span>
+    · 分镜：85 字 → 本地模型（think=False）…
+$ book2vido batch --batch ./src_in --out out --fast      <span class="c"># 第 2 次</span>
+    · 分镜：<span class="r">85 字 → 本地模型（think=False）…</span>   ← 又跑了一遍模型
+{"scenes": 2, "seconds": 19.2, "cost": 0.0001, "cache": <span class="r">"miss"</span>}</pre>
+
+<p>缓存目录里确实躺着齐全的中间产物（<strong>12 张卡 + 12 段语音 + 12 个 clip</strong>）——它们被落盘了，但下面第 2 条发现会说明，落盘不等于被复用。</p>
+
+<h2><span class="num">05</span>审计发现（按处置优先级分档）</h2>
+<p class="hint">
+  <span class="tag a">A 级</span> 建议开 spec 修 ·
+  <span class="tag b">B 级</span> 建议补文档 ·
+  <span class="tag c">C 级</span> 记录待议
+</p>
+
+<div class="find">
+  <div class="hd"><span class="tag a">A 级</span><span class="ttl">F1 · <code>batch</code> 完全不走缓存，且状态显示为「miss」而非「关闭」</span></div>
+  <div class="bd"><dl>
+    <dt>证据</dt><dd>实测：同一素材连跑两次，两次都打印「分镜：85 字 → 本地模型」，<strong>逐字相同</strong>；输出 JSON 为 <code>{"scenes": 2, "seconds": 19.2, "cost": 0.0001, "cache": "miss"}</code>。<br>
+      代码：<code>__main__.py:93-100</code> 的 <code>_batch()</code> 调用 <code>pipeline.run()</code>，而 <code>pipeline.py:192</code> 显式 <code>Cache(..., enabled=False)</code>。</dd>
+    <dt>根因</dt><dd><code>batch</code> 复用 T2V-001 兼容入口。该入口<strong>刻意</strong>关闭缓存（为保持旧副作用面），T2V-002 引入的按章 + 缓存能力没升到 <code>batch</code>。</dd>
+    <dt>后果</dt><dd><ul>
+      <li>最贵的环节（LLM）在<strong>最需要缓存的场景</strong>——批量初筛——每次重跑</li>
+      <li>状态标签说谎：<code>pipeline.py:88</code> 在「缓存被关闭」时也返回 <code>"miss"</code>，用户无法区分「查了没命中」与「根本没启用」</li>
+      <li><code>batch</code> 还不读目录、整本当一章，与 <code>run</code> 的能力代差会持续扩大</li>
+    </ul></dd>
+    <dt>修法</dt><dd class="fix"><code>_batch()</code> 改走 <code>run_book()</code>（按章 + 缓存），或给 <code>pipeline.run()</code> 加 <code>enabled</code>/<code>cache</code> 参数；同时把缓存状态拆成 <code>hit / miss / off</code> 三态。</dd>
+    <dt>复发判据</dt><dd>任何<strong>新入口</strong>都必须回答「它走缓存吗」；成本日志里一个标签不允许同时表示两种含义。</dd>
+  </dl></div>
+</div>
+
+<div class="find">
+  <div class="hd"><span class="tag a">A 级</span><span class="ttl">F2 · 中间产物已落盘，却没有被当缓存复用</span></div>
+  <div class="bd"><dl>
+    <dt>证据</dt><dd>缓存目录实测含 <code>card_001.png … card_012.png</code>、<code>voice_1.mp3 … voice_12.mp3</code>、<code>clip_000.mp4 …</code>；<br>
+      但 <code>pipeline.py:68-80</code> 在每次「成片未命中」时<strong>无条件全量</strong>重渲染卡片与重跑配音——<code>visualizer.py:79</code> 的 <code>card()</code> 与 <code>narrator.py:29</code> 的 <code>speak_many()</code> 都没有「已存在即跳过」的判断。</dd>
+    <dt>根因</dt><dd>缓存边界划在「分镜」和「成片」两层，<strong>中间产物只是工作文件，没有命中条件</strong>。修一句分镜 → 整批下游重算。</dd>
+    <dt>后果</dt><dd><ul>
+      <li>速度：手改一句 → 12 张卡重渲染 + 12 句重配音 + 12 个 clip 重编码（「人改一句、十几秒看到新片」里的十几秒就是这个）</li>
+      <li><strong>更重要的非速度后果</strong>：TTS 走 edge-tts 需要联网；断网时会回退本地 <code>say</code>，<strong>音色整片变掉</strong>。若按句缓存 mp3，改一句时其余 11 句仍能保住原云音色</li>
+    </ul></dd>
+    <dt>修法</dt><dd class="fix">给 <code>card / voice / clip</code> 各挂内容指纹（scene 文本 + 版式因子）做命中跳过；与现有 <code>video_key</code> 同一套思路，只是粒度下沉一层。</dd>
+    <dt>复发判据</dt><dd><strong>落盘 ≠ 缓存。</strong>写任何新中间产物时，同时写清「命中条件是什么」——没有命中条件的产物，只是垃圾。</dd>
+  </dl></div>
+</div>
+
+<div class="find">
+  <div class="hd"><span class="tag b">B 级</span><span class="ttl">F3 · 「零 LLM、零幻觉、毫秒级」原本只是模块自述，不是全项目判据</span></div>
+  <div class="bd"><dl>
+    <dt>证据</dt><dd>该表述原仅见于 <code>outline.py:1</code> 的模块 docstring 与 <code>doc/10-目录索引与按需生成.md:36</code>，是「目录索引这个模块的特性」，未进入 <code>CONSTITUTION.md</code>。</dd>
+    <dt>后果</dt><dd>后人往链路里加环节时<strong>没有可对照的尺子</strong>——「加个模型让它更聪明」是最自然的直觉，缺少一条成文铁律去挡住它。<code>batch</code> 与 <code>run</code> 的能力分叉（F1）就是缺尺子的实例。</dd>
+    <dt>修法</dt><dd class="fix">已修：<code>CONSTITUTION.md</code> 新增<strong>铁律六 · 能用脚本就别用模型（确定性优先）</strong>，含分工判据、7:1 分工表、「关进笼子」约束、缓存分层纪律、以及「新增缓存必须回答人改它生效吗」。</dd>
+    <dt>复发判据</dt><dd>任何新增环节在 spec 里必须标注它落在「脚本侧」还是「模型侧」及理由。</dd>
+  </dl></div>
+</div>
+
+<div class="find">
+  <div class="hd"><span class="tag c">C 级</span><span class="ttl">F4 · FFmpeg 详细日志未静音，淹没成本日志</span></div>
+  <div class="bd"><dl>
+    <dt>证据</dt><dd><code>compositor.py:30-38</code> 与 <code>:46-49</code> 调用 ffmpeg 时<strong>未传</strong> <code>-v error</code>；实测一次 <code>batch</code> 运行刷出上百行 banner 与逐帧进度，把面向人的成本日志挤出视野。</dd>
+    <dt>后果</dt><dd>CLI 可读性下降；对「无人值守批量跑」场景尤其糟——真正的错误信息会被噪音埋掉。</dd>
+    <dt>修法</dt><dd class="fix">合成调用加 <code>-v error</code>（与本项目其它环节一致），失败时再回吐 stderr。</dd>
+    <dt>复发判据</dt><dd>面向人的 CLI 输出里，不该出现第三方工具的 banner。</dd>
+  </dl></div>
+</div>
+
+<div class="find">
+  <div class="hd"><span class="tag c">C 级</span><span class="ttl">F5 · <code>visual.w/h</code> 只在卡片渲染生效，合成阶段硬编码 1080×1920</span></div>
+  <div class="bd"><dl>
+    <dt>证据</dt><dd><code>providers.py:35</code> 把 <code>cfg["visual"]</code> 整体传给 Pillow（w/h 生效于卡片）；而 <code>compositor.py:33</code> 写死 <code>scale=1080:1920 … pad=1080:1920</code>；同时 <code>cache.py:70</code> 的 <code>video_key</code> <strong>包含</strong> w/h。</dd>
+    <dt>后果</dt><dd>把尺寸改成 720×1280 想省资源 → 卡片按 720 画、合成又放大回 1080×1920，等于白改（还多一次缩放损失）。缓存会正确失效，所以不会出错，只是「改了没有预期效果」。</dd>
+    <dt>修法</dt><dd class="fix">合成阶段改为读同一份 <code>cfg["visual"]["w"]/["h"]</code>，去掉硬编码。</dd>
+    <dt>复发判据</dt><dd>同一个配置项出现在两处、其中一处是字面量 —— 必查哪一处是死代码。</dd>
+  </dl></div>
+</div>
+
+<h2><span class="num">06</span>建议与待拍板</h2>
+<table>
+  <thead><tr><th>项</th><th>建议</th><th>性质</th></tr></thead>
+  <tbody>
+    <tr><td>F1 batch 无缓存</td><td>开 T2V-005 spec 收口（含缓存状态三态化）</td><td>行为变更，需 boss 定优先级</td></tr>
+    <tr><td>F2 中间产物未复用</td><td>与 F1 同一 spec 内一并做，粒度下沉一层</td><td>行为变更（改后「人改一句」会更快、音色更稳）</td></tr>
+    <tr><td>F3 原则成文</td><td>已完成（铁律六）</td><td>规则类，已直接入库并回写 CHANGELOG</td></tr>
+    <tr><td>F4 / F5</td><td>各一行改动，可随时顺手带上</td><td>修补类，不阻塞</td></tr>
+  </tbody>
+</table>
+
+<div class="box blue">
+  <p class="lbl">写在最后</p>
+  <p>这条原则真正的价值不在「省了多少秒」，而在<strong>把不确定性收敛到一个点上</strong>。整条链路里只有一个环节可能给出无法复现的结果——只要把它圈出来、给它约束、给它缓存，剩下的一切就是可解释、可测试、可重跑的。<br>
+  <strong>缓存是这个收敛动作的工具：让模型回到它唯一该干的事。</strong></p>
+</div>
+
+<footer>
+  证据来源：本机实测（macOS M1 Pro / qwen3:8b / ffmpeg 9.0.1）＋ 源码行号回挂。<br>
+  相关文档：<code>CONSTITUTION.md</code> 铁律六 · <code>doc/10-目录索引与按需生成.md</code> · <code>doc/lessons/README.md</code> · 源码 <code>cache.py / pipeline.py / __main__.py</code>。<br>
+  本页为决策看板，结论可复核、数字可复算；未改动的项均标注为「建议」。
+</footer>
+
+</div>
+</body>
+</html>

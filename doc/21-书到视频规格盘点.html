@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>book2vido · 一本书进去，出来什么（规格盘点）</title>
+<style>
+  :root{
+    --blue:#056DE8; --ink:#1d1d1f; --ink2:#424245; --ink3:#6e6e73;
+    --line:#e5e5e7; --bg:#ffffff; --bg2:#fafafa; --red:#c7362f; --amber:#a86800; --green:#0a7a3d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1020px;margin:0 auto;padding:56px 32px 96px}
+  header{border-bottom:2px solid var(--ink);padding-bottom:22px}
+  h1{font-size:29px;line-height:1.35;margin:0 0 10px;letter-spacing:-.4px;font-weight:600}
+  .meta{color:var(--ink3);font-size:13px}
+  .meta b{color:var(--ink2);font-weight:500}
+  a{color:var(--blue)}
+  h2{font-size:19px;margin:52px 0 6px;letter-spacing:-.2px;font-weight:600}
+  h2 .num{color:var(--blue);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15px;margin:28px 0 8px;font-weight:600}
+  p{margin:10px 0}
+  .lead{color:var(--ink2)}
+  .sub{color:var(--ink3);font-size:13.5px;margin:0 0 16px}
+  code{font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg2);
+    border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--ink2)}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12.5px;color:var(--ink3);font-weight:500;border-bottom:1px solid var(--ink)}
+  tr.hi td{background:#f2f7fe}
+  tr.bad td{background:#fdf6f5}
+  .num{font-variant-numeric:tabular-nums}
+  .ok{color:var(--green);font-weight:600}
+  .no{color:var(--red);font-weight:600}
+  .warn{color:var(--amber);font-weight:600}
+  .box{border:1px solid var(--line);border-left:3px solid var(--blue);background:var(--bg2);
+    border-radius:0 8px 8px 0;padding:14px 18px;margin:18px 0;font-size:14px;color:var(--ink2)}
+  .box.bad{border-left-color:var(--red)}
+  .box.good{border-left-color:var(--green)}
+  .box.warn{border-left-color:var(--amber)}
+  .box .t{font-weight:600;color:var(--ink);display:block;margin-bottom:4px}
+  .thesis{border:2px solid var(--blue);border-radius:12px;padding:22px 26px;margin:26px 0;background:#fbfdff}
+  .thesis .kicker{font-size:12px;font-weight:600;color:var(--blue);letter-spacing:1.2px;margin-bottom:8px}
+  .thesis .big{font-size:19px;font-weight:600;line-height:1.55;margin:0 0 12px;letter-spacing:-.2px}
+  .thesis p{font-size:14px;color:var(--ink2);margin:8px 0}
+  .pull{font-size:15.5px;color:var(--ink);border-left:3px solid var(--ink);
+    padding:2px 0 2px 16px;margin:22px 0;font-weight:500;line-height:1.7}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+  .card{border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .card .h{font-weight:600;font-size:14px;margin-bottom:6px}
+  .card .m{font-size:12.5px;color:var(--ink3);line-height:1.65}
+  /* 大数字条 */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+  .stat{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--bg2)}
+  .stat .v{font-size:25px;font-weight:600;letter-spacing:-.5px;line-height:1.2;color:var(--blue)}
+  .stat .k{font-size:12px;color:var(--ink3);margin-top:4px;line-height:1.5}
+  figure{margin:20px 0}
+  figure img{width:100%;border:1px solid var(--line);border-radius:8px;display:block}
+  figcaption{font-size:12.5px;color:var(--ink3);margin-top:8px;line-height:1.6}
+  blockquote{margin:14px 0;padding:10px 16px;border-left:3px solid var(--line);
+    color:var(--ink2);font-size:14px;background:var(--bg2)}
+  footer{margin-top:70px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--ink3);font-size:12.5px}
+  @media(max-width:720px){
+    .two{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>book2vido · 一本书进去，出来什么</h1>
+  <div class="meta">
+    <b>日期</b> 2026-09-15 ｜ <b>样本</b>《关键对话》348 页 PDF（本机实测，非估算）｜
+    <b>分工</b>：<a href="20-需求收敛与形态定位.html">doc/20</a> 定「做哪个形态」，
+    本文回答「<b>现在这套东西的输入输出规格到底是什么</b>」，并修掉一个真缺陷
+  </div>
+</header>
+
+<p class="lead" style="margin-top:22px">
+本文是一份<b>规格盘点</b>——把「丢一本书进去、出来什么」用真实数据摊开，让后面任何讨论都有共同的尺子。
+<br>盘点过程中撞到一个必须修的缺陷，附实证与判据。
+</p>
+
+<div class="thesis">
+  <div class="kicker">盘点结论</div>
+  <p class="big">「一章有多长」不是关键——<b>关键是「一章有多短」</b>。</p>
+  <p>
+    长度上限早就设计好了：单集恒定 12 句、约 35 秒、12 张卡，<b>无论那章是 14 页还是 40 页</b>。
+    真正会出事的是<b>下限</b>——本书里「参考文献」只有 5 个字、「附录D」只有 22 个字，
+    系统<b>照样给它们各出一条 32 秒的片</b>，内容是 12 句同义反复。
+  </p>
+  <p>
+    实测证据在 <a href="#s04">§04</a>。修复是 3 行代码 + 一条可解释的判据，
+    不引入任何新依赖，直接过铁律七。
+  </p>
+</div>
+
+<!-- ===== 01 ===== -->
+<h2 id="s01"><span class="num">01</span>一页账：输入什么，出来什么</h2>
+<p class="sub">这份表是后面所有讨论的共同尺子。数字全部来自 <code>cache/09bd9369f3034a3b/</code> 的真实产物。</p>
+
+<div class="two">
+  <div class="card">
+    <div class="h">输入侧（现在能吃什么）</div>
+    <div class="m">
+      <b>PDF</b>（首选）—— 读内嵌书签 → 两级目录 + 精确页码，零 LLM、零幻觉、毫秒级<br>
+      <b>MD / TXT / 长文</b> —— 无页边界，一律「整本当一章」<br>
+      兜底链：内嵌目录 → 正文「第X章」正则 → 整本当一章（<b>宁可粒度粗，不给错结构</b>）<br>
+      单次送模型上限 <code>max_chars: 2500</code>（本地 4K 上下文硬约束）
+    </div>
+  </div>
+  <div class="card">
+    <div class="h">输出侧（一集长什么样）</div>
+    <div class="m">
+      <b>12 句</b>口播（<code>max_sentences: 12</code>，恒定，不随章节伸缩）<br>
+      <b>29–39 秒</b> 竖屏 1080×1920 · <b>12 张卡</b> · <b>~600 KB</b><br>
+      <b>1 个 .mp4</b>，音画同步，Apple 系字体 + 行途蓝 <code>#056DE8</code><br>
+      可选：<code>script.json</code> 可人工改，改完重跑不动模型
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="v">93</div><div class="k">目录条目<br>22 顶层 + 71 小节</div></div>
+  <div class="stat"><div class="v">11</div><div class="k">真正的正文章<br>（其余 11 条是序/附录）</div></div>
+  <div class="stat"><div class="v">28.0%</div><div class="k">全书信息覆盖<br>（旧行为只有 1.8%）</div></div>
+  <div class="stat"><div class="v">¥0.006</div><div class="k">整本 22 条的电费<br>（口径见 doc/01）</div></div>
+</div>
+
+<!-- ===== 02 ===== -->
+<h2 id="s02"><span class="num">02</span>一本书的真实账</h2>
+<p class="sub">样本：《关键对话》348 页。所有数字可由 <code>tools/</code> 下的探针复算。</p>
+
+<h3>22 个顶层条目 ≠ 22 章</h3>
+<p>
+  目录树给出 22 条，但按性质拆开，<b>只有 11 条是书的正文章</b>。这个区分很重要——
+  它决定「出一本书」到底要出多少集，以及哪些条目<b>本来就不该出片</b>。
+</p>
+
+<table>
+  <thead><tr>
+    <th style="width:110px">类别</th><th style="width:60px">条数</th>
+    <th>条目</th><th style="width:170px">该不该出片</th>
+  </tr></thead>
+  <tbody>
+    <tr><td><b>书前材料</b></td><td class="num">5</td>
+      <td>赞誉、第2版序、第1版序、译者序、前言</td>
+      <td class="warn">可出，但非卖点</td></tr>
+    <tr class="hi"><td><b>正文章节</b></td><td class="num">11</td>
+      <td>第1章 … 第11章（含「第10章 案例分析」37 页）</td>
+      <td class="ok">核心，就是它</td></tr>
+    <tr class="bad"><td><b>书后尾料</b></td><td class="num">6</td>
+      <td>后记、参考文献、附录 A/B/C/D</td>
+      <td class="no">不该出（料不够，见 §04）</td></tr>
+  </tbody>
+</table>
+
+<h3>出全书 vs 出正文：两笔账</h3>
+<table>
+  <thead><tr>
+    <th style="width:150px">口径</th><th style="width:100px">集数</th>
+    <th style="width:110px">总时长</th><th style="width:110px">生成耗时</th>
+    <th style="width:100px">电费</th><th>说明</th>
+  </tr></thead>
+  <tbody>
+    <tr class="bad"><td>整本 <code>--all</code>（改前）</td><td class="num">22</td>
+      <td class="num">≈ 12.8 分钟</td><td class="num">≈ 18–23 分钟</td><td class="num">≈ ¥0.006</td>
+      <td>含 5 条垃圾集（全靠编，见 §04）</td></tr>
+    <tr class="hi"><td>整本 <code>--all</code>（改后）</td><td class="num">17</td>
+      <td class="num">≈ 9.9 分钟</td><td class="num">≈ 13–18 分钟</td><td class="num">≈ ¥0.005</td>
+      <td>自动拦住 5 条附录，<b>无需人工排除</b></td></tr>
+    <tr><td>只出正文</td><td class="num">11</td>
+      <td class="num">≈ 6.4 分钟</td><td class="num">≈ 9–12 分钟</td><td class="num">≈ ¥0.003</td>
+      <td>这才是「一本书 = 一部短片集」的正解</td></tr>
+  </tbody>
+</table>
+
+<h3>和「不分章」的旧行为比</h3>
+<table>
+  <thead><tr><th style="width:170px">指标</th><th style="width:150px">旧行为（截头 2500 字）</th>
+    <th style="width:150px">现在（分章 + 首中尾采样）</th><th>倍数</th></tr></thead>
+  <tbody>
+    <tr><td>输出</td><td>1 条 / 25 秒</td><td class="hi">22 条 / 12.8 分钟</td><td class="ok">31×</td></tr>
+    <tr><td>全书信息覆盖</td><td>1.8%（只有开头）</td><td class="hi">28.0%</td><td class="ok">15.6×</td></tr>
+    <tr><td>电费</td><td>¥0.0003</td><td>¥0.006</td><td>20×</td></tr>
+  </tbody>
+</table>
+
+<div class="box good">
+  <span class="t">这三个倍数放一起才是重点</span>
+  成本涨 20 倍，覆盖涨 15.6 倍，产出涨 31 倍 —— <b>极致的资源效率就长这样</b>：
+  一份电费的钱，换来一整本书的短片集。这也正是「用 AI 红利替代人力、而不是省钱」的实证。
+</div>
+
+<!-- ===== 03 ===== -->
+<h2 id="s03"><span class="num">03</span>一章有多长 → 出来多少</h2>
+<p class="sub">这是 boss 原话问的那句。答案是：<b>输入的料差 2.8 倍，输出的片几乎一样长</b>。</p>
+
+<table>
+  <thead><tr>
+    <th style="width:180px">章</th><th style="width:62px">页数</th><th style="width:82px">原文</th>
+    <th style="width:82px">喂进模型</th><th style="width:80px">覆盖率</th><th>出片</th>
+  </tr></thead>
+  <tbody>
+    <tr class="bad"><td>第5章 保证安全</td><td class="num">40</td><td class="num">16,879</td>
+      <td class="num">2,498</td><td class="no num">14.8%</td><td class="num">12 句 / 38.9s</td></tr>
+    <tr><td>第7章 陈述观点</td><td class="num">36</td><td class="num">14,423</td>
+      <td class="num">2,498</td><td class="warn num">17.3%</td><td class="num">12 句 / ~36s</td></tr>
+    <tr><td>第2章 掌握关键对话</td><td class="num">17</td><td class="num">7,978</td>
+      <td class="num">2,498</td><td class="warn num">31.3%</td><td class="num">12 句 / 35.7s</td></tr>
+    <tr class="hi"><td>第11章 综合应用</td><td class="num">14</td><td class="num">5,384</td>
+      <td class="num">2,498</td><td class="ok num">46.4%</td><td class="num">12 句 / ~35s</td></tr>
+    <tr><td>译者序（短章）</td><td class="num">3</td><td class="num">1,536</td>
+      <td class="num">1,536</td><td class="ok num">100%</td><td class="num">12 句 / ~33s</td></tr>
+    <tr class="bad"><td>参考文献（极短）</td><td class="num">1</td><td class="num">5</td>
+      <td class="num">5</td><td class="num">100%</td><td class="no num">12 句 / 编出来</td></tr>
+  </tbody>
+</table>
+
+<div class="pull">
+  输出<b>不随输入伸缩</b>：40 页和 14 页都是 12 句 35 秒。<br>
+  所以「一章多长」问错了方向 —— 该问的是<b>「一章有多短」</b>。
+</div>
+
+<h3>规律：章越长，进模型的比例越低</h3>
+<p>
+  长章走「首/中/尾各 1/3 预算」采样 —— 这是 4K 上下文下的刻意妥协，不是 bug。
+  但它带来一个反直觉的后果：<b>短章反而「信息完整」</b>。
+</p>
+<blockquote>
+  「赞誉」3 页 1,224 字 → <b>100% 进模型</b>，出片是全文转述。<br>
+  「第5章」40 页 16,879 字 → <b>14.8% 进模型</b>，出片是从不到六分之一里提炼的 12 句。<br>
+  两集在播放列表里长得一样长，但信息密度差 <b>6.8 倍</b>。
+</blockquote>
+<p class="sub">
+  想提高覆盖率？<a href="10-目录索引与按需生成.md">doc/10 §6</a> 已逐条过闸：
+  调大 max_chars ❌ / 多轮调用 ❌ / 换长上下文模型 △ —— <b>接受上限但让它可见</b> ✅。
+  而且真正提高覆盖率的正解不在这里，在 <a href="#s06">§06</a> 的「指定兴趣点」。
+</p>
+
+<!-- ===== 04 ===== -->
+<h2 id="s04"><span class="num">04</span>一个真缺陷：22 个字也能出片（已修）</h2>
+<p class="sub">本次盘点最该修的一件事：已实测复现 → 已修 → 已实测验证。证据在 <code>doc/assets/audit/</code>。</p>
+
+<h3>实测：把「附录D」（22 字）丢进去</h3>
+<pre style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:14px 16px;
+  font:12.5px/1.7 ui-monospace,Menlo,monospace;color:var(--ink2);overflow-x:auto">$ book2vido run --input 关键对话.pdf --chapter 22 --out /tmp/probe_ch22.mp4 --no-cache
+
+[1/1] 第 22 章「附录D 本书作者团队 其他畅销作品推荐」p348-p348
+    · 正文切片：22 字（上限 2500） → 本地模型（think=True）…
+    · 画面：渲染 12 张卡…
+    · 配音：12 句并发（workers=12）…
+    · 合成：FFmpeg concat…
+
+口播句数  : 12          ← 22 个字，出了 12 句
+耗时      : 62.4 s      成片 32.85s / 584KB
+单条成本  : ≈ ¥0.00031</pre>
+
+<figure>
+  <img src="assets/audit/01_22字章节出12句_同义反复.png" alt="22字章节抽帧：12句同义反复">
+  <figcaption>
+    <b>抽帧证据</b>（第 1 / 3 / 7 / 11 句）。原文只有一行标题，模型只能靠<b>同义反复</b>凑满 12 句：
+    「附录D讲作者团队信息」→「附录D提供作者背景」是同一句换个说法；
+    「畅销作品同样优秀」在原文字面里<b>根本没有任何依据</b>。
+    同时 12 张卡退化成 <b>2 个图标</b>（全是同一本书的图形）——图标层也跟着塌了。
+  </figcaption>
+</figure>
+
+<div class="box bad">
+  <span class="t">根因（已修）：只有「空」的守卫，没有「太短」的守卫</span>
+  <code>pipeline.py</code> 里唯一的拦截是 <code>if not text.strip(): 不静默出空片</code> ——
+  它挡得住「整章取不到文本」，但挡不住「<b>章的文本只有 5 个字</b>」。
+  5 个字非空，于是照常进模型；而「出 12 句」是硬约束，模型只能编。
+  <br><br>
+  <b>为什么本机永远测不出来</b>：跑测试用的是正经长文，不会有人拿「参考文献」去测。
+  只有<b>跑整本书</b>（<code>--all</code>）才会踩到 —— 而那时你看到的只是「有几集怪怪的」，
+  不会意识到是系统在编。
+</div>
+
+<h3>闸门定在哪：用判据，不用拍脑袋的数字</h3>
+<p>
+  不能定个「少于 500 字不出」——那是拍脑袋的数字，违反错题库 L-14。
+  用一条<b>能解释给别人听</b>的判据：
+</p>
+<div class="pull">
+  一句话换一句话。<b>原文能切出的句子数 ≥ 目标句数（12），才允许出片。</b>
+</div>
+<p class="sub">
+  依据：<code>max_sentences</code> 已经是配置里的既有值，判据直接引用它，不新增魔数。
+  原文只有 1 句而要求出 12 句，缺口只能靠编 —— 这句话任何人都能听懂。
+</p>
+
+<table>
+  <thead><tr><th style="width:230px">条目</th><th style="width:80px">字数</th>
+    <th style="width:80px">句数</th><th style="width:100px">稀释比</th><th>判定</th></tr></thead>
+  <tbody>
+    <tr><td>参考文献</td><td class="num">5</td><td class="num">0</td><td class="num">∞</td><td class="no">拦</td></tr>
+    <tr><td>附录D 其他畅销作品推荐</td><td class="num">22</td><td class="num">1</td><td class="num">12.0×</td><td class="no">拦</td></tr>
+    <tr><td>附录C 想让自己的人生变得更完美吗</td><td class="num">46</td><td class="num">1</td><td class="num">12.0×</td><td class="no">拦</td></tr>
+    <tr><td>附录B VitalSmarts公司介绍</td><td class="num">487</td><td class="num">8</td><td class="num">1.5×</td><td class="no">拦</td></tr>
+    <tr><td>附录A 作者介绍</td><td class="num">558</td><td class="num">11</td><td class="num">1.1×</td><td class="no">拦（差 1 句）</td></tr>
+    <tr class="hi"><td>后记 10 年应用作者手记</td><td class="num">2,498</td><td class="num">67</td><td class="num">0.2×</td><td class="ok">过</td></tr>
+    <tr class="hi"><td>全部 11 个正文章</td><td class="num">2,498</td><td class="num">65–81</td><td class="num">0.1–0.2×</td><td class="ok">过</td></tr>
+  </tbody>
+</table>
+
+<div class="box good">
+  <span class="t">判据的验证：拦下 5 / 22 条，正文零误伤</span>
+  拦的正好是<b>参考文献 + 全部 4 个附录</b>；11 个正文章、5 条书前材料、后记全部通过。
+  边界也干净：附录A（11 句）差 1 句被拦，第2版序（15 句）通过 —— 不是模糊地带。
+  <br>副作用是好的：<code>--all</code> 从此不会再产出垃圾集，同时省下 5 × 62s ≈ <b>5 分钟</b>无谓耗时。
+</div>
+
+<h3>已修：判据落成纯函数，接线到四个入口</h3>
+<p>
+  判据本体是 <code>segmenter.insufficient_reason(text, target)</code> —— <b>纯函数，不认识章节</b>
+  （依赖保持单向：配置 → 调用方 → 判据）。调用点在 <code>pipeline._produce()</code>，
+  位置刻意压在<b>取料之后、进模型之前</b>：分镜是全流程最贵的一段（~36s），
+  拦晚一步就是白烧一次模型。
+</p>
+
+<table>
+  <thead><tr>
+    <th style="width:230px">入口</th><th>改动</th><th style="width:150px">行为</th>
+  </tr></thead>
+  <tbody>
+    <tr><td><code>run_book</code><br>（<code>--all</code> / <code>--chapters</code>）</td>
+      <td>新增 <code>skipped</code> 列表，与 <code>failed</code> <b>分开</b>；单条被跳过不阻塞其余章</td>
+      <td class="ok">逐条 ⊘ + 末尾汇总</td></tr>
+    <tr><td><code>_run_cmd</code> 单章</td>
+      <td>一条都没出 → 退出码 <b>1</b>（调用方要能判断「没拿到东西」）</td>
+      <td class="ok">⊘ + 非 0</td></tr>
+    <tr><td><code>run</code> 兼容入口<br>（T2V-001 语义）</td>
+      <td>catch 住打人话，<b>不甩 traceback</b>；不违背 AC-14 —— 这是<b>内容可行性判断</b>，不是链路差异</td>
+      <td class="ok">⊘ + 非 0</td></tr>
+    <tr><td><code>batch</code> 批量目录</td>
+      <td>单条短料不拖垮整批：记一行、继续下一条</td>
+      <td class="ok">⊘ + 继续</td></tr>
+  </tbody>
+</table>
+
+<div class="box good">
+  <span class="t">为什么必须把「跳过」和「失败」分开</span>
+  跳过是<b>我们主动的判断</b>（料不够，不出比硬出好），失败是<b>意外</b>（TTS 挂了、磁盘满了）。
+  混在一个列表里，用户会以为工具坏了；而跳过必须<b>仍然打印原因</b>——
+  「跳过」不等于「静默」（军规 <code>progress_visibility</code>）。
+</div>
+
+<h3>修复后的实测输出（原样粘贴）</h3>
+<pre style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:14px 16px;
+  font:12.5px/1.7 ui-monospace,Menlo,monospace;color:var(--ink2);overflow-x:auto">$ book2vido run --input 关键对话.pdf --chapter 22 --out /tmp/gate22.mp4
+
+[1/1] 第 22 章「附录D 本书作者团队 其他畅销作品推荐」p348-p348
+⊘ 第 22 章跳过：可用文本仅 22 字 / 1 句，不足以支撑 12 句口播（判据：原句数 ≥ 目标句数）
+
+⊘ 跳过 1 章（料不足以支撑口播，非故障）：
+   · [22] 附录D 本书作者团队 其他畅销作品推荐 —— 可用文本仅 22 字 / 1 句，…
+
+🔴 未产出任何成片（跳过 1 / 失败 0） ｜ 耗时 0 s
+$ echo $?
+1
+$ ls /tmp/gate22.mp4
+ls: No such file          ← 关键：没留下半成品，也没烧掉 62 秒</pre>
+
+<p class="sub">
+  对照 <a href="#s04">上面</a>改前那次：<b>62.4 秒、12 句、584KB 的垃圾片</b> → 现在是
+  <b>0 秒、0 文件、一句人话 + 退出码 1</b>。
+</p>
+
+<h3>守护：判据本身也要能被证伪</h3>
+<p>
+  新增 <code>tools/verify_gate.py</code>（纯标准库），两类检查：
+  ①<b>14 条边界断言</b>——含两条实测回归锚点（22 字附录D / 5 字参考文献）；
+  ②<b>真实书截面</b>——独立断言「正文章零误伤」，判据收紧过头会在这里红。
+  目标句数<b>从 <code>config.yaml</code> 读，不写死</b>：配置改了 12→8 而脚本还按 12 验，
+  那就是在验一个已经失效的口径（本项目抓过多次「改了不生效」，故前置堵死）。
+</p>
+
+<div class="pull">
+  一个刻意的设计取舍：<b>半角点号 <code>.</code> 不算句末。</b><br>
+  它在中文里大量充当小数点（3.14）、编号（1.）、缩写（Mr.）、URL —— 收进来会造出假句边界
+  → 句数<b>高估</b> → <b>漏拦</b>（该拦的静默放过）。<br>
+  代价是纯英文书句数被<b>低估</b>（可能误拦）—— 这是<b>刻意选的</b>：误拦会打出「⊘ + 原因」用户立刻看见，
+  漏拦是静默编造，正是本判据要消灭的那类缺陷。
+</div>
+
+<!-- ===== 05 ===== -->
+<h2 id="s05"><span class="num">05</span>另外两个会踩的错位</h2>
+<p class="sub">都不是缺陷，是「用户预期」和「系统实际」对不上。</p>
+
+<h3>错位一：<code>--chapter N</code> 的 N <b>不是书的章号</b></h3>
+<p>
+  N 是<b>目录树里的顶层序号</b>。因为书前有 5 条材料，所以序号整体后移 5 位：
+</p>
+<pre style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:14px 16px;
+  font:12.5px/1.7 ui-monospace,Menlo,monospace;color:var(--ink2);overflow-x:auto">--chapter 2   → 第2版序        （610 字，2 页）  ← 用户以为要出「第2章」
+--chapter 7   → 第2章 掌握关键对话（7,978 字，17 页）← 真正的第2章在这里
+--chapter 22  → 附录D 其他畅销作品推荐</pre>
+<p>
+  实测：<code>cache/.../ch07/script.json</code> 里写着 <code>chapter_index: 7, title: "第2章 掌握关键对话"</code>。
+  <b>序号与章号分离是设计（要能点播序/附录），但用户不会知道。</b>
+</p>
+
+<h3>错位二：输出文件有两套命名</h3>
+<table>
+  <thead><tr><th style="width:200px">位置</th><th style="width:280px">文件名</th><th>能看出是同一集吗</th></tr></thead>
+  <tbody>
+    <tr><td>缓存目录</td><td><code>cache/…/ch07/ch07.mp4</code></td><td class="no">看不出</td></tr>
+    <tr><td>正式输出</td><td><code>samples/chapters/第2章_掌握关键对话.mp4</code></td><td class="no">看不出</td></tr>
+  </tbody>
+</table>
+<p class="sub">
+  一个是序号、一个是标题，中间没有对照物。本书内测时两者都存在，靠人脑记「ch07 = 第2章」。
+  低频问题，但排查时很费时间 —— 记一笔，不急着改。
+</p>
+
+<!-- ===== 06 ===== -->
+<h2 id="s06"><span class="num">06</span>用户指定兴趣点 → 定向出片</h2>
+<p class="sub">这是 boss 提的那句「用户感觉不懂的可以输入，然后针对他的输入生成他想重点了解的视频」。</p>
+
+<div class="thesis">
+  <div class="kicker">结论：能力已经在，缺的只是一个入口</div>
+  <p class="big">书里的 <b>71 个小节</b>每一个都有精确页码 —— 但它们现在<b>不可点播</b>。</p>
+  <p>
+    目录树里，小节被刻意设成 <code>index = 0</code>（<code>outline.py</code> 原注释：「小节不参与点播，
+    只用于 list 展示」）。而 <code>by_index(0)</code> 返回 <code>None</code> —— 序号 0 取不到任何东西。
+    <b>结果：看着有一堆精细的切入点，一个都点不动。</b>
+  </p>
+</div>
+
+<h3>实测：手工造一个小节去切片，通了</h3>
+<pre style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:14px 16px;
+  font:12.5px/1.7 ui-monospace,Menlo,monospace;color:var(--ink2);overflow-x:auto">小节在目录树里：  index=0  p67-67   「我们的目标」
+doc.by_index(0)  →  None                                    ← 点不动 ✗
+
+手工造 Chapter(99, "我们的目标", 67, 67) 再切片：
+  → 401 字 ✓
+  → 「在本书接下来的章节中，我们将一一探索人们用来营造对话环境的技巧…」
+
+结论：slice_chapter 吃的是<b>任意 Chapter</b>（含页码区间），不是「必须来自目录树」。
+      能力齐全，缺的只是把小节页码接出来的那根线。</pre>
+
+<h3>而且：指定兴趣点比整章更「完整」</h3>
+<table>
+  <thead><tr><th style="width:230px">切法</th><th style="width:90px">原文</th>
+    <th style="width:90px">覆盖率</th><th>出来的片</th></tr></thead>
+  <tbody>
+    <tr><td>整章「第5章」（40 页）</td><td class="num">16,879</td>
+      <td class="no num">14.8%</td><td>盲采样，八成内容没进模型</td></tr>
+    <tr class="hi"><td>小节「我们的目标」（1 页）</td><td class="num">401</td>
+      <td class="ok num">100%</td><td>全文进模型，说的是这件事的完整意思</td></tr>
+  </tbody>
+</table>
+<div class="box good">
+  <span class="t">反直觉但成立</span>
+  <b>「只看一段」得到的片，信息比「看整章」更完整。</b>
+  因为 2500 字的预算在小节上是宽裕的（100% 进），在长章上是稀缺的（14.8% 进）。
+  这条同时是「覆盖率怎么提高」（<a href="#s03">§03</a> 的问题）的真实答案 ——
+  <b>不是把预算做大，是把颗粒度切小。</b>
+</div>
+
+<h3>三种输入形态（按成本从低到高）</h3>
+<table>
+  <thead><tr><th style="width:60px">形态</th><th style="width:250px">用户怎么给</th>
+    <th style="width:130px">系统怎么定位</th><th>成本</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>①</b></td><td>「我要第 3 章的『暂停对话后该怎么做』」</td>
+      <td>小节标题精确匹配 → 页码</td>
+      <td class="ok">极低。已有数据，加一个 <code>--section</code> 出口</td></tr>
+    <tr><td><b>②</b></td><td>「我想了解 p133-150」</td>
+      <td>直接给页码区间</td>
+      <td class="ok">极低。<code>slice_chapter</code> 本来就吃区间</td></tr>
+    <tr><td><b>③</b></td><td>「我想知道怎么让生气的人愿意说话」</td>
+      <td>自然语言 → 检索小节标题</td>
+      <td class="warn">中。要么关键词匹配（免费、粗糙），要么过一次本地模型（一次调用）</td></tr>
+  </tbody>
+</table>
+<p>
+  <b>① 和 ② 可以立刻做</b>，是接一条已有的线，过三道闸没问题。
+  <b>③ 才是「自然语言交互」</b>，它需要一次检索/理解步骤 —— 但注意：
+  这一步<b>不需要实时</b>，因为是异步出片，用户可以等 60 秒。
+</p>
+
+<!-- ===== 07 ===== -->
+<h2 id="s07"><span class="num">07</span>「实时调剧情」的直播形态：建议先不做</h2>
+<p class="sub">boss 提到的那个启发（观众输入实时改剧情）。它很动人，但要先算清差距在哪。</p>
+
+<table>
+  <thead><tr><th style="width:200px">维度</th><th style="width:190px">现在</th>
+    <th style="width:190px">直播式交互需要</th><th>差距</th></tr></thead>
+  <tbody>
+    <tr><td>响应延迟</td><td>62.4s / 集</td><td>≤ 2s / 次</td>
+      <td class="no">约 <b>30 倍</b>。LLM 独占 36s，且探针 2 证明<b>加并发也没用</b></td></tr>
+    <tr class="bad"><td>内容形态</td><td><b>概要</b>（12 句提炼）</td><td><b>叙事</b>（角色 + 状态 + 连续剧情）</td>
+      <td class="no">不是同一件事。我们做的是「读懂」，它要的是「追剧」</td></tr>
+    <tr><td>成本闸</td><td>本地推理，¥0.0003/条</td>
+      <td>实时互动要压延迟 → 通常要换云端</td>
+      <td class="no">撞铁律一（公司资源）+ 铁律七（费用）</td></tr>
+  </tbody>
+</table>
+
+<div class="box bad">
+  <span class="t">真正的障碍不是速度，是「剧情」这个词</span>
+  我们的产物是<b>概要</b>：没有角色、没有状态、没有前后因果。
+  「实时调剧情」需要的是<b>叙事引擎</b>（谁在第几步做了什么、状态怎么延续）——
+  那是另一个项目，不是这条流水线加个开关。
+  <br><br>
+  <b>而且它跟 §06 的关系是「包含」</b>：boss 想要的效果（用户输入 → 出他关注的视频），
+  <b>异步版就已经实现了 90%</b>。直播只是把交付时间从 60 秒压到 2 秒，内容不会因此变好。
+</div>
+
+<div class="box good">
+  <span class="t">推荐：先做「异步交互」，把「实时」押后，判据写死</span>
+  ① 先落 §06 的形态 ①②（指定章节/小节 → 出片），这是<b>真正的按需</b>；
+  ② 等它跑出真实使用数据，再问「有没有必要实时化」——<b>大概率答案是没必要</b>，
+  因为用户要的是「我要的那个视频」，不是「看着视频长出来」；
+  ③ <b>重启条件</b>：当本地模型首字延迟降到 < 1s <b>且</b>我们有了叙事层，
+  这两条<b>必须同时满足</b>才动手。
+</div>
+
+<!-- ===== 08 ===== -->
+<h2 id="s08"><span class="num">08</span>对外介绍（三个长度）</h2>
+<p class="sub">盘点顺带补齐的：这套东西<b>怎么讲给别人听</b>。冷启动期，「被看见」优先于「讲完整」。</p>
+
+<h3>一句话（推文 / 电梯）</h3>
+<div class="box good">
+  <b>把一本书丢进去，出来一集集能刷的短片 —— 全程本地跑，不花一分 API 钱。</b>
+</div>
+
+<h3>一段话（GitHub about / 项目简介）</h3>
+<div class="box">
+  完全本地的「书 → 短片集」工具：PDF 进去，读出目录树，按章各出一条竖屏短片（12 句口播 / 约 35 秒 / 12 张卡）。
+  348 页的《关键对话》实测：整本 22 条 ≈ 13 分钟，电费约 ¥0.006。
+  信息覆盖 28%（旧式「截头 2500 字」只有 1.8%）。想深入某一段，指定它就单独出一条 —— 那一条的覆盖率是 100%。
+</div>
+
+<h3>一屏（公众号 / 详细介绍）</h3>
+<div class="box">
+  <b>它解决的是一件很具体的事</b>：字太多，读不完。<br><br>
+  丢一本书进去，它读目录、按章切开、每章压成 12 句口播，配上图标卡和配音，生成一条竖屏短片。
+  一本书 = 一部可以按章刷的短片集。全程跑在你自己的电脑上：模型本地、配音免费、
+  画面用代码画 —— <b>没有 API 账单，断网也能出片</b>。<br><br>
+  <b>两个诚实的地方</b>：① 单章越长，进模型的比例越低（40 页的章只有 14.8% 的原文被读到），
+  这是本地 4K 上下文的硬约束，我们选择把它<b>写在明处</b>而不是吹成无损；
+  ② 料不够的章节（比如只有一行的「参考文献」）它<b>不出片</b>，而不是硬编 12 句给你。<br><br>
+  <b>想深入哪一段，就指定哪一段</b> —— 出来的那一条，反而是 100% 读过原文的。
+</div>
+
+<!-- ===== 09 ===== -->
+<h2 id="s09"><span class="num">09</span>待拍板</h2>
+<p class="sub">
+  <b>A（修闸门）本轮已完成</b>，实证与验证留在 <a href="#s04">§04</a>；下表保留原始论证，
+  供日后对账「当初为什么这么判」。<b>仍未动的是 B / C，D 仍不推荐。</b>
+</p>
+
+<table>
+  <thead><tr><th style="width:60px">选项</th><th style="width:300px">内容</th>
+    <th>代价</th><th style="width:130px">状态 / 我的意见</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>A</b></td>
+      <td><b>修闸门</b>：拆掉「22 字也出片」的缺陷（判据 = 原句数 ≥ 目标句数）</td>
+      <td>约 3 行代码 + 一个验证脚本。不动任何对外数字，无新依赖</td>
+      <td class="ok">✅ <b>本轮已完成</b><br>（四入口接线 + <code>verify_gate.py</code>）</td></tr>
+    <tr><td><b>B</b></td>
+      <td><b>加 <code>--section</code> 出口</b>：让小节能点播（§06 形态 ①②）</td>
+      <td>一个 CLI 参数 + 一节索引。是接已有的线，不是新建</td>
+      <td class="warn">推荐，<b>现在是下一跳</b></td></tr>
+    <tr><td><b>C</b></td>
+      <td>先只改<b>输出命名</b>（§05 错位二），让 cache 与输出能对上</td>
+      <td>最小，但收益也最小（单人次排查场景）</td>
+      <td>可缓</td></tr>
+    <tr class="bad"><td><b>D</b></td>
+      <td>追<b>直播式实时交互</b>（§07）</td>
+      <td>撞两条铁律 + 30 倍延迟差 + 需要另一个项目（叙事层）</td>
+      <td class="no">不推荐</td></tr>
+  </tbody>
+</table>
+
+<div class="box">
+  <span class="t">A 已完成，所以现在只剩 B 这一跳</span>
+  A 让产出<b>不掉档</b>（不会再有编出来的垃圾集）—— 已兑现；B 让产出<b>能定向</b>（用户要哪段给哪段）—— 待做。
+  这两条合起来，正好就是 boss 说的「用户不懂的可以输入 → 生成他重点想了解的视频」——
+  <b>而且 B 做完之后，「一节 401 字」的片是 100% 读过原文的</b>，
+  质量反而比整章片高。这是本轮盘点最值钱的一条。
+  <br><br>
+  <b>B 的实际成本为什么很低</b>：能力全在，缺的只是一个入口 ——
+  71 个小节在目录树里<b>已经带精确页码</b>，<code>slice_chapter</code> <b>已经吃任意页码区间</b>
+  （本轮实测可切），唯一障碍是 <code>--chapter N</code> 只认顶层序号（<code>doc.by_index(0)</code> 恒返回 None）。
+  <b>补的是入口，不是能力。</b>
+</div>
+
+<footer>
+  <b>数据来源</b>：《关键对话》348 页 PDF（<code>cache/09bd9369f3034a3b/</code> 的真实产物）；
+  成片时长 = <code>ffprobe</code> 实测；覆盖率 = 复跑 <code>extractor + outline + segmenter</code> 重算；
+  成本 = 电费口径，公式与三条边界见 <a href="01-llm-local.md">doc/01 §成本口径</a>。<br>
+  <b>实证附件</b>：<code>doc/assets/audit/01_22字章节出12句_同义反复.png</code>（抽帧证据）、
+  <code>doc/assets/audit/probe_ch22.mp4</code>（原始成片，32.85s / 584KB）。<br>
+  <b>修复的复核方式</b>：跑 <code>python tools/verify_gate.py &lt;书.pdf&gt; --list</code>
+  （14 条边界断言 + 真实截面 + 「正文章零误伤」断言）；CLI 侧
+  <code>run --chapter 22</code> 应打 <code>⊘ 跳过</code> 且退出码 1、不产出文件。<br>
+  <b>复核方式</b>：本文数字若与 <a href="10-目录索引与按需生成.md">doc/10</a> 冲突，
+  以本文为准（doc/10 的覆盖率表为同一批数据，本文把输出侧补齐了）；改了任一份的对账结论，两份都要动。
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>book2vido · 产物演进史</title>
+<style>
+  :root{
+    --blue:#056DE8; --blue-soft:#EAF2FE; --blue-line:#C8DDFB;
+    --ink:#0B0B0C; --ink2:#5A5F66; --ink3:#8A9099;
+    --line:#E8E9EC; --bg:#FFFFFF; --card:#FAFAFB;
+    --red:#D93025; --red-soft:#FDECEA;
+    --amber:#B26A00; --amber-soft:#FFF4E0;
+    --green:#1E7A46; --green-soft:#E8F5EE;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"PingFang SC","Hiragino Sans GB","Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.7;
+  }
+  .wrap{max-width:1020px; margin:0 auto; padding:56px 28px 96px}
+  header{border-bottom:2px solid var(--ink); padding-bottom:22px}
+  .kicker{font-size:12px; letter-spacing:.14em; color:var(--blue); font-weight:600; text-transform:uppercase}
+  h1{font-size:31px; margin:10px 0 12px; letter-spacing:-.02em}
+  .lede{font-size:16px; color:var(--ink2); margin:0}
+  .meta{display:flex; flex-wrap:wrap; gap:36px; margin:26px 0 0; padding:0; list-style:none}
+  .meta li{font-size:12.5px; color:var(--ink3)}
+  .meta b{display:block; font-size:19px; color:var(--ink); font-weight:600; letter-spacing:-.01em}
+  h2{font-size:17px; margin:60px 0 6px; padding-top:24px; border-top:1px solid var(--line)}
+  h2 .num{color:var(--blue); margin-right:8px}
+  h3{font-size:14.5px; margin:26px 0 8px}
+  .hint{font-size:13px; color:var(--ink2); margin:8px 0 22px}
+  p{margin:0 0 14px}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px;
+       background:#F3F4F6; padding:1px 5px; border-radius:4px}
+  table{width:100%; border-collapse:collapse; margin:6px 0 8px; font-size:13.5px}
+  th{text-align:left; font-size:12px; color:var(--ink3); font-weight:600;
+     padding:9px 10px; border-bottom:1px solid var(--line); white-space:nowrap}
+  td{padding:10px; border-bottom:1px solid var(--line); vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .box{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 20px; margin:16px 0}
+  .box.blue{background:var(--blue-soft); border-color:var(--blue-line)}
+  .box .lbl{font-size:12px; color:var(--ink3); letter-spacing:.06em; margin:0 0 6px}
+  .box .big{font-size:26px; font-weight:600; letter-spacing:-.02em; margin:0}
+  .stat3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:20px 0}
+  .stat3 .box{margin:0}
+  pre{
+    background:#0B0B0C; color:#E6E8EB; padding:15px 17px; border-radius:9px;
+    overflow-x:auto; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12.5px; line-height:1.65; margin:12px 0
+  }
+  pre .c{color:#7C8794}
+  .tag{font-size:11px; font-weight:700; padding:3px 9px; border-radius:99px; white-space:nowrap; display:inline-block}
+  .tag.r{background:var(--red-soft); color:var(--red)}
+  .tag.a{background:var(--amber-soft); color:var(--amber)}
+  .tag.g{background:var(--green-soft); color:var(--green)}
+  .tag.n{background:#F3F4F6; color:var(--ink2)}
+  .ok{color:var(--green); font-weight:600}
+  .bad{color:var(--red); font-weight:600}
+  footer{margin-top:64px; padding-top:20px; border-top:1px solid var(--line);
+         font-size:12.5px; color:var(--ink3)}
+
+  /* 三段色带 */
+  .band{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:22px 0 6px}
+  .band div{border-radius:9px; padding:12px 14px; border:1px solid var(--line)}
+  .band .s1{background:var(--red-soft); border-color:#F5C9C4}
+  .band .s2{background:var(--amber-soft); border-color:#F0DCB8}
+  .band .s3{background:var(--green-soft); border-color:#BFE3CD}
+  .band b{display:block; font-size:15px; margin-bottom:2px}
+  .band span{font-size:12.5px; color:var(--ink2)}
+
+  /* 代际墙 */
+  .wall{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0}
+  .gen{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--card)}
+  .gen .cap{padding:11px 13px; border-bottom:1px solid var(--line); background:#fff}
+  .gen .cap .nm{font-size:14px; font-weight:600}
+  .gen .cap .tm{font-size:11.5px; color:var(--ink3); font-family:ui-monospace,Menlo,monospace}
+  .gen .shots{display:flex; gap:1px; background:#fff; justify-content:center}
+  /* 竖版卡片：contain 完整显示，绝不裁切——「文字挤成竖条」这类证据一旦被裁就没了 */
+  .gen .shots img{width:auto; max-width:100%; display:block; background:#fff;
+                  object-fit:contain; height:420px}
+  /* 总览图：按容器宽自适应，保留图标细节 */
+  .gen .shots img.one{width:100%; height:auto; object-fit:contain}
+  .gen .note{padding:11px 13px; font-size:12.5px; color:var(--ink2)}
+  .gen .note em{font-style:normal; color:var(--ink3)}
+  .wall2{grid-template-columns:repeat(2,1fr)}
+  .wide{width:100%; display:block; border:1px solid var(--line); border-radius:10px; margin:10px 0}
+  .widecap{font-size:12.5px; color:var(--ink3); margin:0 0 20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">book2vido · 产物演进史</div>
+  <h1>一天，从「条形码」到「能懂」</h1>
+  <p class="lede">
+    这份档案记的<strong>不是最终那支片子</strong>，而是画面从「读不了」变成「读得懂」的过程——
+    包括中间那次退步。产品演进最有信息量的地方，恰恰在还没成型的那几版里。
+  </p>
+  <ul class="meta">
+    <li><b>8h21m</b>产物跨度（12:07 → 20:28）</li>
+    <li><b>4 代</b>画面形态</li>
+    <li><b>6 → 12</b>图标去重数（语义多样度）</li>
+    <li><b>0% → 100%</b>有内容帧比</li>
+  </ul>
+</header>
+
+<h2><span class="num">0</span>一句话：三段，一条曲线</h2>
+<p class="hint">「有没有内容」和「内容对不对」是两件事。前者看画面填充度，后者看同一批卡用了几个不同图标。</p>
+
+<div class="band">
+  <div class="s1"><b>没内容</b><span>版式在，肉不在。三种坏法：文字挤成条、漏进 PDF 版权页、渲染中断只剩骨架。</span></div>
+  <div class="s2"><b>有内容</b><span>序号 / 标题 / 图标 / 释义都出来了。但图标只是「有」——12 张卡只用了 6 个不同图形。</span></div>
+  <div class="s3"><b>有信息</b><span>图标能表意（靶心=目标、盾牌=安全、扳机=动机），文案一句说清。12 张卡 12 个图形。</span></div>
+</div>
+
+<h2><span class="num">1</span>四代画面，实图举证</h2>
+<p class="hint">
+  全部是从各代产物里<strong>现场抽帧</strong>的，不是重绘。注意第一代和第二代的区别——它们是两种不同的「没内容」。
+</p>
+
+<div class="wall">
+  <div class="gen">
+    <div class="cap"><span class="nm">v0 · 条形码</span> <span class="tm">12:07</span></div>
+    <div class="shots"><img src="assets/evolution/01_20260915-1207_条形码_文字挤成竖条.png" alt="v0 条形码"></div>
+    <div class="note">文字被挤成<strong>竖条</strong>堆在左上角。<em>成因：降级模式直接把原文塞进卡片，没做长度约束。</em></div>
+  </div>
+  <div class="gen">
+    <div class="cap"><span class="nm">v1 · 白板</span> <span class="tm">12:34</span></div>
+    <div class="shots"><img src="assets/evolution/03_20260915-1234_白板_内容层全空.png" alt="v1 白板"></div>
+    <div class="note">版式完整，<strong>内容层完全为空</strong>——连标题都没渲染。<em>（这不是图没加载，这一版真的就是空的。）成因：切真模型后口播稿精炼到极短，而画面层没接住。</em></div>
+  </div>
+  <div class="gen">
+    <div class="cap"><span class="nm">v2 · 能读</span> <span class="tm">18:04</span></div>
+    <div class="shots"><img src="assets/evolution/05_20260915-1804_能读_图标语义不准.png" alt="v2 能读"></div>
+    <div class="note">序号 / 标题 / 图标 / 释义<strong>全齐了</strong>。但图标语义不准——见下方对照。</div>
+  </div>
+</div>
+
+<div class="wall wall2">
+  <div class="gen">
+    <div class="cap"><span class="nm">v3 · 能懂</span> <span class="tm">18:15</span></div>
+    <div class="shots"><img src="assets/evolution/06_20260915-1814_能懂_图标语义化.png" alt="v3 能懂"></div>
+    <div class="note">同一张卡（05 安全）：图标从「锁」换成<strong>盾牌+钥匙孔</strong>，释义从「暂停对话保安全」改成「<strong>对话氛围要安全</strong>」——图标和文案同时更准。</div>
+  </div>
+  <div class="gen">
+    <div class="cap"><span class="nm">中途失败 · 骨架在，肉不在</span> <span class="tm">14:30</span></div>
+    <div class="shots"><img src="assets/evolution/04_20260915-1430_空卡_骨架在肉不在.png" alt="中途失败"></div>
+    <div class="note">卡片只留下序号和两条版式线，正文与图标缺失。同批配音文件出现 <strong>0 字节</strong>的残件——<em>成因：在线 TTS 回退链路卡死，出片中断。</em></div>
+  </div>
+</div>
+
+<h2><span class="num">2</span>这条曲线不是一路上坡</h2>
+<p class="hint">
+  纵轴 = 画面填充度（中部区域非白像素占比的采样均值）。<strong>注意 12:07 → 12:34 是往下走的。</strong>
+</p>
+
+<svg viewBox="0 0 680 400" width="100%" style="margin:8px 0 0">
+  <defs>
+    <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#056DE8" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#056DE8" stop-opacity="0.01"/>
+    </linearGradient>
+  </defs>
+
+  <!-- y 轴刻度 -->
+  <g font-size="10" fill="#8A9099" font-family="Menlo,monospace">
+    <line x1="60" y1="310" x2="640" y2="310" stroke="#E8E9EC"/>
+    <text x="20" y="314">0</text>
+    <line x1="60" y1="226.7" x2="640" y2="226.7" stroke="#F2F3F5"/>
+    <text x="14" y="230">0.02</text>
+    <line x1="60" y1="143.3" x2="640" y2="143.3" stroke="#F2F3F5"/>
+    <text x="14" y="147">0.04</text>
+    <line x1="60" y1="60" x2="640" y2="60" stroke="#F2F3F5"/>
+    <text x="14" y="64">0.06</text>
+  </g>
+
+  <!-- 面积 -->
+  <path d="M105,284.6 L225,309.6 L345,140.8 L465,105.4 L600,101.7 L600,310 L105,310 Z"
+        fill="url(#fill)"/>
+  <!-- 折线 -->
+  <polyline points="105,284.6 225,309.6 345,140.8 465,105.4 600,101.7"
+            fill="none" stroke="#056DE8" stroke-width="2.4" stroke-linejoin="round"/>
+  <!-- 退步段：红虚线叠加 -->
+  <line x1="105" y1="284.6" x2="225" y2="309.6" stroke="#D93025" stroke-width="2.4" stroke-dasharray="5 4"/>
+  <circle cx="105" cy="284.6" r="5" fill="#D93025"/>
+  <circle cx="225" cy="309.6" r="5" fill="#D93025"/>
+  <circle cx="345" cy="140.8" r="5" fill="#056DE8"/>
+  <circle cx="465" cy="105.4" r="5" fill="#1E7A46"/>
+  <circle cx="600" cy="101.7" r="5" fill="#1E7A46"/>
+
+  <!-- 退步标注 -->
+  <text x="112" y="332" font-size="10.5" fill="#D93025" font-family="Menlo,monospace">↓ 退了一步</text>
+  <text x="112" y="346" font-size="10" fill="#8A9099">不是崩，是换了</text>
+  <text x="112" y="358" font-size="10" fill="#8A9099">一条渲染路径</text>
+
+  <!-- 节点标签 -->
+  <g font-size="11.5" font-weight="600">
+    <text x="105" y="272" text-anchor="middle" fill="#D93025">v0 条形码</text>
+    <text x="225" y="296" text-anchor="middle" fill="#D93025">v1 白板</text>
+    <text x="345" y="128" text-anchor="middle" fill="#B26A00">v2 能读</text>
+    <text x="480" y="93" text-anchor="middle" fill="#1E7A46">v3 能懂</text>
+    <text x="600" y="89" text-anchor="middle" fill="#1E7A46">稳定批量</text>
+  </g>
+
+  <!-- x 轴时刻 -->
+  <g font-size="10" fill="#8A9099" font-family="Menlo,monospace">
+    <text x="105" y="378" text-anchor="middle">12:07</text>
+    <text x="225" y="378" text-anchor="middle">12:34</text>
+    <text x="345" y="378" text-anchor="middle">18:04</text>
+    <text x="465" y="378" text-anchor="middle">18:15</text>
+    <text x="600" y="378" text-anchor="middle">20:26</text>
+  </g>
+</svg>
+
+<div class="box blue">
+  <p class="lbl">为什么中间会退一步</p>
+  <p style="margin:0">
+    第一代是<strong>降级模式</strong>的产物——本地模型权重还在下载，流水线退回「直接拿原文」的规则路径，
+    所以画面里字很多（但全挤成了竖条，还混进了 PDF 的版权页）。
+    权重就绪后切到真模型，口播稿被精炼到很短，<strong>而画面层当时还没能力接住这些短句</strong>，于是从「挤满」掉到了「全空」。
+    这一退不是故障，是<strong>换了实现路径之后的过渡态</strong>——记下来，是为了以后别人看到这条曲线不会误判成「改坏了」。
+  </p>
+</div>
+
+<h2><span class="num">3</span>第一代到底多离谱：证据放大</h2>
+<p class="hint">同一支片（v0）的另一处画面，裁掉边缘放大——画面里是这本书的英文版权页。</p>
+<img class="wide" src="assets/evolution/02_20260915-1207_元数据泄漏_英文版权页.png" alt="v0 元数据泄漏">
+<p class="widecap">
+  画面上能读到书名副标题片段、作者姓氏与 ISBN——<strong>抽取环节把版权页/元数据当成了正文</strong>，
+  并且中文文字宽度约束失效，被压成一条条竖线。两个缺陷叠在一起，才有了「条形码」这一代。
+</p>
+
+<h2><span class="num">4</span>「有内容」≠「有信息」：一次控制变量的对照</h2>
+<p class="hint">
+  下面两张是<strong>同一本书、同一批 12 张卡、只差图标层与文案</strong>的两版总览。左边是 v2，右边是 v3。
+  这是整份档案里最有说服力的一组——变量被控制住了。
+</p>
+
+<div class="wall wall2">
+  <div class="gen">
+    <div class="cap"><span class="nm">修复前 · 12 张卡 6 个图形</span> <span class="tm">v2</span></div>
+    <div class="shots"><img class="one" src="assets/evolution/07_对照_修复前12卡总览.png" alt="修复前总览"></div>
+    <div class="note">拼图出现 3 次、菱形 2 次、三角形 2 次。图标与文案<strong>语义相符不到 1/3</strong>。</div>
+  </div>
+  <div class="gen">
+    <div class="cap"><span class="nm">修复后 · 12 张卡 12 个图形</span> <span class="tm">v3</span></div>
+    <div class="shots"><img class="one" src="assets/evolution/08_对照_修复后12卡总览.png" alt="修复后总览"></div>
+    <div class="note">靶心=目标、盾牌=安全、眼睛=观察、闪电=动机。<strong>语义 12/12，零重复</strong>。</div>
+  </div>
+</div>
+
+<table>
+  <tr><th>指标</th><th>v2 修复前</th><th>v3 修复后</th></tr>
+  <tr><td>12 卡出现的<strong>不同</strong>图标数</td><td class="bad">6</td><td class="ok">12</td></tr>
+  <tr><td>图标与文案语义相符</td><td class="bad">约 1/3</td><td class="ok">12/12</td></tr>
+  <tr><td>重复图标</td><td class="bad">拼图 ×3、菱形 ×2</td><td class="ok">0</td></tr>
+  <tr><td>画面填充度（中部墨量）</td><td>0.0406</td><td>0.0491</td></tr>
+</table>
+
+<div class="box">
+  <p class="lbl">真正的病根：不是词表不够大，是架构错位</p>
+  <p style="margin:0 0 10px">
+    图标词表是按「AI / 工程化主题词」建的（省 token、缓存、管线、部署…），
+    而模型<strong>自由生成</strong>出来的却是叙事型抽象概念（心态、观察、动机、案例）。两个集合交集极小，
+    于是全部落空，退到「拿编号做散列、从 16 个中性图形里抓一个」——<strong>12 个球丢进 16 个箱子，撞车是必然</strong>。
+  </p>
+  <p style="margin:0">
+    药方不是补词表，是<strong>把受控词表前置进模型的输出约束</strong>：让模型从一个明确的清单里选，
+    而不是自由发挥后再事后翻译。
+  </p>
+</div>
+
+<p>
+  这也解释了一个容易骗过自己的地方：<strong>v2 和 v3 的画面填充度几乎一样</strong>（0.0406 vs 0.0491）。
+  只看「像素多不多」，两版是同一档；要看出差别，必须换第二个指标——<strong>这批卡用了几个不同的图形</strong>。
+  一维指标会把「有内容」和「有信息」判成同一件事。
+</p>
+
+<h2><span class="num">5</span>演进台账</h2>
+<p class="hint">按时间排列，append-only。新增一代就往这里加一行，并把代表帧放进 <code>assets/evolution/</code>。</p>
+
+<table>
+  <tr>
+    <th>代</th><th>时刻</th><th>产物</th><th>画面实况</th><th>填充度</th><th>图标去重</th><th>触发变化的原因</th>
+  </tr>
+  <tr>
+    <td><span class="tag r">没内容</span></td>
+    <td><code>12:07</code></td>
+    <td><code>关键对话_sample.mp4</code></td>
+    <td>文字挤成竖条 + 漏进 PDF 版权页</td>
+    <td>0.0061</td>
+    <td>—</td>
+    <td>降级模式（模型权重未就绪），直接拿原文</td>
+  </tr>
+  <tr>
+    <td><span class="tag r">没内容</span></td>
+    <td><code>12:34</code></td>
+    <td><code>关键对话_ollama.mp4</code></td>
+    <td>版式完整，内容层全空</td>
+    <td>0.0001</td>
+    <td>—</td>
+    <td>切真模型重跑；口播稿变短，画面层没接住</td>
+  </tr>
+  <tr>
+    <td><span class="tag r">没内容</span></td>
+    <td><code>14:30</code></td>
+    <td><code>人话翻译术</code>工作目录</td>
+    <td>卡片只剩序号与版式线；配音有 0 字节残件</td>
+    <td>0.0003</td>
+    <td>—</td>
+    <td>在线 TTS 回退链路卡死，出片中断</td>
+  </tr>
+  <tr>
+    <td><span class="tag a">有内容</span></td>
+    <td><code>18:04</code></td>
+    <td><code>关键对话_拖拽版.mp4</code></td>
+    <td>序号 / 标题 / 图标 / 释义齐备，图标语义不准</td>
+    <td>0.0406</td>
+    <td class="bad">6 / 12</td>
+    <td>版式与图标层打通；但词表与模型产出错位</td>
+  </tr>
+  <tr>
+    <td><span class="tag g">有信息</span></td>
+    <td><code>18:15</code></td>
+    <td><code>关键对话_v2.mp4</code></td>
+    <td>图标能表意，文案一句说清</td>
+    <td>0.0491</td>
+    <td class="ok">12 / 12</td>
+    <td>受控概念清单前置进模型输出约束</td>
+  </tr>
+  <tr>
+    <td><span class="tag g">有信息</span></td>
+    <td><code>20:26</code></td>
+    <td><code>chapters/第1、2章.mp4</code></td>
+    <td>按章点播的稳定批量产物</td>
+    <td>0.0500</td>
+    <td class="ok">—</td>
+    <td>目录索引 + 按需生成落地，质量趋于稳定</td>
+  </tr>
+</table>
+
+<h2><span class="num">6</span>口径与复算</h2>
+<p class="hint">本页每个数字都可由下面两条口径复算。填充度是<strong>相对指标</strong>，只用于同版式内纵向比较，不做绝对判断。</p>
+
+<pre><span class="c"># 填充度：中部区域非白像素占比，在片子上等距采样取均值</span>
+ffprobe -v error -show_entries format=duration -of json &lt;产物.mp4&gt;
+ffmpeg  -v error -ss &lt;t&gt; -i &lt;产物.mp4&gt; -frames:v 1 -f image2pipe -vcodec png - \
+  | <span class="c"># 取 ROI = 高 12%–80% / 宽 8%–92%，统计 min(RGB) &lt; 215 的占比</span>
+
+<span class="c"># 图标去重数：数同一批卡片 PNG 里有几个不同的图形（肉眼实图核对，勿只看文件名）</span>
+ffmpeg -y -v error -pattern_type glob -i 'card_*.png' \
+  -vf "scale=270:-1,tile=4x3" -frames:v 1 overview.png</pre>
+
+<p>
+  两处需要小心的口径：
+  ① <strong>填充度含采样噪声</strong>，不同版式的卡片不可横向比（v0 的「条形码」填充度比 v1 高，但 v0 完全不可读）；
+  ② 上表 12:07 的 0.0061 是<strong>采样均值</strong>，该片约一半帧接近空白，均值会被拉低。
+</p>
+
+<footer>
+  book2vido · 产物演进史 ｜ 生成于 2026-09-15 ｜
+  代表帧与两版总览留存在 <code>doc/assets/evolution/</code>，均由各代产物现场抽帧，非重绘。<br>
+  配套：<code>doc/13-确定性与模型分工.html</code>（分工审计）·
+  <code>doc/lessons/README.md</code>（错题库）·
+  <code>doc/08-画面资产策略.md</code>（图标层 v1→v2 数据出处）。
+</footer>
+
+</div>
+</body>
+</html>

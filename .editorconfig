@@ -1,0 +1,33 @@
+# .editorconfig · 让不同编辑器写出同一种缩进
+# 为什么需要：本项目有 shell / Python / Markdown / YAML 四种主要文件类型，
+# 缩进不一致会在 diff 里制造噪声，也会让 shell 脚本的 heredoc（<<'EOF'）内容被意外改写。
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{py,yaml,yml}]
+indent_style = space
+indent_size = 4
+
+[*.sh]
+indent_style = space
+indent_size = 2
+# shell 脚本里 heredoc 的缩进有意义，编辑器不要自作主张
+trim_trailing_whitespace = false
+
+[*.md]
+# Markdown 里行尾双空格 = 换行，不能被清掉
+trim_trailing_whitespace = false
+indent_style = space
+indent_size = 2
+
+[*.{json,html,css}]
+indent_style = space
+indent_size = 2
+
+[Makefile]
+indent_style = tab

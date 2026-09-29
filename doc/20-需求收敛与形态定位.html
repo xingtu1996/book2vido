@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>book2vido · 需求收敛与形态定位</title>
+<style>
+  :root{
+    --blue:#056DE8; --ink:#1d1d1f; --ink2:#424245; --ink3:#6e6e73;
+    --line:#e5e5e7; --bg:#ffffff; --bg2:#fafafa; --red:#c7362f; --amber:#a86800; --green:#0a7a3d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1020px;margin:0 auto;padding:56px 32px 96px}
+  header{border-bottom:2px solid var(--ink);padding-bottom:22px}
+  h1{font-size:29px;line-height:1.35;margin:0 0 10px;letter-spacing:-.4px;font-weight:600}
+  .meta{color:var(--ink3);font-size:13px}
+  .meta b{color:var(--ink2);font-weight:500}
+  a{color:var(--blue)}
+  h2{font-size:19px;margin:52px 0 6px;letter-spacing:-.2px;font-weight:600}
+  h2 .num{color:var(--blue);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15px;margin:28px 0 8px;font-weight:600}
+  p{margin:10px 0}
+  .lead{color:var(--ink2)}
+  .sub{color:var(--ink3);font-size:13.5px;margin:0 0 16px}
+  code{font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg2);
+    border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--ink2)}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12.5px;color:var(--ink3);font-weight:500;border-bottom:1px solid var(--ink)}
+  tr.hi td{background:#f2f7fe}
+  .ok{color:var(--green);font-weight:600}
+  .no{color:var(--red);font-weight:600}
+  .warn{color:var(--amber);font-weight:600}
+  .box{border:1px solid var(--line);border-left:3px solid var(--blue);background:var(--bg2);
+    border-radius:0 8px 8px 0;padding:14px 18px;margin:18px 0;font-size:14px;color:var(--ink2)}
+  .box.bad{border-left-color:var(--red)}
+  .box.good{border-left-color:var(--green)}
+  .box.warn{border-left-color:var(--amber)}
+  .box .t{font-weight:600;color:var(--ink);display:block;margin-bottom:4px}
+  .thesis{border:2px solid var(--blue);border-radius:12px;padding:22px 26px;margin:26px 0;background:#fbfdff}
+  .thesis .kicker{font-size:12px;font-weight:600;color:var(--blue);letter-spacing:1.2px;margin-bottom:8px}
+  .thesis .big{font-size:19px;font-weight:600;line-height:1.55;margin:0 0 12px;letter-spacing:-.2px}
+  .thesis p{font-size:14px;color:var(--ink2);margin:8px 0}
+  .pull{font-size:15.5px;color:var(--ink);border-left:3px solid var(--ink);
+    padding:2px 0 2px 16px;margin:22px 0;font-weight:500;line-height:1.7}
+  /* 断点示意 */
+  .flow{display:flex;align-items:stretch;gap:0;margin:20px 0;font-size:13px}
+  .flow .node{flex:1;border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--bg2)}
+  .flow .node .n{font-size:11.5px;color:var(--ink3);font-weight:600;letter-spacing:.5px}
+  .flow .node .t{font-weight:600;margin:3px 0 6px;color:var(--ink)}
+  .flow .node .d{color:var(--ink3);font-size:12.5px;line-height:1.6}
+  .flow .gap{display:flex;align-items:center;justify-content:center;padding:0 10px;color:var(--red);
+    font-size:22px;font-weight:700}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+  .card{border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .card .h{font-weight:600;font-size:14px;margin-bottom:6px}
+  .card .m{font-size:12.5px;color:var(--ink3);line-height:1.65}
+  footer{margin-top:70px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--ink3);font-size:12.5px}
+  @media(max-width:720px){.flow{flex-direction:column}.flow .gap{padding:8px 0}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>book2vido · 需求收敛与形态定位</h1>
+  <div class="meta">
+    <b>日期</b> 2026-09-15 ｜ <b>状态</b> 待拍板（形态属业务决策，未经批准不落库）｜
+    <b>与 <a href="19-社会价值与爆红预案.html">doc/19</a> 的分工</b>：
+    19 回答<b>「为什么值得做」</b>，本文回答<b>「做出来的到底是什么东西」</b>
+  </div>
+</header>
+
+<p class="lead" style="margin-top:22px">
+起点是 boss 转述的一句用户原话：<b>「有没有能生成短剧的 AI？字太多根本看不下去。」</b>
+<br>这句话里藏着<b>两个不同的东西</b>，而绝大多数做 AI 短剧的人把它们当成了一件事。
+本文的动作只有一个：<b>把它们拆开</b>，然后看第一性原理会把我们推到哪。
+</p>
+
+<div class="thesis">
+  <div class="kicker">第一结论</div>
+  <p class="big">用户说的是「短剧」，要的是「不用读字」。这是两件事——前者要 GPU，后者要排版。</p>
+  <p>
+    「短剧」是用户能想到的<b>那个形态的名字</b>，不是需求本身。「字太多根本看不下去」才是症状。
+    把症状翻译成需求：<b>用户要的是一个不用读字、也能获取信息的东西</b>。
+  </p>
+  <p>
+    顺着这个翻译往下走，结论会很反直觉：<b>这个需求的最省解，不是「拍剧」，是「排版」。</b>
+    因为「剧」这种载体的成本大头，恰好全都压在需求里<em>不存在</em>的那一栏上。
+  </p>
+</div>
+
+<!-- ===== 01 ===== -->
+<h2><span class="num">01</span>把那一句话拆成三层</h2>
+<p class="sub">同一句话，三层理解会导出三条完全不同的产品路线。</p>
+
+<table>
+  <thead><tr>
+    <th style="width:110px">层</th><th style="width:290px">原话对应</th>
+    <th>它其实在说什么</th><th style="width:190px">按这一层做，会怎样</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td><b>命名层</b></td><td>「有没有能生成短剧的 AI」</td>
+      <td>用户在<b>用自己的词汇找一个工具</b>。「短剧」是他能想到的最省事的视觉叙事载体</td>
+      <td>去做短剧生成器 → 一头撞进红海</td>
+    </tr>
+    <tr class="hi">
+      <td><b>症状层</b></td><td>「字太多根本看不下去」</td>
+      <td>真正的痛点：<b>读取成本高于收益</b>，于是放弃</td>
+      <td>做「把字变少的东西」→ 方向对，但仍要选载体</td>
+    </tr>
+    <tr>
+      <td><b>需求层</b></td><td>（用户没说的那句）</td>
+      <td><b>我不需要看脸，我需要看懂。</b>信息可以不走文字，走符号 + 声音 + 节奏</td>
+      <td>做「符号化叙事」→ 成本落到排版级</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="pull">
+用户抱怨的是「字多」，不是「没画面」。他要的是<b>信息换一种不用读的走法进来</b>——
+至于承载它的是演员还是符号，他从头到尾没提过。
+</p>
+
+<div class="box">
+  <span class="t">这一步的用处：定住我们不做的事</span>
+  「短剧」这个词一旦被当成需求本身，就会连带把它的<b>全部成本</b>一起接过来：
+ 演员一致性、表演、镜头语言。但按需求层看，这些<b>一项都不在需求里</b>。
+ 需求收敛的第一件事，是<b>把不在需求里的成本原地删掉</b>。
+</div>
+
+<!-- ===== 02 ===== -->
+<h2><span class="num">02</span>市场实况：那条线有多贵</h2>
+<p class="sub">「AI 短剧」不是无人区，是<b>最挤的那条路</b>，而且挤在同一堵墙下面。</p>
+
+<h3>同类项目速查（星数为 2026-09-14/15 快照，引用前请重拉）</h3>
+<table>
+  <thead><tr>
+    <th style="width:250px">项目</th><th style="width:80px">★</th>
+    <th>做什么</th><th style="width:180px">成本落在哪</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>chatfire-AI/huobao-drama</td><td>15,101</td><td>全 Agent 全自动短剧</td>
+        <td class="no">烧 Kling / Seedance，且 CC BY-NC-SA 禁商用</td></tr>
+    <tr><td>HKUDS/ViMax</td><td>12,368</td><td>Agentic 视频生成</td>
+        <td class="no">烧云端视频模型</td></tr>
+    <tr><td>anil-matcha/ai-short-drama</td><td>492</td><td>多 Agent 管线</td>
+        <td class="no">烧 Kling / Veo，同质化</td></tr>
+    <tr><td>EvoLinkAI/ai-short-drama</td><td>36</td><td>小说转视频</td>
+        <td class="warn">自托管模型，仍需 GPU</td></tr>
+    <tr><td>lzcjsyr/Book2Video</td><td>6</td><td>PDF → 口播 → 静态图 → FFmpeg</td>
+        <td class="warn">思路最接近我们，但仍在图像 API 上付费</td></tr>
+    <tr class="hi"><td><b>book2vido（本项目）</b></td><td>—</td>
+        <td>长文 → 口播稿 + 代码画卡 → 免费 TTS → FFmpeg</td>
+        <td class="ok">纯电费，实测 ¥0.0004/条</td></tr>
+  </tbody>
+</table>
+
+<h3>成本结构：黑洞只有一格</h3>
+<p class="sub">把「做一条片子」拆成环节，按<b>花钱量级</b>排——不是为了比较，是为了看清哪一格可以整块删掉。</p>
+<table>
+  <thead><tr>
+    <th style="width:150px">环节</th><th>AI 短剧打法</th><th style="width:130px">花的钱</th>
+    <th>我们的做法</th><th style="width:110px">花的钱</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>剧本 / 分镜</td><td>云端大模型 / Agent 编排</td><td>低</td>
+        <td>本地 Qwen3-8B，7 环里只 1 环用模型</td><td class="ok">电费</td></tr>
+    <tr class="hi"><td><b>画面生成</b></td><td><b>文生视频 / 文生图</b>（Kling、Seedance、Veo）</td>
+        <td class="no"><b>高 ← 黑洞</b></td>
+        <td><b>Pillow 信息卡 + 开源矢量图标</b>，代码画</td><td class="ok"><b>¥0</b></td></tr>
+    <tr><td>角色一致性</td><td>LoRA / 换脸 / 固定种子锁人设</td><td class="no">高（技术债）</td>
+        <td><b>不需要这项能力</b>——见 §03</td><td class="ok">¥0</td></tr>
+    <tr><td>配音</td><td>云端 TTS / 积分</td><td>低</td>
+        <td>edge-tts（匿名免费）/ macOS say 回退</td><td class="ok">¥0</td></tr>
+    <tr><td>合成</td><td>云端渲染 / 剪辑订阅</td><td>低</td>
+        <td>FFmpeg 本地</td><td class="ok">¥0</td></tr>
+  </tbody>
+</table>
+
+<div class="box bad">
+  <span class="t">行业自己给出的判据：那一格不只是贵，还是最大的坑</span>
+  检索到的 AI 短剧实战教程里，「新手必避 3 个坑」有一条几乎每篇都会写：
+  <b>「不忽视角色一致性：观众秒出戏」</b>；做法是「<b>锁定角色一致性，避免换脸穿帮</b>」。
+  <br>也就是说，画面生成这一格<b>贵，而且付了钱还会欠下另一笔债</b>。
+</div>
+
+<!-- ===== 03 ===== -->
+<h2><span class="num">03</span>第一性原理：把最贵那一格删掉</h2>
+<p class="sub">「极致省资源」不是把每一格都压一压，是<b>找到那一格，然后整块不要</b>。</p>
+
+<p>
+上表里只有一格是量级上的贵。所以第一性原理的动作很干脆：
+<b>不是优化画面生成，是不做画面生成。</b>
+</p>
+
+<p>
+但删掉之后必须补上它的<b>职能</b>——画面在为叙事干什么？答案是两件事：
+<b>（一）告诉观众现在讲什么，（二）让视线有地方落。</b>
+第一件事靠<b>符号</b>就能干，第二件事靠<b>版式</b>就能干。两样都不需要像素级生成。
+</p>
+
+<div class="thesis">
+  <div class="kicker">关键洞见</div>
+  <p class="big">「剧」靠角色表演传情节，所以要一致性；我们靠符号路标传信息，所以天生一致。</p>
+  <p>
+    短剧最大的技术债是<b>「让同一个人在不同的画面里长得一样」</b>，因为观众靠脸认人。
+    但一个图标<b>不需要被认出来是谁</b>——它就是它自己。<code>tabler:bulb</code> 画一百次，一百次都一样。
+  </p>
+  <p>
+    换句话说：<b>我们的「确定性」能力（同输入 → 同产出，逐字节一致），正好就是「角色一致性」这个难题的通俗解。</b>
+    别人花算力去收敛的东西，我们在架构层就不用追。<b>这不是弥补劣势，是劣势根本不存在于我们的需求里。</b>
+  </p>
+</div>
+
+<h3>代价照旧写在明处</h3>
+<table>
+  <thead><tr><th style="width:170px">放弃</th><th>换来</th><th style="width:200px">代价</th></tr></thead>
+  <tbody>
+    <tr><td>画质军备竞赛</td><td>成本地板（¥0 vs 按量付费）</td>
+        <td>画面是<b>信息卡</b>，不是插画、不是表演</td></tr>
+    <tr><td>「一句话生成一部剧」</td><td>7 环只有 1 环上模型 → 可复现</td>
+        <td>不是全自动，需要人选章</td></tr>
+    <tr><td>无中生有的创作</td><td>只做<b>已有长文的降维</b></td>
+        <td>用户群是「手里有长文的人」，不是「想拍剧的人」</td></tr>
+  </tbody>
+</table>
+
+<p class="pull">
+这条路的用户群比「想做短剧的人」小，但<b>准得多</b>：
+他们是作者、知识博主、公众号主——<b>手里已经有一堆看不下去的长文</b>。
+我们不做无中生有，我们做降维。
+</p>
+
+<!-- ===== 04 ===== -->
+<h2><span class="num">04</span>我们已经有两块，缺的只是一条线</h2>
+<p class="sub">这一步是全文最省钱的一句：<b>不新建任何东西，把已有的两块接起来。</b></p>
+
+<div class="two">
+  <div class="card">
+    <div class="h">A ｜ book2vido（本项目）</div>
+    <div class="m">
+      <b>强在自动</b>：长文 → 本地 LLM 提炼 → 切分 + 口播稿 + 信息卡。<br>
+      <b>出口只有一个</b>：合成竖屏视频。<br>
+      <b>现状</b>：单条 23.1–39.0s / 518–708KB / ≈¥0.0004。
+    </div>
+  </div>
+  <div class="card">
+    <div class="h">B ｜ tuitu_card_gen.py（行途已有）</div>
+    <div class="m">
+      <b>强在成熟</b>：一句话观点 → 1080×1440 卡片 PNG，P028 黑白极简 + 行途蓝，
+      HTML + Chrome 渲染，已实产 12+ 张、直发公众号贴图。<br>
+      <b>弱在手工</b>：4 段文案（大字 / 标题 / 支撑句 / 金句）<b>全靠人写</b>。
+    </div>
+  </div>
+</div>
+
+<h3>断点在哪</h3>
+<div class="flow">
+  <div class="node"><div class="n">A · 自动化强</div><div class="t">长文</div>
+    <div class="d">PDF / 章节<br>→ 本地模型提炼出<br><b>一句核心 + 若干要点</b></div></div>
+  <div class="gap">✕</div>
+  <div class="node" style="border-color:#c7362f">
+    <div class="n">断点</div><div class="t">出口不通</div>
+    <div class="d">A 提炼出来的东西<br><b>只能进视频合成器</b>，<br>喂不进卡片模板</div></div>
+  <div class="gap">✕</div>
+  <div class="node"><div class="n">B · 排版成熟</div><div class="t">卡片</div>
+    <div class="d">模板已调好<br>→ 但 4 段文案<br><b>要人一句句想</b></div></div>
+</div>
+
+<div class="box good">
+  <span class="t">接法：两边各出一半，中间加一根管子</span>
+  A 出<b>结构化文案</b>（核心观点 / 支撑句 / 金句），B 出<b>版式与渲染</b>。
+  中间只要一个薄薄的适配层。这正是铁律七要的形状——
+  <b>最省的交付是复用已有的那两个，而不是再写第三个。</b>
+</div>
+
+<!-- ===== 05 ===== -->
+<h2><span class="num">05</span>为什么「图文」这一出口值得先做</h2>
+<p class="sub">不是因为好看，是因为平台的算账方式不一样。</p>
+
+<h3>图文和视频，比的不是同一件事</h3>
+<table>
+  <thead><tr><th style="width:170px">维度</th><th>视频（口播 / 短剧）</th><th>图文（图片流）</th></tr></thead>
+  <tbody>
+    <tr><td><b>算法看什么</b></td><td>完播率（看了多少秒）</td>
+        <td class="hi"><b>阅读完成率</b>（划到最后一张）</td></tr>
+    <tr><td><b>门槛 / 优秀线</b></td><td>30% / 50%</td><td class="hi"><b>60% / 80%</b></td></tr>
+    <tr><td><b>用户动作成本</b></td><td>要坐住 30 秒</td>
+        <td class="ok">划一下，几乎零成本</td></tr>
+    <tr class="hi"><td><b>同主题实测</b></td><td>1.8 万播放</td>
+        <td class="ok"><b>5.3 万播放（约 2.9 倍）</b></td></tr>
+    <tr><td><b>生产时间</b></td><td>≈4.2 小时</td><td class="ok">≈30 分钟</td></tr>
+  </tbody>
+</table>
+
+<div class="box warn">
+  <span class="t">数据来源必须标明（对外引用前复核）</span>
+  以上为<b>自媒体实测与行业分析口径，不是抖音官方公开规则</b>（来源：多家运营类站点，2026-08~09）。
+  数字方向一致、量级可信，但<b>不可当成官方承诺引用</b>。
+  另一条同源信息：抖音 2025 年底上线<b>长图文</b>（长文 + 多图 + 自动滚动 + 背景音乐，进推荐流），
+  亦是转述报道口径。若要在对外内容里写，先自查一遍原始出处。
+</div>
+
+<h3>别只看好处——图文是红海里的红海</h3>
+<p>
+上面那些倍数有代价：<b>图文是门槛最低的形态，所以同质化最严重</b>。
+行业分析原话是「模板化的<b>大字报</b>图文在信息流里已经很难被看第二眼」。
+</p>
+<p>
+这恰好划出我们的位置：<b>图文这条路上，比的是「每一张图值不值得停一秒」，不是「字够不够大」。</b>
+而「值得停一秒」靠的是<b>信息增量</b>——从一章里提炼出一个真正有认知差的点。
+这正好是 A（本地模型提炼）的活。
+</p>
+
+<p class="pull">
+所以这条路线自洽的地方在于：<b>我们进的是红海，但带的是别人没有的那件装备——自动提炼。</b>
+模板人人能抄，把一本书读成 12 个值得停的卡片，抄起来没那么快。
+</p>
+
+<!-- ===== 06 ===== -->
+<h2><span class="num">06</span>阶段适配与待拍板</h2>
+<p class="sub">按账号现状（公众号冷启动、外部用户 n=0）判断，而不是按通用最佳实践。</p>
+
+<h3>专家判断</h3>
+<div class="box good">
+  <span class="t">推荐：先打通「图文出口」，暂不做短剧</span>
+  <b>为什么</b>：① 成本≈0（是接已有的两块，不是引入新依赖，直接过铁律七三道闸）；
+  ② 立刻能用在行途自己的分发上——<b>先吃自己的狗粮</b>，我们自己就是第一个「手里有一堆长文」的用户；
+  ③ 冷启动期第一优先级是「<b>被看见的次数</b>」，而图文形态的曝光效率恰好更高。
+  <br><br>
+  <b>风险与代价</b>：图文同质化严重，做不好会被当大字报划走；且它<b>不体现「视频」能力</b>，
+  对外叙事上会显得比同行「轻」。补救：把它定位成<b>分发出口之一</b>，而不是产品本体——
+  视频出口保留，两条腿走。
+  <br><br>
+  <b>为什么现在不做短剧</b>：需要画面生成 → 撞铁律一（零公司资源）与铁律七（费用闸）；
+  且 n=0 时不该进最挤的赛道。判据写死：<b>当「图文出口」跑出稳定数据，再谈体裁升级。</b>
+</div>
+
+<h3>待拍板（三选一）</h3>
+<table>
+  <thead><tr><th style="width:60px">选项</th><th style="width:290px">内容</th>
+    <th>代价</th><th style="width:90px">我的意见</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>A</b></td>
+      <td>做<b>图文出口</b>：A 的结构化输出 → B 的模板，先给自己用</td>
+      <td>一个适配层的工作量；需先定义「结构化文案」的字段</td>
+      <td class="ok">推荐</td></tr>
+    <tr><td><b>B</b></td>
+      <td>先只做<b>字段定义与试点</b>：手工把 A 的一次输出喂进 B，看效果再决定要不要自动化</td>
+      <td>最少工作量，但会多出一轮人工</td>
+      <td>次选（更稳）</td></tr>
+    <tr><td><b>C</b></td>
+      <td>追<b>短剧</b>方向（角色 / 剧情 / 表演）</td>
+      <td>撞两条铁律 + 红海 + 要 GPU + 角色一致性技术债</td>
+      <td class="no">不推荐</td></tr>
+  </tbody>
+</table>
+
+<div class="box">
+  <span class="t">还有一个更小的动作，可能比上面三个都值</span>
+  boss 提到「符号化也挺好的，<b>有个引导</b>」。这句可以只落在<b>一个视觉参数</b>上：
+  在卡片上加一条<b>进度引导</b>（第几张 / 共几张）。成本是一行代码，
+  但它同时服务于「看得下去」（用户知道还有多久）和「划到最后一张」（对算法的完成率指标）。
+  <b>不需要等形态拍板就能做。</b>
+</div>
+
+<footer>
+  <b>事实来源</b>：竞星数 = doc/07 / doc/16 的 2026-09-14/15 快照；抖音机制 = 自媒体实测口径（非官方，引用需复核）；
+  本项目数据 = demo/README.md 实测区间；卡片规格 = <code>src/book2vido/visualizer.py</code>（1080×1920，正文最多 5 行）；
+  贴图卡规格 = <code>tools/tuitu_card_gen.py</code>（1080×1440 @2x，HTML + Chrome 渲染）。<br>
+  <b>复核方式</b>：改了本文任何一条结论，必须同步 <a href="07-competitors.md">doc/07</a> 的竞品表与
+  <a href="16-项目总览.md">doc/16 §3</a> 的差异化论证（三处同源，改一必改三）。
+</footer>
+
+</div>
+</body>
+</html>

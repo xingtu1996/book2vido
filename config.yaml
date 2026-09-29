@@ -1,0 +1,56 @@
+# book2vido 配置
+# llm.provider: ollama（本地模型，需先 ollama pull qwen3:8b）| rule（无模型降级，保证先跑通）
+llm:
+  provider: ollama
+  model: qwen3:8b
+  base_url: http://localhost:11434
+  # 思考模式。必须显式声明：qwen3 在 Ollama 里默认就是开的，不写 = 行为随模型版本漂移。
+  # 本机实测（M1 Pro 16GB）同一条口播稿任务：think=true 36s/568tok（句子通顺）；
+  # think=false 18s/152tok（快 2 倍，但句子明显变碎）。口播稿保质量 → true。
+  # 批量初筛要速度，用 CLI 的 --fast 覆盖，不必改这里。
+  think: true
+  # 提示词资产（T2V-007）。null = <项目根>/prompts/scriptwriter.md ——
+  # 分镜的唯一「模型行为」来源，独立成文件、逐条注释、有版本号。
+  # 想试另一版提示词：填绝对路径即可，**不改代码**。改完会在 script.json 的
+  # prompt_version / prompt_hash 里留痕，也自动让分镜缓存失效（不需要记得升版本号）。
+  prompt_file: null
+
+tts:
+  # edge（免费匿名，**需网**）| say（完全本地，**断网可跑**）
+  # 断网实测（2026-09-16，同一章 / --fast / 关缓存，socket 层拦全部外网）：
+  #   say  档 → 外网请求 **0 次**，43.3s
+  #   edge 档 → 12/12 句失败后回退 say，外网请求 36 次，71.0s（**+27.7s**）
+  # 要兑现「内容不出本机 / 断网可用」，或面向离线场景 → 改成 say。见 CONSTITUTION.md 铁律九。
+  provider: edge
+  voice: zh-CN-YunxiNeural
+
+visual:
+  # 画面主题（色板 SSoT：行途封面设计规则 V1.2「黑红灰」）
+  #   ink   = 深底炭黑红（默认。竖屏信息流最抓眼，红对比最强）
+  #   paper = 浅底纸白红（与公众号浅底封面同源，亮环境友好）
+  #   blue  = 行途蓝（主题化之前的原配色，留作回退 / A-B 对照）
+  #   custom= 用下面的 accent 覆盖，其余取 blue 的配套色
+  # ⚠️ 换主题会自动让成片缓存失效（theme 已进 video_key），不必手动清缓存。
+  theme: ink
+  accent: "#056DE8"       # 仅 theme: custom 时生效
+  font: null              # null=自动择优 macOS 自带中文字体（PingFang→Hiragino Sans GB→STHeiti）
+  w: 1080
+  h: 1920
+  icons: true             # 关键词图标层（Iconify 开源图标，¥0）；缺缓存且无网时自动跳过
+  icon_dir: null          # null=项目根 assets/icons
+  icon_size: 430
+
+limits:
+  max_sentences: 12       # 单条口播句数上限
+  max_chars: 2500         # 送本地模型的正文上限（4K ctx 硬约束）。
+                          # 超长章节由 segmenter 按「首/中/尾均匀采样」裁，而不是截头。
+
+cache:
+  enabled: true           # 三层缓存（成片/分镜/无）。最贵的是分镜（LLM ~36s），缓存主要省它
+  dir: null               # null = <项目根>/cache。缓存是可选产物，删掉即回到无缓存行为
+
+concurrency:
+  tts_workers: 12         # TTS 并发度。实测 12 句：串行 28.9s → 并发 12 线程 2.2s（13.1x）
+  tts_retry: 2            # 单句 TTS 失败重试次数；失败率 >50% 时自动降并发
+  # ⚠️ 这里**只有 TTS**。不要用它并发调模型——Ollama 服务端串行，
+  #    实测串行 2.2s vs 并发 2.1s（省 5%，就是噪声）。见 doc/10 探针 2。

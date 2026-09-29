@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>book2vido · 产品诞生始末 · 过程信源 · 终局与宣发</title>
+<style>
+  :root{
+    --blue:#056DE8; --ink:#1d1d1f; --ink2:#424245; --ink3:#6e6e73;
+    --line:#e5e5e7; --bg:#ffffff; --bg2:#fafafa; --red:#c7362f; --amber:#a86800; --green:#0a7a3d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1020px;margin:0 auto;padding:56px 32px 96px}
+  header{border-bottom:2px solid var(--ink);padding-bottom:22px}
+  h1{font-size:29px;line-height:1.35;margin:0 0 10px;letter-spacing:-.4px;font-weight:600}
+  .meta{color:var(--ink3);font-size:13px}
+  .meta b{color:var(--ink2);font-weight:500}
+  a{color:var(--blue)}
+  h2{font-size:19px;margin:52px 0 6px;letter-spacing:-.2px;font-weight:600}
+  h2 .num{color:var(--blue);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15px;margin:28px 0 8px;font-weight:600}
+  p{margin:10px 0}
+  .lead{color:var(--ink2)}
+  .sub{color:var(--ink3);font-size:13.5px;margin:0 0 16px}
+  code{font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg2);
+    border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--ink2)}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12.5px;color:var(--ink3);font-weight:500;border-bottom:1px solid var(--ink)}
+  tr.hi td{background:#f2f7fe}
+  tr.bad td{background:#fdf6f5}
+  .num{font-variant-numeric:tabular-nums}
+  .ok{color:var(--green);font-weight:600}
+  .no{color:var(--red);font-weight:600}
+  .warn{color:var(--amber);font-weight:600}
+  .box{border:1px solid var(--line);border-left:3px solid var(--blue);background:var(--bg2);
+    border-radius:0 8px 8px 0;padding:14px 18px;margin:18px 0;font-size:14px;color:var(--ink2)}
+  .box.bad{border-left-color:var(--red)}
+  .box.good{border-left-color:var(--green)}
+  .box.warn{border-left-color:var(--amber)}
+  .box .t{font-weight:600;color:var(--ink);display:block;margin-bottom:4px}
+  .thesis{border:2px solid var(--blue);border-radius:12px;padding:22px 26px;margin:26px 0;background:#fbfdff}
+  .thesis .kicker{font-size:12px;font-weight:600;color:var(--blue);letter-spacing:1.2px;margin-bottom:8px}
+  .thesis .big{font-size:19px;font-weight:600;line-height:1.55;margin:0 0 12px;letter-spacing:-.2px}
+  .thesis p{font-size:14px;color:var(--ink2);margin:8px 0}
+  .pull{font-size:15.5px;color:var(--ink);border-left:3px solid var(--ink);
+    padding:2px 0 2px 16px;margin:22px 0;font-weight:500;line-height:1.7}
+  ul.plain{list-style:none;padding:0;margin:14px 0}
+  ul.plain li{position:relative;padding-left:20px;margin:9px 0;color:var(--ink2)}
+  ul.plain li::before{content:"·";position:absolute;left:6px;color:var(--blue);font-weight:700}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+  .stat{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--bg2)}
+  .stat .v{font-size:25px;font-weight:600;letter-spacing:-.5px;line-height:1.2;color:var(--blue)}
+  .stat .k{font-size:12px;color:var(--ink3);margin-top:4px;line-height:1.5}
+  figure{margin:20px 0}
+  figure img{width:100%;border:1px solid var(--line);border-radius:8px;display:block}
+  figcaption{font-size:12.5px;color:var(--ink3);margin-top:8px;line-height:1.6}
+  blockquote{margin:14px 0;padding:10px 16px;border-left:3px solid var(--line);
+    color:var(--ink2);font-size:14px;background:var(--bg2)}
+  footer{margin-top:70px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--ink3);font-size:12.5px}
+  /* 时间轴 */
+  .tl{margin:22px 0;border-left:2px solid var(--line);padding-left:0}
+  .tl .st{position:relative;padding:0 0 22px 24px}
+  .tl .st::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;
+    border-radius:50%;background:#fff;border:2px solid var(--blue)}
+  .tl .st.dead::before{border-color:var(--ink3)}
+  .tl .st .when{font-size:12px;color:var(--blue);font-weight:600;font-variant-numeric:tabular-nums;
+    letter-spacing:.4px}
+  .tl .st.dead .when{color:var(--ink3)}
+  .tl .st .what{font-weight:600;font-size:14.5px;margin:2px 0 4px}
+  .tl .st .ev{font-size:13px;color:var(--ink3);line-height:1.7}
+  .tl .st .ev code{font-size:12px}
+  @media(max-width:720px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>book2vido · 产品诞生始末 · 过程信源 · 终局与宣发</h1>
+  <div class="meta">
+    <b>日期</b> 2026-09-15 ｜ <b>方法</b>从本机五份痕迹重建，非回忆、非推测 ｜
+    <b>读者</b>：下一个接手的人（不论人还是 agent）<br>
+    <b>分工</b>：<a href="16-项目总览.md">doc/16</a> 讲「这是什么」，
+    <a href="18-商业化规划.html">doc/18</a> 讲「怎么赚钱」，
+    <a href="19-社会价值与爆红预案.html">doc/19</a> 讲「为什么值得做」——
+    <b>本文讲「它是怎么变成今天这样的，以及下一个接手的人从哪看起」</b>
+  </div>
+</header>
+
+<p class="lead" style="margin-top:22px">
+本文回答三个问题：<b>①这段工作留下了什么可追溯的痕迹</b>、
+<b>②产品是怎么一步步长成现在这样的</b>、<b>③如果要出去见人，会死在哪</b>。
+</p>
+
+<div class="thesis">
+  <div class="kicker">最重要的一条</div>
+  <p class="big">git 的第一笔提交是 <b>09-15 19:50</b>，而这个产品的第一件产出物在 <b>09-14 02:54</b>。</p>
+  <p>
+    中间那 <b>41 小时</b>——从「调研开源方案」到「跑出第一条成片」——<b>不在 git 里</b>。
+    它只存在于 WorkBuddy 的会话痕迹中。这就是为什么「过程信源」不是锦上添花：
+    <b>换一个 agent 接手，那 41 小时就等于没发生过。</b>
+  </p>
+</div>
+
+<!-- ============ 01 ============ -->
+<h2 id="s01"><span class="num">01</span>痕迹盘点：这段工作能追溯到什么</h2>
+<p class="sub">全部为本机实测，每项都给可复制的读取命令。机器可读版在 <code>SESSION_PROVENANCE.json</code>。</p>
+
+<div class="stats">
+  <div class="stat"><div class="v">68</div><div class="k">产出物索引<br>（跨目录，唯一完整）</div></div>
+  <div class="stat"><div class="v">803</div><div class="k">命令级取证行<br>（带 hash 链）</div></div>
+  <div class="stat"><div class="v">18</div><div class="k">git 提交<br>（19:50 起）</div></div>
+  <div class="stat"><div class="v">242</div><div class="k">可还原的历史版本<br>（其余为空壳）</div></div>
+</div>
+
+<table>
+  <thead><tr><th style="width:150px">信源</th><th style="width:90px">规模</th>
+    <th>能回答什么</th><th style="width:170px">局限</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>artifact-index</b><br><code>&lt;sid&gt;.json</code></td>
+      <td class="num">68 件</td>
+      <td><b>产品诞生始末的主时间轴</b>。每件产出物的路径、大小、创建/更新时间、来源工具。
+        19:50 之前的演进只有这里记着。</td>
+      <td>只含显式交付过的产物，<b>过程性命令不在内</b></td></tr>
+    <tr><td><b>audit-log</b><br><code>2026-09-15.jsonl</code></td>
+      <td class="num">803 行</td>
+      <td>逐条命令全文 + 时间戳 + <b>hash 链</b>（防篡改）。含 800 允许 / 2 拦截 / 1 批准。</td>
+      <td>只有命令，<b>没有意图与结论</b></td></tr>
+    <tr><td><b>sessions 表</b><br><code>workbuddy.db</code></td>
+      <td class="num">1 行</td>
+      <td>会话坐标：id / cwd / 标题 / 模型 / 起止 / token 用量（110114 / 300000）。</td>
+      <td>元数据，无内容</td></tr>
+    <tr><td><b>modify_backup</b><br><code>workspace/sessions/</code></td>
+      <td class="num">242 / 12059</td>
+      <td><b>唯一能读回「某文件改动前的样子」</b>的地方（含 CHANGELOG 的三个历史态）。</td>
+      <td>12059 条里 <b>11817 条是 0 字节空壳</b>，只证明「碰过」</td></tr>
+    <tr class="bad"><td><b>changes-index</b></td>
+      <td class="num">77 批</td>
+      <td>文件改动批次账。</td>
+      <td>⚠️ <b>只覆盖 cwd</b> → 收录到的全是 memory 日志，<b>项目代码改动不在内</b>。别单独用。</td></tr>
+  </tbody>
+</table>
+
+<div class="box bad">
+  <span class="t">一个必须记住的坑：cwd 不是项目根</span>
+  本会话 <code>cwd</code> 是 <code>~/工作室/xingtu</code>（历史残留目录），
+  而项目在 <code>~/xingtu/book2vido</code>。<b>两者不是同一个目录。</b>
+  直接后果就是上表最后一行：只跟踪 cwd 的索引看不见项目改动。
+  接手时<b>以项目根为准，不要以 cwd 为准</b>。
+</div>
+
+<h3>会话正文不在本地 —— 这条要诚实说</h3>
+<p>
+  我核实过：Chromium 的 IndexedDB 停在 <b>2026-07-09</b>，不含本会话 id；<code>blobs</code> 目录也没有。
+  <b>每一轮对话的原文在 WorkBuddy 服务端</b>，本机拿不到。
+</p>
+<p>
+  所以「引用 sessionid 作为原始信源」的正确理解是：<b>交出坐标，而不是交出正文</b>——
+  坐标能让任何人在 WorkBuddy 里按 id 找回那个会话；正文若需要跨工具带走，
+  只能由人导出一次再随包移交。这也正是 <code>SESSION_PROVENANCE.json</code> 里
+  <code>cannot</code> 那一节老实写下的两条。
+</p>
+
+<!-- ============ 02 ============ -->
+<h2 id="s02"><span class="num">02</span>产品诞生始末（从痕迹重建）</h2>
+<p class="sub">七个阶段。每条都回挂真实文件与时间戳——你可以自己去文件系统核对。</p>
+
+<div class="tl">
+  <div class="st">
+    <div class="when">09-14 02:47 → 02:54</div>
+    <div class="what">① 立项：先调研，不先写代码</div>
+    <div class="ev">
+      会话建立 7 分钟后产出 <code>文本转视频开源项目调研_2026-09-14.html</code>（42KB）。
+      <b>第一件事不是写代码，是看别人做到哪了</b>——这与项目纪律
+      「新建项目前先调研既有开源方案，不要闭门造车」一致，也是后来
+      <a href="07-competitors.md">doc/07 竞品表</a>的源头。
+    </div>
+  </div>
+
+  <div class="st">
+    <div class="when">09-15 12:02 → 12:20</div>
+    <div class="what">② 骨架成型：宪法 + 规格 + 流水线 + 第一条成片</div>
+    <div class="ev">
+      18 分钟内落下四根柱子：<code>README</code> / <code>CONSTITUTION.md</code>（铁律）/
+      <code>specs/...m-vp/</code>（规格驱动）/ <code>pipeline.py</code>。
+      12:07 第一条成片 <code>关键对话_sample.mp4</code>（5.5MB），12:20 切到 Ollama 版。
+      <b>规矩先于代码</b>——宪法和 spec 比实现早了几分钟。
+    </div>
+  </div>
+
+  <div class="st">
+    <div class="when">09-15 14:29 → 14:52</div>
+    <div class="what">③ 第二个样本 + 交接基建</div>
+    <div class="ev">
+      换题材跑通（<code>省Token实战包装.mp4</code>）后立刻补
+      <code>HANDOFF.md</code> 与 <code>AGENTS.md</code>。
+      <b>在只有两条成片时就建交接文档</b>——这是后面「换 harness」能成立的前提。
+    </div>
+  </div>
+
+  <div class="st">
+    <div class="when">09-15 16:13 → 18:27</div>
+    <div class="what">④ 画面层攻坚：这一天上半场最长的仗</div>
+    <div class="ev">
+      从字体渲染出问题（<code>font_test/card_001.png</code>）开始，两小时内产出
+      <a href="08-画面资产策略.md">doc/08 画面资产策略</a>、修复前/后 12 卡对照图、
+      资源实测（<a href="10-目录索引与按需生成.md">doc/10</a>）与三个探针脚本。
+      <b>攻的是「卡上的字能不能看」，不是「画面美不美」</b>——这个取舍一直没变过。
+    </div>
+  </div>
+
+  <div class="st dead">
+    <div class="when">09-15 19:12 → 19:50 ← git 的起点</div>
+    <div class="what">⑤ 建仓：代码第一次进入可追溯历史</div>
+    <div class="ev">
+      <code>19:50 初始提交</code>。注意时间——<b>距第一件产出物已经过去 41 小时</b>。
+      同批落下 <a href="11-产品化路线看板.html">doc/11</a>、
+      <a href="12-交付形态与许可决策.html">doc/12</a>、
+      <a href="lessons/README.md">错题库</a>。
+      <b>建仓和「登记欠账」是同时做的</b>，不是事后补的。
+    </div>
+  </div>
+
+  <div class="st">
+    <div class="when">09-15 20:19 → 21:31</div>
+    <div class="what">⑥ 能给人看的东西 + 把提示词变成资产</div>
+    <div class="ev">
+      先出 demo 画廊（9 条片 + 自动播放 GIF），再做两次「自我审计」：
+      <a href="13-确定性与模型分工.html">doc/13 能用脚本就别用模型</a>、
+      <a href="14-产物演进史.html">doc/14 产物演进档案</a>。
+      然后 <b>提示词从代码里搬进 <code>prompts/scriptwriter.md</code></b>，
+      连带一个「改提示词必须让缓存失效」的修复（T2V-007）。
+      <b>先让人看得懂，再让机器可复用。</b>
+    </div>
+  </div>
+
+  <div class="st">
+    <div class="when">09-15 21:47 → 23:10</div>
+    <div class="what">⑦ 战略层集中爆破：最后 85 分钟出了六份文档</div>
+    <div class="ev">
+      <a href="16-项目总览.md">16 总览</a> → <a href="17-结构诊断与重构方案.html">17 结构</a> →
+      <a href="18-商业化规划.html">18 商业化</a> →
+      <a href="19-社会价值与爆红预案.html">19 社会价值</a> →
+      <a href="20-需求收敛与形态定位.html">20 需求收敛</a> →
+      <a href="21-书到视频规格盘点.html">21 规格盘点</a>，中间夹着提纯领域资产
+      （<code>paths.py</code> / <code>concepts.py</code>）和两个新守护脚本。
+    </div>
+  </div>
+</div>
+
+<div class="box warn">
+  <span class="t">时间轴自己说出的一件事</span>
+  <b>「做什么」比「怎么做」晚成型。</b>06:00 起就在写流水线，而
+  <a href="20-需求收敛与形态定位.html">doc/20</a> 问出
+  「用户到底要短剧还是要看懂」是在 <b>22:58</b>——15 小时之后。
+  <br><br>
+  这不是失误，是顺序本身有道理：<b>手上没有能跑的东西，需求讨论会变成空谈</b>。
+  但它留下一个必须承认的后果：<b>前面 15 小时内所有「性能优化」「画面打磨」的优先级判断，
+  都是在一个尚未确认的需求上做的。</b>这也是 <a href="#s04">§04</a> 里
+  「No Market Need 是最大风险」的根。
+</div>
+
+<!-- ============ 03 ============ -->
+<h2 id="s03"><span class="num">03</span>换 harness 接手：现在缺的只有一件</h2>
+<p class="sub">目标：Claude Code / Codex / OpenCode 或「三个月后忘了细节的人」都能接上。</p>
+
+<p>先说<b>已经有的</b>——这块基础比我预想的好：</p>
+
+<table>
+  <thead><tr><th style="width:190px">已有</th><th>作用</th><th style="width:80px">通用性</th></tr></thead>
+  <tbody>
+    <tr><td><code>AGENTS.md</code></td><td><b>事实源</b>：硬约束 + 纪律 + 导航。所有 harness 共用。</td>
+      <td class="ok">全通用</td></tr>
+    <tr><td><code>CLAUDE.md</code></td><td>只有 8 行——<b>指针</b>（<code>@AGENTS.md</code> 导入）+ Claude Code 专属补充。
+      刻意不复制内容（复制=制造第二个副本，项目反复踩过的坑）。</td>
+      <td class="ok">复制这个模式即可</td></tr>
+    <tr><td><code>HANDOFF.md</code></td><td>会话交接全文：状态快照 / 已知坑 / 下一步。</td>
+      <td class="ok">全通用</td></tr>
+    <tr><td><code>CONSTITUTION.md</code></td><td>八条铁律，最高优先级。</td><td class="ok">全通用</td></tr>
+    <tr><td><code>specs/</code> · <code>doc/</code> · <code>lessons/</code></td>
+      <td>规格执行账 / KB 索引 / 错题库（含发布前复发判据速查）。</td><td class="ok">全通用</td></tr>
+  </tbody>
+</table>
+
+<div class="box good">
+  <span class="t">这一轮补上的那块（唯一真缺的）</span>
+  <code>SESSION_PROVENANCE.json</code> —— 上述所有文件都在回答
+  <b>「这个项目是什么、怎么干活」</b>，但<b>没有一份在回答「这活是怎么变成今天这样的」</b>。
+  <br><br>
+  这个缺口只在换人时才暴露：新 agent 读不到「为什么当初不做短剧」，
+  就会把 <a href="20-需求收敛与形态定位.html">doc/20</a> 已经拍过的结论<b>重新质疑一遍</b>，
+  甚至反向改回去。已拍板的决策必须能追到它的证据——这就是信源坐标的用途。
+</div>
+
+<h3>跨 harness 原生 resume 做不到，但不必做</h3>
+<p>
+  Claude Code 无法恢复 WorkBuddy 的会话状态，这是事实。但 n=1 的项目不需要那套
+  ——把「过程」转成 <b>「可读的当前状态 + 痕迹坐标」</b> 就够了，成本几乎为零。
+  <b>这是 §01 那张表和 <code>AGENTS.md</code> 四件套加起来的效果，不是要再造一个系统。</b>
+</p>
+
+<!-- ============ 04 ============ -->
+<h2 id="s04"><span class="num">04</span>终局：会死在哪</h2>
+<p class="sub">
+  概念来源：<b>Loot Drop</b>（loot-drop.io，收录 1600+ 倒闭初创 / 烧掉 400 亿美元 / 22 类产品 / 50+ 国）——
+  boss 说的「创业公司坟场」。它把死因归成七类，我们就照那七类逐条自检。
+</p>
+
+<table>
+  <thead><tr><th style="width:32px">#</th><th style="width:150px">失败反模式</th>
+    <th style="width:70px">占倒闭</th><th>本项目处境</th></tr></thead>
+  <tbody>
+    <tr class="bad"><td>1</td><td><b>No Market Need</b><br>没市场需求</td>
+      <td class="num">≈35%</td>
+      <td class="no">最大风险，且已定位到具体位置</td></tr>
+    <tr class="bad"><td>6</td><td><b>Legal / Regulatory</b><br>法律与监管</td>
+      <td class="num">—</td>
+      <td class="no">次大风险：把别人的书做成视频</td></tr>
+    <tr><td>4</td><td><b>Competition</b><br>竞争不过</td><td class="num">—</td>
+      <td class="warn">中：赛道挤（<a href="07-competitors.md">doc/07</a> 四个 AI 短剧项目），但我们不在同一条道上</td></tr>
+    <tr><td>5</td><td><b>Product / Tech</b><br>产品技术失败</td><td class="num">—</td>
+      <td class="warn">中：本地模型质量是天花板，不是可改进项</td></tr>
+    <tr class="hi"><td>2</td><td>Ran Out of Cash<br>钱花光</td><td class="num">—</td>
+      <td class="ok">结构性退场 —— ¥0 底牌（铁律一 + 七）</td></tr>
+    <tr class="hi"><td>3</td><td>Team Conflict<br>团队内斗</td><td class="num">—</td>
+      <td class="ok">结构性退场 —— n=1</td></tr>
+    <tr class="hi"><td>7</td><td>Unit Economics<br>单位经济不成立</td><td class="num">—</td>
+      <td class="ok">结构性退场 —— 边际成本≈电费</td></tr>
+  </tbody>
+</table>
+
+<div class="pull">
+  七条里三条因为「¥0 + 一人」<b>直接退场</b>——这是这个模式真正的结构性优势，
+  不是省钱的副产品。剩下四条里有两条是真风险，而<b>它们指向的答案是同一个</b>。
+</div>
+
+<h3>#1 No Market Need：风险不在「没人要」，在「要的不是这个」</h3>
+<p>
+  <a href="20-需求收敛与形态定位.html">doc/20</a> 已经把用户原话拆成三层：
+  「有没有能生成短剧的 AI」是<b>命名层</b>，「字太多看不下去」是<b>症状层</b>，
+  而没人说出口的是<b>需求层</b>——「我不需要看脸，我需要看懂」。
+</p>
+<p>
+  风险具体在哪：<b>如果我们按命名层去做短剧，就一头撞进红海</b>；
+  按需求层做图文，成本落到排版级，但<b>需求层至今没有被一个真实用户证实过</b>——
+  目前全部推理都来自「我们自己就是拿着长文的用户」。这在 n=0 阶段是合理的起点，
+  但必须承认它是<b>假设，不是验证</b>。
+</p>
+
+<h3>#6 法律监管：这条比看上去更实</h3>
+<p>
+  工具的用途是「把一本书变成视频」。两个具体风险：
+</p>
+<ul class="plain">
+  <li><b>输入侧</b>：本机 demo 用的是《关键对话》——真实出版物。</li>
+  <li><b>输出侧</b>：一旦对外分发，工具本身可中立，但<b>官方 demo 用的是受版权保护的素材</b>。</li>
+</ul>
+<p>
+  缓解不复杂（换公版书 / 自有内容做公开 demo），<b>但必须在公开分发之前完成</b>，
+  不是之后补。这条与 <a href="12-交付形态与许可决策.html">doc/12</a> 的许可裁决是同一扇门。
+</p>
+
+<div class="box">
+  <span class="t">终局判断</span>
+  这个产品的终局<b>不是「成为爆款工具」，而是「证明一条判断能被复制」</b>：
+  <b>在用户真正在意的那一点上加到极致，在用户不会因此少得到什么的地方减到极限</b>
+  （<a href="20-需求收敛与形态定位.html">doc/20</a> §「做减法」）。
+  <br><br>
+  照 Loot Drop 的分类，它大概率会以「<b>小而有用的开源工具 + 一整套判断方法</b>」收场，
+  而不是一家公司——因为七反模式里退场的那三条（烧钱 / 团队 / 单位经济），
+  恰好是「公司」这种形态的必修课。<b>我们的终局形态与我们的成本结构是一致的。</b>
+</div>
+
+<!-- ============ 05 ============ -->
+<h2 id="s05"><span class="num">05</span>「直接发 X + GitHub 链接可能就爆」——这个判断要拆开</h2>
+<p class="sub">这是我作为操盘手给的意见，不是流程复述。</p>
+
+<p><b>「可能爆」我同意，而且有机制支撑</b>：一条 30 秒的演示片 + 一个能跑的开源仓，
+是这个时代传播效率最高的组合之一。demo 画廊（9 条片 + 自动播放 GIF）也已经做好了
+——<b>素材是齐的</b>。</p>
+
+<p><b>但「直接发」当前有三个硬阻塞</b>，任何一个都会把好事变坏事：</p>
+
+<table>
+  <thead><tr><th style="width:34px">#</th><th style="width:170px">阻塞</th><th>为什么它会让「爆」变成坏结果</th></tr></thead>
+  <tbody>
+    <tr class="bad"><td>1</td><td><b>脱敏欠账</b></td>
+      <td>仓库里仍有绝对路径与本机用户名，以及内部代号类痕迹（<code>AGENTS.md</code> 硬约束 5 就是防这个）。
+        <b>发出去等于把在职状态暴露在公网</b>——这是那条最高优先级的红线，且<b>开源不可撤回</b>。</td></tr>
+    <tr class="bad"><td>2</td><td><b>私有仓 + LICENSE 未裁决</b></td>
+      <td>没有许可证的公开仓库，法律上「人人可看、无人可用」。爆了也接不住——
+        来的人第一句话会是「能商用吗」，而你答不上来（<a href="12-交付形态与许可决策.html">doc/12</a>）。</td></tr>
+    <tr class="bad"><td>3</td><td><b>demo 用的是真实出版物</b></td>
+      <td>见 §04 #6。官方演示用受版权素材，正是最容易被要求下架的位置。</td></tr>
+  </tbody>
+</table>
+
+<div class="thesis">
+  <div class="kicker">我的推荐</div>
+  <p class="big">先发<b>内容</b>，再发<b>代码</b>——而不是「直接发 GitHub」。</p>
+  <p><b>理由（按权重）</b>：</p>
+  <p>
+    <b>① 顺序风险不对称。</b>内容发错了可以改；代码公开是<b>单向门</b>——
+    脱敏和许可证都是「发之前一分钱，发之后无穷贵」。所以<b>凡不可逆的动作必须排在最后</b>。
+  </p>
+  <p>
+    <b>② 阶段适配。</b>账号仍在冷启动期（PEC 带来 25 个新粉，是第一个明确涨粉来源）。
+    这个阶段第一优先级是<b>「被看见的次数」</b>。视频 + 内容分发能反复触达；
+    star 不产生信任、也不直接带来粉丝。<b>内容爆比开源爆更适合现在的账号。</b>
+  </p>
+  <p>
+    <b>③ 护城河不在代码里。</b><a href="16-项目总览.md">doc/16</a> 那句「代码可抄，判断抄不走」
+    在这里正好用上——<b>先发内容不怕被抄</b>，因为能抄走的是实现，抄不走的是
+    「为什么不做短剧」这一串判断。
+  </p>
+  <p><b>代价与代价的补法</b>：</p>
+  <p>
+    <b>风险</b>：内容先发，可能有人照着做一版开源、抢在前面。
+    <b>补法</b>：把「爆的是判断而不是代码」当预期而非意外；
+    内容里就不承诺「马上开源」，留出清理窗口。
+  </p>
+</div>
+
+<div class="box warn">
+  <span class="t">一个前提澄清</span>
+  「先发内容」不等于「不发代码」。它只是说：<b>把三个不可逆动作（脱敏 → 许可证 → 换 demo 素材）
+  排到公开之前</b>，其余全部可以现在就动。
+</div>
+
+<!-- ============ 06 ============ -->
+<h2 id="s06"><span class="num">06</span>待拍板</h2>
+
+<table>
+  <thead><tr><th style="width:56px">选项</th><th style="width:300px">内容</th><th>代价 / 我的意见</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>A</b></td>
+      <td><b>先清三个阻塞</b>：脱敏扫描 → 定 LICENSE → 换 demo 素材，为公开发布扫场</td>
+      <td>不需要新决策，只是执行既有纪律。既是 §05 的前置，也独立值钱</td></tr>
+    <tr><td><b>B</b></td>
+      <td><b>做一条「30 秒演示片」</b>作为内容侧的先头部队（现成的 9 条片里剪）</td>
+      <td>纯内容动作，可逆、可试。不走 GitHub 也能先验证传播假设</td></tr>
+    <tr><td><b>C</b></td>
+      <td>把 <code>SESSION_PROVENANCE.json</code> 的<b>模式推广</b>到其它项目</td>
+      <td>复用度高，但当前只有 book2vido 需要。推荐<b>等第二次真用到再抽象</b></td></tr>
+    <tr class="bad"><td><b>D</b></td>
+      <td><b>直接公开仓 + 发 X</b></td>
+      <td class="no">不推荐 —— 三个不可逆动作都没做，踩 §04 的两条真风险</td></tr>
+  </tbody>
+</table>
+
+<div class="box">
+  <span class="t">A 和 B 的关系</span>
+  A 让「能公开」成立，B 让「值得被看见」成立。<b>两者可以并行</b>，互不阻塞。
+  C 是唯一一条我建议<b>先不做</b>的——它符合铁律七：
+  <b>最省的抽象，是不提前抽象的那个。</b>
+</div>
+
+<footer>
+  <b>数据来源</b>：本机五份痕迹实测（artifact-index 68 件 / audit-log 803 行 /
+  sessions 表 / modify_backup 12059 条 / git 18 提交）+ Loot Drop 公开资料。
+  <b>所有数字可用</b> <code>SESSION_PROVENANCE.json</code> 里的 <code>readRecipe</code> 复算。
+  <br><b>会话坐标</b>：<code>6fd70a56-4164-48d8-bbca-053ff4689228</code> ｜
+  WorkBuddy ｜ deepseek-v4.1-flash ｜ 2026-09-14 02:47 → 09-15 23:39
+  <br><b>本文含绝对路径，属内部文件，不得随公开仓分发。</b>
+</footer>
+
+</div>
+</body>
+</html>

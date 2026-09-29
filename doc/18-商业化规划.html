@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>book2vido · 商业化规划</title>
+<style>
+  :root{
+    --blue:#056DE8; --ink:#1d1d1f; --ink2:#424245; --ink3:#6e6e73;
+    --line:#e5e5e7; --bg:#ffffff; --bg2:#fafafa; --red:#c7362f; --amber:#a86800; --green:#0a7a3d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1020px;margin:0 auto;padding:56px 32px 96px}
+  header{border-bottom:2px solid var(--ink);padding-bottom:22px}
+  h1{font-size:29px;line-height:1.35;margin:0 0 10px;letter-spacing:-.4px;font-weight:600}
+  .meta{color:var(--ink3);font-size:13px}
+  .meta b{color:var(--ink2);font-weight:500}
+  h2{font-size:19px;margin:52px 0 6px;letter-spacing:-.2px;font-weight:600}
+  h2 .num{color:var(--blue);margin-right:8px;font-variant-numeric:tabular-nums}
+  h3{font-size:15px;margin:28px 0 8px;font-weight:600}
+  p{margin:10px 0}
+  .lead{color:var(--ink2)}
+  .sub{color:var(--ink3);font-size:13.5px;margin:0 0 16px}
+  code{font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg2);
+    border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--ink2)}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12.5px;color:var(--ink3);font-weight:500;border-bottom:1px solid var(--ink)}
+  tr.hi td{background:#f2f7fe}
+  .ok{color:var(--green);font-weight:600}
+  .no{color:var(--red);font-weight:600}
+  .warn{color:var(--amber);font-weight:600}
+  ul.plain{list-style:none;padding:0;margin:14px 0}
+  ul.plain li{position:relative;padding-left:20px;margin:9px 0;color:var(--ink2)}
+  ul.plain li::before{content:"·";position:absolute;left:6px;color:var(--blue);font-weight:700}
+  .box{border:1px solid var(--line);border-left:3px solid var(--blue);background:var(--bg2);
+    border-radius:0 8px 8px 0;padding:14px 18px;margin:18px 0;font-size:14px;color:var(--ink2)}
+  .box.bad{border-left-color:var(--red)}
+  .box.good{border-left-color:var(--green)}
+  .box.warn{border-left-color:var(--amber)}
+  .box .t{font-weight:600;color:var(--ink);display:block;margin-bottom:4px}
+  pre{background:var(--bg2);border:1px solid var(--line);border-radius:8px;
+    padding:14px 16px;overflow-x:auto;font:12.5px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink2)}
+  .thesis{border:2px solid var(--blue);border-radius:12px;padding:22px 26px;margin:26px 0;background:#fbfdff}
+  .thesis .kicker{font-size:12px;font-weight:600;color:var(--blue);letter-spacing:1.2px;margin-bottom:8px}
+  .thesis .big{font-size:19px;font-weight:600;line-height:1.55;margin:0 0 12px;letter-spacing:-.2px}
+  .thesis p{font-size:14px;color:var(--ink2);margin:8px 0}
+  .pull{font-size:15.5px;color:var(--ink);border-left:3px solid var(--ink);
+    padding:2px 0 2px 16px;margin:22px 0;font-weight:500;line-height:1.7}
+  .pill{display:inline-block;font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:20px;border:1px solid var(--line);background:var(--bg2);color:var(--ink3)}
+  .pill.now{background:#eef6f0;color:var(--green);border-color:#cfe6d8}
+  .pill.later{background:#fdf5e6;color:var(--amber);border-color:#f0e0bd}
+  .pill.never{background:#fdeceb;color:var(--red);border-color:#f2cfcc}
+  footer{margin-top:70px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--ink3);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>book2vido · 商业化规划</h1>
+  <div class="meta">
+    <b>日期</b> 2026-09-15 ｜ <b>状态</b> 规划层，待拍板 ｜
+    <b>与 <a href="11-产品化路线看板.html">doc/11</a> / <a href="12-交付形态与许可决策.html">doc/12</a> 的关系</b>：
+    那两份是<b>决策留档</b>（起源、三问、四选项），本文是<b>规划层</b>（商业化怎么做才专业）
+  </div>
+</header>
+
+<p class="lead" style="margin-top:22px">
+这份规划里最重要的一句话，是它的<b>第一结论</b>：<b>现在不该做商业化。</b>
+不是因为不该赚钱，而是因为缺的东西不是规划 —— 是<b>反馈</b>。
+已发布内容 <b>0</b> 条，外部用户 <b>0</b> 人。在这个数字上写收入模型，无论写得多细，都是编的。
+</p>
+<p class="sub">
+所以本文的形式被这个判断决定了：<b>它不给收入预测，它给「每条收入轨道的触发条件」。</b>
+每一项都回答同一句话：<b>哪个指标到位了，才轮到动它。</b>
+</p>
+
+<div class="thesis">
+  <div class="kicker">第一结论</div>
+  <p class="big">在 n = 0 的时候，"怎么做商业化"是个假问题；真问题是"先让谁用起来"。</p>
+  <p>
+    专业投资人在审早期项目时，问的第一句是「你有哪些真实用户数据」，不是「你的商业模式是什么」。
+    <b>没有数据的商业计划书，本身就是不专业的标志</b> —— 它看起来最完整，实际最不可证伪。
+  </p>
+  <p>
+    因此本文所有条目都带<b>触发条件</b>而非日期。日期会在条件未达成时制造"该做点什么"的假压力；
+    而<b>在 n=0 时启动产品化，等于给一个没人用的东西加功能。</b>
+  </p>
+</div>
+
+<!-- ===== 01 ===== -->
+<h2><span class="num">01</span>市场与定位：先定「卖给谁」，再谈「怎么收钱」</h2>
+
+<h3>用户分层：三层里只有一层会付钱</h3>
+<table>
+  <thead><tr><th style="width:88px">层</th><th style="width:190px">是谁</th><th>他要什么</th><th>你给什么</th><th style="width:190px">付费意愿</th></tr></thead>
+  <tbody>
+    <tr><td><b>L1 读者</b></td><td>内容读者 / 观众</td><td>「这本书到底讲了什么」</td><td>视频（免费看）</td><td>不付费 —— 但他是<b>分发燃料</b></td></tr>
+    <tr><td><b>L2 使用者</b></td><td>朋友 / 工程师 / 读书会</td><td>「把我看不下去的书变成视频」</td><td>安装包 / 引擎（免费）</td><td>少量 —— 但他是<b>唯一的反馈源</b></td></tr>
+    <tr class="hi"><td><b>L3 付费者</b></td><td class="no">？ ← 这一格是空的</td><td class="no">？</td><td class="no">？</td><td><b>目前未知</b></td></tr>
+  </tbody>
+</table>
+<div class="box">
+  <span class="t">那个空着的格子，是这份规划里最诚实也最重要的一格。</span>
+  L3 为空<b>不是缺陷，是当前阶段的事实</b>。所有"谁该付钱"的假设，
+  都必须等 L2 有人真用了之后才能验证 —— 而在此之前，<b>任何自称知道 L3 是谁的判断都是猜想</b>。
+</div>
+
+<h3>赛道坐标：卡在一个「头部不感兴趣」的位置</h3>
+<table>
+  <thead><tr><th style="width:190px">赛道</th><th style="width:180px">代表 / 模式</th><th>我们的位置</th></tr></thead>
+  <tbody>
+    <tr><td>AI 视频生成</td><td>云端 API，按量付费，拼画质</td><td class="no">不竞争（铁律二：不烧钱，主动放弃画质军备）</td></tr>
+    <tr class="hi"><td>书本 → 视频</td><td>同类开源项目（星数极低）</td><td><b>同一卡位，竞品极弱</b> —— 这是机会，也是"没人验证过需求"的信号</td></tr>
+    <tr><td>AI 摘要 / 知识蒸馏</td><td>云端订阅</td><td>差异：<b>本地 + ¥0 + 出的是视频不是文字</b></td></tr>
+    <tr><td>听书 / 速读 App</td><td>订阅制</td><td>差异：<b>输出是观点提炼，不是朗读原文</b></td></tr>
+  </tbody>
+</table>
+
+<div class="box warn">
+  <span class="t">市场规模的诚实说法（不吹 TAM）。</span>
+  这是一个<b>小众工具市场</b>。「想快速看完一本书」的人很多，但
+  <b>愿意为此装一个本地模型（首次 4.9 GB 下载）+ 等 40 秒出片</b>的人少得多。
+  这是产品形态自带的<b>天然天花板</b>，必须承认 —— 它决定了这个产品<b>很难做成大生意，但很容易做成好内容和好口碑</b>。
+  而这个"天花板"本身，恰好指向了本文第 03 节的结论。
+</div>
+
+<!-- ===== 02 ===== -->
+<h2><span class="num">02</span>价值主张与免费 / 付费的切割线</h2>
+
+<h3>价值主张（一句话，数字已按实测校准）</h3>
+<p class="pull">
+半分钟上下，不到 1 MB，不要钱，有书有电脑就行。
+</p>
+<p class="sub">
+口径说明：原 slogan 写「30 秒 666kb」，实测区间为 29.3–38.9 秒 / 556–709 KB（详见
+<a href="11-产品化路线看板.html">doc/11</a> §06）。对外数字必须扛得住核 —— 被实测打脸损耗的是整条内容的可信度。
+</p>
+
+<h3>切割线该切在哪：这是商业化的核心工程问题</h3>
+<p>
+<b>不该切在「能不能生成」。</b>两个理由，都是本项目特有的：
+</p>
+<ul class="plain">
+  <li><b>引擎若开源，任何人都能自己跑</b> → 把功能锁起来没有意义，锁的是自己的口碑。</li>
+  <li><b>我们的边际成本 ≈ ¥0</b> → 禁止别人用不会省钱，只会少一个传播节点。</li>
+</ul>
+<p>所以要切的是<b>「省事」与「规模化」</b>—— 这是真实存在的稀缺，而且别人抄不走（因为它不靠功能，靠交付）。</p>
+
+<table>
+  <thead><tr><th style="width:52%">免费（引擎 / 自建）</th><th>付费（省事 / 规模化）</th></tr></thead>
+  <tbody>
+    <tr><td>自己装 Ollama、自己下 4.9 GB 模型</td><td>打开就能用，不用懂任何技术</td></tr>
+    <tr><td>一条一条跑</td><td>批量：100 本丢进去，睡一觉拿结果</td></tr>
+    <tr><td>命令行 / 拖拽</td><td>图形界面 / 网页</td></tr>
+    <tr><td>出问题自己看日志</td><td>有人帮你定位</td></tr>
+    <tr><td>只有 macOS 包</td><td>全平台可用</td></tr>
+  </tbody>
+</table>
+<div class="box good">
+  <span class="t">这条线的设计原则（一句话）。</span>
+  免费版<b>不能是残废版</b> —— 它必须是<b>完整能力 + 高门槛</b>。
+  付费买的<b>不是功能，是省掉的门槛</b>。
+  这样即使有人白嫖引擎，他也在帮你传播"这东西真能用"这件事。
+</div>
+
+<!-- ===== 03 ===== -->
+<h2><span class="num">03</span>收入轨道：六条，按「启动成本」排序</h2>
+<p class="sub">
+<b>排序依据必须先说明</b>：按启动成本而非预期收入排 —— 因为在 n=0 时，
+「预期收入」全是编的，而「启动成本」是能算的。这张表是本文最核心的一页。
+</p>
+
+<table>
+  <thead><tr><th style="width:44px">#</th><th style="width:170px">轨道</th><th style="width:132px">启动成本</th><th>触发条件（到位才轮到它）</th><th style="width:150px">与红线的关系</th></tr></thead>
+  <tbody>
+    <tr class="hi">
+      <td><b>R1</b></td>
+      <td><b>内容流量分成</b><br><span class="sub" style="margin:0">平台广告分成</span></td>
+      <td>¥0 · 能力已有</td>
+      <td>粉丝数达平台门槛（部分平台为 500）</td>
+      <td><span class="pill now">安全</span> 纯内容行为</td>
+    </tr>
+    <tr class="hi">
+      <td><b>R2</b></td>
+      <td><b>社群 / 知识星球</b><br><span class="sub" style="margin:0">行途既有终局设计</span></td>
+      <td>低 · 已有规划</td>
+      <td>有 ≥50 个真实读者愿意进（且愿意付费）</td>
+      <td><span class="pill now">安全</span> 既有路线</td>
+    </tr>
+    <tr>
+      <td><b>R3</b></td>
+      <td><b>咨询 / 顾问</b><br><span class="sub" style="margin:0">卖时间与判断力</span></td>
+      <td>¥0</td>
+      <td>有 1 个真实需求主动找上来</td>
+      <td><span class="pill later">需审在职边界</span></td>
+    </tr>
+    <tr>
+      <td><b>R4</b></td>
+      <td><b>课程 / 训练营</b></td>
+      <td>中 · 要投入做内容</td>
+      <td>R1/R2 跑通 + 有明显需求信号</td>
+      <td><span class="pill later">需审在职边界</span></td>
+    </tr>
+    <tr>
+      <td><b>R5</b></td>
+      <td><b>企业授权 / 双轨</b><br><span class="sub" style="margin:0">开源 + 商业授权并行</span></td>
+      <td>中 · 要先定许可</td>
+      <td>引擎已开源 <b>且</b> 有企业实际在使用</td>
+      <td><span class="pill later">需先定许可（doc/12 §03 选项 B/D）</span></td>
+    </tr>
+    <tr>
+      <td><b>R6</b></td>
+      <td><b>托管 SaaS / 会员</b></td>
+      <td>高 · 引入云端成本</td>
+      <td class="no">需先改铁律一/二（底牌）</td>
+      <td><span class="pill never">与铁律一冲突</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box">
+  <span class="t">这张表真正要传达的一个洞察（请重点看这一条）。</span>
+  R1–R4 全是<b>「卖人」</b>（卖内容、卖时间、卖信任）；R5–R6 才是<b>「卖工具」</b>。
+  而它们的前置条件是同一句话的两面：
+  <b>"卖人"的前置是内容与信任，"卖工具"的前置是引擎先成为独立资产。</b>
+  <br>→ 所以<b>短期收入路径在内容侧，长期产品路径在开源侧，两者不冲突，但顺序不能颠倒。</b>
+</div>
+
+<div class="box bad">
+  <span class="t">关于 R6，必须说一句重话。</span>
+  托管 SaaS 会引入<b>持续的云端成本</b>，直接违反铁律一（零公司资源）与铁律二（¥0）。
+  所以它不是"以后再说"，而是：<b>除非根本底牌换掉，否则不做。</b>
+  这不是保守 —— 一旦上了云端，"边际成本 ≈ 0"这个唯一的<b>结构性优势</b>就没了，
+  换来的是一个和一个正常 SaaS 拼价格的普通生意。
+</div>
+
+<!-- ===== 04 ===== -->
+<h2><span class="num">04</span>定价策略：锚是 0，这既是优势也是难点</h2>
+
+<h3>锚点：竞品价格构成我们的锚</h3>
+<table>
+  <thead><tr><th style="width:250px">参照物</th><th>计价方式</th><th>它给我们的锚</th></tr></thead>
+  <tbody>
+    <tr><td>付费 TTS / 语音合成服务</td><td>按字符量</td><td rowspan="3"><b>我们的锚是「0」</b></td></tr>
+    <tr><td>云端视频生成服务</td><td>按生成秒数</td></tr>
+    <tr><td>AI 摘要 / 知识工具订阅</td><td>按月</td></tr>
+  </tbody>
+</table>
+<div class="box warn">
+  <span class="t">"锚是 0"是双刃的。</span>
+  它是最好的获客武器，也是<b>定价的难点</b>：
+  <b>免费的东西不能直接涨价卖</b>。想让用户掏钱，必须提供一个与"引擎"不同的东西
+  —— 这就是第 02 节那条切割线存在的全部理由。
+</div>
+
+<h3>分层定价（若走到那一步，按此梯度）</h3>
+<table>
+  <thead><tr><th style="width:150px">层</th><th style="width:140px">价格</th><th>卖的是什么</th></tr></thead>
+  <tbody>
+    <tr><td>免费</td><td class="ok">¥0</td><td>引擎 + 自己动手（B 站教程级门槛）</td></tr>
+    <tr><td>一次买断</td><td>低（两位数）</td><td>打包好的安装包 —— 买的是"不用动手"</td></tr>
+    <tr><td>订阅</td><td>低 / 月</td><td>托管 + 批量 + 持续更新（对应 R6，已标为不做）</td></tr>
+  </tbody>
+</table>
+
+<div class="box good">
+  <span class="t">冷启动期的定价原则（本节的核心专家意见）。</span>
+  <b>不要给工具定价。</b>给工具定价需要"用户已经认可它的价值"，而 n=0 时这件事无法验证 ——
+  定低了折算自己，定高了没有成交，两种结果都拿不到有效信息。
+  <br><br>
+  冷启动期该定价的是<b>你的时间</b>（咨询 / 课程，即 R3/R4）。
+  因为那是<b>确定的稀缺品</b>，定价不需要用户群，只要有一个人认它就行。
+  <br>→ <b>推论：R3 应该在 R1 之后最先启动，而不是等产品成熟。</b>
+</div>
+
+<!-- ===== 05 ===== -->
+<h2><span class="num">05</span>单位经济：现在<b class="no">无法计算</b>，而这才是诚实的答案</h2>
+<table>
+  <thead><tr><th style="width:150px">指标</th><th style="width:170px">状态</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td>边际成本</td><td class="ok">≈ ¥0</td><td>本地推理 + 免费 TTS。<b>这是结构性优势</b>，可支撑价格战</td></tr>
+    <tr><td>毛利率</td><td class="ok">接近 100%（若成交）</td><td>边际成本≈0 → 账面上最漂亮的一格</td></tr>
+    <tr><td>已投入现金</td><td class="ok">¥0</td><td>只有磁盘、电费与时间（电费口径见 <a href="01-llm-local.md">doc/01</a> §成本口径）</td></tr>
+    <tr><td>获客成本 CAC</td><td class="no">无法计算</td><td>无渠道数据。唯一已知路径是内容，成本＝时间</td></tr>
+    <tr><td>用户生命周期价值 LTV</td><td class="no">无法计算</td><td>无付费用户，无留存数据</td></tr>
+  </tbody>
+</table>
+<div class="box warn">
+  <span class="t">专家判断：那张"毛利率接近 100%"的表，是一张残缺的表。</span>
+  它看起来极美，但<b>缺了分母（用户数）和获客（CAC）</b>。
+  而且这里有一条不那么直觉的规律：
+  <b>边际成本越低的产品，通常越难获客</b> —— 因为低成本意味着没有差异化定价空间，
+  也意味着"省钱"这个卖点对个人用户几乎不构成购买理由（他本来就不用花钱）。
+  <br>→ 与护城河那一节的结论同源：<b>低成本不是护城河，低成本 + 已获客才是。</b>
+</div>
+
+<!-- ===== 06 ===== -->
+<h2><span class="num">06</span>增长飞轮：两条，但只有一条现在能转</h2>
+
+<h3>飞轮 A · 内容飞轮（现在就能启动）</h3>
+<pre>项目本身 → 内容（书评视频 / 公众号长文 / 贴图）
+        → 读者 → 其中一部分成为使用者
+        → 反馈 → 产品变好 → 产出更好的内容 ⟳</pre>
+<p class="sub">启动成本 ¥0，且<b>不依赖用户群</b> —— 这是当前唯一能自己转起来的轮子。</p>
+
+<h3>飞轮 B · 开源飞轮（要有用户才转）</h3>
+<pre>引擎开源 → star → 使用者 → 贡献 / issue
+        → 产品变好 → 更多 star ⟳</pre>
+<div class="box bad">
+  <span class="t">飞轮 B 有一个残酷的启动条件。</span>
+  它需要<b>"有用户"作为第一推动力</b>。n=1 的项目开源，换来的通常是
+  <b>无人问津 + 一份隐性维护承诺</b> —— 两个轮子的第一推动力不同，不能混着说。
+</div>
+
+<div class="box good">
+  <span class="t">两个飞轮的交汇点（这一条同时解释了另一个问题）。</span>
+  飞轮 B 的启动条件是 <b>「引擎已经是独立资产」</b> ——
+  既要<b>结构上独立</b>（能被单独切出来），也要<b>许可上可分</b>（能单独授权）。
+  这两件事恰好就是<a href="12-交付形态与许可决策.html">doc/12</a> §03 的许可决策
+  与 <a href="17-结构诊断与重构方案.html">doc/17</a> 的包结构问题。
+  <br>→ <b>结论：「包结构」与「商业化」不是两件事，它们是同一个问题的两个面 ——
+  「引擎与产品怎么切开」。</b>
+</div>
+
+<!-- ===== 07 ===== -->
+<h2><span class="num">07</span>阶段路线图：用触发条件，不用日期</h2>
+<table>
+  <thead><tr><th style="width:120px">阶段</th><th style="width:210px">目标</th><th>进入条件</th><th style="width:290px">退出判据（可验）</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>0 · 现在</b></td><td>拿到真实反馈</td><td>—</td>
+      <td><b>≥ 5 个真人使用 + ≥ 3 篇已发布内容</b></td></tr>
+    <tr><td><b>1 · 验证</b></td><td>弄清「谁在用、用来干嘛」</td><td>阶段 0 达成</td>
+      <td><b>≥ 3 人主动重复使用</b>（不是一次尝鲜）</td></tr>
+    <tr><td><b>2 · 首批收入</b></td><td>启动 R1 / R2</td><td>阶段 1 达成</td>
+      <td>首笔收入 —— <b>不计金额，只计"确有人付费"</b></td></tr>
+    <tr><td><b>3 · 产品化</b></td><td>做"省事版"（承接 R5）</td><td>阶段 2 达成 <b>且</b> 随包 ffmpeg 完成</td>
+      <td>有人为「省事」付费</td></tr>
+    <tr><td><b>4 · 规模化</b></td><td>可选：企业 / 云</td><td>阶段 3 达成 <b>且</b> 许可决策落地</td>
+      <td>—（R6 需先改底牌）</td></tr>
+  </tbody>
+</table>
+<div class="box">
+  <span class="t">为什么阶段 3 的进入条件里有一条工程项（随包 ffmpeg）。</span>
+  因为产品化的<b>物理前提</b>就是"包能给不懂技术的人用"。
+  在它完成之前，「把包给别人用」这件事<b>不成立</b> —— 不是"体验差一点"，
+  是用户机器上会直接停住。所以商业规划与工程 backlog <b>在这一点上必须对齐</b>，
+  不能各排各的期。
+</div>
+
+<!-- ===== 08 ===== -->
+<h2><span class="num">08</span>红线：任何商业动作之前，先过这四关</h2>
+<p class="sub">与 <a href="11-产品化路线看板.html">doc/11</a> §05 保持一致，此处补上量化与处置。</p>
+<table>
+  <thead><tr><th style="width:110px">关</th><th>内容</th><th style="width:330px">量化 / 处置</th></tr></thead>
+  <tbody>
+    <tr><td><b>脱敏</b></td><td>对外物料不含真实姓名、雇主名称、内部项目代号、绝对路径</td>
+      <td>已有可执行的扫描口径与"公开前必清"清单；<b>每写入一个含绝对路径的新文档，这个数就会变 —— 用前必须重跑命令</b></td></tr>
+    <tr class="hi"><td><b>在职</b></td><td>上架、收款、公开招募等商业化动作<b>暂停</b>，直到边界明确</td>
+      <td><b>这是 R3–R6 的共同前置。</b>R1/R2 之所以标"安全"，是因为它们是纯内容行为</td></tr>
+    <tr><td><b>Key</b></td><td>内容生产不接任何公司订阅的 LLM / API Key</td>
+      <td>已有自动扫描守门（铁律一）</td></tr>
+    <tr><td><b>合伙</b></td><td>技术 × 运营目前是<b>口头约定</b></td>
+      <td><b>真要走商业化，第一件该定的不是代码，是三句话：谁的账号上架、收入怎么分、不做了怎么退。</b></td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 09 ===== -->
+<h2><span class="num">09</span>这份规划的自我审查</h2>
+<table>
+  <thead><tr><th style="width:200px">可能的批评</th><th>回应</th></tr></thead>
+  <tbody>
+    <tr><td><b>"通篇没给一个收入预测，这算规划吗？"</b></td>
+      <td>算，而且这才是 n=0 阶段的正确形态。<b>给不出预测的时候硬给，是把风险包装成确定性</b>，
+        那对决策的伤害大于帮助。本文给的每一条触发条件都是可验的 —— 这是预测做不到的</td></tr>
+    <tr><td><b>"六条轨道是不是太多了？"</b></td>
+      <td>是，但这六条的作用不是"都要做"，而是<b>划出边界</b>：告诉未来的自己哪些现在不能碰（R6）、
+        哪些前置没到（R5）、哪条现在就能启动（R1）。<b>列出不做的，和列出要做的同样重要</b></td></tr>
+    <tr><td><b>"是不是违反了克制（铁律七）？"</b></td>
+      <td>没有。<b>本文零新依赖、零新资产、零代码变更</b> —— 它是一份判断，不是一件工具。
+        且它明确把 R6（引入云端成本）与 R5（引入许可复杂度）压在条件之后，是克制的执行</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 10 ===== -->
+<h2><span class="num">10</span>待拍板</h2>
+<table>
+  <thead><tr><th style="width:52px">#</th><th>事项</th><th style="width:400px">我的建议</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td>1</td><td>是否接受「阶段 0」作为当前的唯一目标</td>
+      <td><b>接受。</b>判据就一句：<b>≥5 个真人使用 + ≥3 篇已发布内容</b>。其余全部后置</td></tr>
+    <tr class="hi"><td>2</td><td>是否接受「免费版 = 完整能力 + 高门槛」这条切割线</td>
+      <td><b>接受。</b>它同时锁定了"引擎可开源"与"产品可收费"两件事的合法性</td></tr>
+    <tr><td>3</td><td>R1 / R2 是否确认为最先启动的两条</td>
+      <td><b>确认。</b>它们是唯一两条不受在职边界限制的轨道</td></tr>
+    <tr><td>4</td><td>R3（咨询）是否提前到 R1 之后</td>
+      <td><b>建议提前。</b>理由见 §04：冷启动期该定价的是你的时间，不是工具</td></tr>
+    <tr><td>5</td><td>R6（托管云）是否明确列为「不破底牌不做」</td>
+      <td><b>建议明确列出。</b>写下来比记在脑子里更能防将来"顺手加个云"</td></tr>
+    <tr><td>6</td><td>合伙三句话（谁的账号 / 怎么分 / 怎么退）是否现在落纸</td>
+      <td><b>建议现在谈，不必现在签。</b>因为它是 R3 以后所有轨道的共同前置，越拖越难谈</td></tr>
+    <tr><td>7</td><td>本文与对内台账（工作空间 backlog 看板）的对账</td>
+      <td>本文＝<b>论证层</b>，台账＝<b>执行层</b>。改动任一处的结论时，对账另一处</td></tr>
+  </tbody>
+</table>
+
+<footer>
+  <b>事实来源与口径</b>：<br>
+  用户数（0 人 / 0 条已发布内容）、粉丝量、实测时长体积区间、模型下载体积、许可与交付缺口清单 ——
+  均取自 <a href="11-产品化路线看板.html">doc/11</a> · <a href="12-交付形态与许可决策.html">doc/12</a> ·
+  <a href="16-项目总览.md">doc/16</a> 已登记的实测口径，本文不引入新数字。<br>
+  竞品星数体量与竞品表快照取自 <a href="07-competitors.md">doc/07</a>（快照日期见该文）。<br>
+  <b>凡本文中标注"无法计算"的指标，不得在任何对外物料中给出估值</b> —— 没核过的数字等于没有数字。<br><br>
+  <b>脱敏</b>：本文不含姓名、雇主名称、内部项目代号与绝对路径，可对外公开。
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>极致简单路线 · book2vido 外部端与门槛</title>
+<style>
+  :root{
+    --bg:#F5F7FA; --card:#FFF; --text:#16181D; --muted:#6B7280; --line:#E4E7EC;
+    --red:#C4342B; --red-soft:#FDECEA; --green:#0E9F6E; --green-soft:#E8F6F0;
+    --amber:#D97706; --amber-soft:#FEF6E7; --blue:#056DE8; --blue-soft:#EAF2FE;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-size:15px;line-height:1.75;
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;padding:40px 20px}
+  .wrap{max-width:960px;margin:0 auto}
+  header{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:28px 32px;margin-bottom:22px}
+  h1{font-size:25px;letter-spacing:.4px;margin-bottom:8px}
+  .sub{color:var(--muted);font-size:13.5px}
+  .lead{margin-top:16px;padding:14px 18px;background:var(--red-soft);border-left:4px solid var(--red);
+    border-radius:0 8px 8px 0;font-size:14.5px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:26px 32px;margin-bottom:20px}
+  h2{font-size:18px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+  h2 .n{background:var(--text);color:#fff;width:26px;height:26px;border-radius:7px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto}
+  h3{font-size:15px;margin:20px 0 8px;color:var(--text)}
+  p{margin:10px 0}
+  ul{margin:10px 0 10px 20px}li{margin:5px 0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+  th{background:#F8FAFC;font-weight:600}
+  code{background:#F1F3F6;padding:2px 6px;border-radius:4px;font-size:13px;
+    font-family:"SF Mono",Menlo,Consolas,monospace}
+  .tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+  .t-red{background:var(--red-soft);color:var(--red)}
+  .t-amber{background:var(--amber-soft);color:var(--amber)}
+  .t-green{background:var(--green-soft);color:var(--green)}
+  .t-blue{background:var(--blue-soft);color:var(--blue)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+  .box{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:#FCFCFD}
+  .box.hi{border-color:var(--red);background:var(--red-soft)}
+  .box.ok{border-color:var(--green);background:var(--green-soft)}
+  .box h4{font-size:14px;margin-bottom:6px}
+  .step{border-left:3px solid var(--blue);padding:2px 0 2px 16px;margin:14px 0}
+  .step .t{font-weight:600;margin-bottom:4px}
+  .step .c{color:var(--muted);font-size:13.5px}
+  .cost{color:var(--muted);font-size:13px;margin-top:4px}
+  footer{color:var(--muted);font-size:12.5px;text-align:center;padding:16px 0 4px}
+  @media(max-width:720px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>极致简单：外部端优先，还是先把包交付出去？</h1>
+  <div class="sub">book2vido · 2026-09-20 · 基于本机实测 + 仓库现状的决策看板</div>
+  <div class="lead">
+    <b>结论：同意"先把外部端做好"——但要先承认一件事：在 <code>ffmpeg</code> 没随包之前，
+    界面做得再好也<b>交付不出去</b>。</b>
+    所以真正的顺序是 <b>P0 打通可交付性（约半天）→ P1 外部端闭环 → P2 降门槛</b>。
+    P0 不是"降门槛"，它是"让后面所有投入都有对象"。
+  </div>
+</header>
+
+<section>
+  <h2><span class="n">1</span>你的类比重构：它俩不是靠"小巧"赢的</h2>
+  <p>你说"Work Agent / Coding Agent 看着小小，但要本地启动、安装成本太高"。这句话对，但根因不在"<b>有没有界面</b>"：</p>
+  <table>
+    <tr><th style="width:32%">维度</th><th>Work Agent / Coding Agent</th><th>book2vido 现状（实测）</th></tr>
+    <tr><td>安装动作</td><td><code>npm i -g</code> 一步完事</td><td><span class="tag t-red">装 Ollama + 拉 5.2 GB 模型 + ffmpeg + Python 运行时</span></td></tr>
+    <tr><td>依赖是否在包里</td><td>是（随包下载）</td><td><span class="tag t-red">ffmpeg 不在包里</span>（<code>packaging/</code> 只有 36 KB 脚本，无 <code>vendor/</code>）</td></tr>
+    <tr><td>首次见到界面前</td><td>一条命令</td><td>读完 README 的"⚠️ 还不能交给没有技术背景的人"</td></tr>
+  </table>
+  <p><b>所以矛盾的本质是「依赖不在包里」，不是"有没有 GUI"。</b>
+  这也解释了你感觉到的那股别扭：这个项目内核已经很轻（7 环节只有 1 环节用模型），
+  但外面套的安装壳很重 —— <b>轻的东西被重壳压住了</b>。</p>
+</section>
+
+<section>
+  <h2><span class="n">2</span>现状体检：离"极致简单"差在哪（全部实测）</h2>
+  <table>
+    <tr><th style="width:26%">项</th><th style="width:12%">状态</th><th>实测事实</th></tr>
+    <tr><td>核心闭环</td><td><span class="tag t-green">已通</span></td><td>拖 PDF 到图标即出片；本次 dogfooding 实测 <b>33.9 s / 603 KB / 1080×1920</b></td></tr>
+    <tr><td>可分发性</td><td><span class="tag t-red">阻塞</span></td><td><code>vendor/</code> 缺 ffmpeg；构建脚本已加门禁，缺件时拒绝出包（<code>❌ 不可分发</code>，这是故意的）</td></tr>
+    <tr><td>可视化界面</td><td><span class="tag t-amber">半成品</span></td><td><code>.app</code> 只有"弹选择器 / 拖拽"，<b>无进度、无预览、无结果管理</b>；<code>tools/ollama_webui.html</code> 是<b>模型管理台</b>不是出片台</td></tr>
+    <tr><td>安装引导</td><td><span class="tag t-red">无</span></td><td>首次打开不知道要下载什么、要等多久</td></tr>
+    <tr><td>Python 运行时</td><td><span class="tag t-green">已随包</span></td><td>约 130 MB，用户无需装 Python / Ollama（Ollama 也已随包，模型则复用本机已有）</td></tr>
+    <tr><td>模型拉取</td><td><span class="tag t-amber">4.9 GB</span></td><td>已 <code>du -sh</code> 实测；首次运行自动下载，是最大的等待来源</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span class="n">3</span>三阶段路线</h2>
+
+  <div class="step">
+    <div class="t">P0 · 让包真的能交付出去（硬阻塞，建议今天清点）<span class="tag t-red">最高优先</span></div>
+    <div class="c">注入 <b>static 版 ffmpeg</b>（不能用 brew 版，它绑 18 个 dylib 不可分发）+ 过 <code>build_app.sh --check</code> 门禁。
+    在此之前，任何界面投入都<b>只能你自己用</b>。</div>
+    <div class="cost">产出：一个双击能给别人用且不崩的包。这是"外部端"存在的物理前提。</div>
+  </div>
+
+  <div class="step">
+    <div class="t">P1 · 外部端闭环（你说的"可视化帮我完成全部操作"）<span class="tag t-blue">优先做</span></div>
+    <div class="c">把一次完整操作<b>全程可见</b>：选文件 → 看章节树 → 选章 → <b>预览分镜</b> → 出片 → 结果显示/重试/历史。
+    关键是<b>反馈</b>不是按钮：现在后端会按阶段发通知，但界面上看不到"进行到哪一步、还要多久"。</div>
+    <div class="cost">待拍板：<b>Web 前端</b>（零依赖单文件 HTML + 本地 http server，可复现现象路线，启动一条命令）
+    vs <b>原生桌面壳</b>（更像产品，但投入量级完全不同）。见下一节。</div>
+  </div>
+
+  <div class="step">
+    <div class="t">P2 · 降门槛（门槛清单，按性价比排）<span class="tag t-amber">后置</span></div>
+    <div class="c">
+      <ul>
+        <li><b>首次启动向导</b>：把"下载模型（约 4.9 GB，预计 X 分钟）"讲清楚 + 进度条 —— 成本最低、体感提升最大</li>
+        <li><b>默认模型瘦身</b>：先给一个小模型跑通全流程，让用户 5 分钟内看到第一条片，再提示可升级 8B 提升质量</li>
+        <li><b>一键体检按钮</b>：已有 <code>tests/verify_env.py</code>，界面直接调用它，用户不必懂 PATH / 依赖</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">4</span>需要你拍板的一件事：外部端做成什么形态？</h2>
+  <div class="grid">
+    <div class="box hi">
+      <h4>A · Web 前端（单文件 HTML + 本地服务）<span class="tag t-red">推荐</span></h4>
+      <ul>
+        <li>沿用 <code>tools/ollama_webui.html</code> 已验证的技术栈（零依赖、单文件、本地 <code>http://127.0.0.1</code>）</li>
+        <li>浏览器就是 UI，不用学桌面框架；Mac/Windows/Linux 同一份代码</li>
+        <li>启动一条命令，或打包时让 launch 脚本自动开浏览器 → 用户体验≈桌面 App</li>
+      </ul>
+      <p class="cost">代价：需要用户理解"它在本地起了个服务"（向导里一句话说清即可）</p>
+    </div>
+    <div class="box">
+      <h4>B · 原生桌面壳（Swift / Tauri）</h4>
+      <ul>
+        <li>最像成品 App，可接受拖拽、菜单栏、通知等系统能力</li>
+      </ul>
+      <p class="cost">代价：新语言/新工具链进项目，与"克制"铁律和三道闸冲突；且在 ffmpeg 未随包前，<b>做出来也发不出去</b></p>
+    </div>
+  </div>
+  <div class="box ok">
+    <h4>我的建议：先 A 跑通闭环，B 等有人真在用之后再议</h4>
+    <p>理由不是"A 简单"，而是 <b>现在最大的未知不是界面形态，而是"谁会用、用来干什么"</b> ——
+    在 n=1 的阶段，用最低成本把闭环铺出來，比提前押注形态更稳。
+    真正该先花钱的地方是 P0（可交付性），那里没有选项，只有做和没做。</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">5</span>公开前不可跳过的三件事（发之前一分钱，发之后无穷贵）</h2>
+  <p>只要目标是"给别人用"，下面三条必须在<b>第一次分发出去之前</b>闭环，任何一条遗漏都不可逆：</p>
+  <ul>
+    <li><b>① 脱敏扫描</b> —— 绝对路径 / 本机用户名 / 内部代号（判据是"这些细节组合起来雇主能不能认出我"）</li>
+    <li><b>② LICENSE 裁决</b> —— 磁盘上现在是 MIT，推荐路线是"私有 + 暂不授权源码"。此刻改成本为零，分发出去不可收回</li>
+    <li><b>③ 换掉 demo 里的受版权素材</b> —— 现用的是真实出版物</li>
+  </ul>
+  <p class="cost">注：本看板与全部新增文档按音频要求只用 <code>$HOME</code> 占位，未写入本机用户名。</p>
+</section>
+
+<footer>book2vido · 极致简单路线看板 · 2026-09-20 · 数据源：本机实测 + 仓库现状 + doc/07 竞品表</footer>
+
+</div>
+</body>
+</html>

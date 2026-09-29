@@ -1,0 +1,56 @@
+# 中间产物（每跑一次再生）
+_cards/
+_clips/
+.work_*/
+__pycache__/
+*.pyc
+*.log
+# 运行日志：目录入库（含约定说明），但里面的 *.log 不入库
+# ⚠️ gitignore **不支持行内注释**（`#` 只在行首才是注释），注释必须单独成行。
+logs/*
+!logs/.gitkeep
+!logs/README.md
+
+# 大体积样片（规则降级版 6min 太大，不入库；精炼版可保留）
+samples/*_sample.mp4
+
+# 本地环境
+.venv/
+venv/
+.env
+
+# 打包产物（dist/Book2Vido.app 约 115MB，构建可再生，不入库）
+dist/
+# 随包二进制（ollama / ffmpeg 体积大且各有自己的许可，构建时注入）
+vendor/
+
+# ── 本地状态 / 中间产物（每跑一次再生，不入库）──
+# 三层缓存：outline.json / text.txt / script.json / 成片
+cache/
+# 改动前的备份（回滚用，不是源码）
+.backups/
+# 旧式无缓存工作目录
+samples/.work_*/
+
+# ── macOS / 编辑器 ──
+.DS_Store
+._*
+*.swp
+*~
+
+# ── 构建中间物 ──
+# 旧 .app 改名让位的备份（体积大）
+dist/*.bak-*/
+*.iconset/
+
+# ⚠️ 注意：gitignore **不支持行内注释**（`#` 只在行首才是注释）。
+# 把注释写在 pattern 后面，pattern 就会变成 "cache/   # 说明" 而永远不匹配——
+# 不报错、不提示，安静地什么都没忽略。见 doc/lessons/README.md L-13。
+
+# ── 构建元数据（pip install 时再生）──
+*.egg-info/
+
+# ── 样例输入（版权原因不入库；自备一本文本型 PDF 到 samples/books/ 即可跑 TC-07）──
+samples/books/
+# ── 初心物证（微信截图，含真实姓名 → 禁入库，见 SECURITY.md）──
+doc/assets/origin/

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>book2vido · 研究级架构评审（doc/23）</title>
+<style>
+  :root{
+    --ink:#1a1a1a; --muted:#6b7280; --line:#e8eaed; --bg:#ffffff;
+    --accent:#056DE8; --warn:#B45309; --warn-bg:#FFFBEB;
+    --ok:#047857; --ok-bg:#ECFDF5; --bad:#B91C1C; --bad-bg:#FEF2F2;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;padding:0 24px 80px;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB",sans-serif;
+    line-height:1.75;font-size:15px;}
+  .wrap{max-width:900px;margin:0 auto;}
+  header{padding:56px 0 32px;border-bottom:3px solid var(--ink);margin-bottom:8px;}
+  .kicker{font-size:12px;letter-spacing:.18em;color:var(--accent);font-weight:600;margin-bottom:12px;}
+  h1{font-size:30px;margin:0 0 14px;line-height:1.3;letter-spacing:-.01em;}
+  .sub{color:var(--muted);font-size:14px;}
+  h2{font-size:21px;margin:56px 0 6px;padding-top:28px;border-top:1px solid var(--line);letter-spacing:-.01em;}
+  h2 .num{color:var(--accent);font-weight:700;margin-right:10px;}
+  h3{font-size:16px;margin:30px 0 10px;}
+  p{margin:12px 0;}
+  ul.plain{padding-left:20px;margin:12px 0;}
+  ul.plain li{margin:7px 0;}
+  .lead{font-size:16px;background:#F8FAFC;border-left:3px solid var(--accent);
+    padding:16px 20px;margin:20px 0;border-radius:0 6px 6px 0;}
+  table{width:100%;border-collapse:collapse;margin:18px 0;font-size:13.5px;}
+  th{text-align:left;padding:10px 12px;border-bottom:2px solid var(--ink);font-weight:600;
+    background:#FAFBFC;font-size:12.5px;letter-spacing:.02em;}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:hover td{background:#FCFDFF;}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:3px;
+    font-weight:600;letter-spacing:.03em;white-space:nowrap;}
+  .t-new{background:#EFF6FF;color:var(--accent);}
+  .t-bad{background:var(--bad-bg);color:var(--bad);}
+  .t-warn{background:var(--warn-bg);color:var(--warn);}
+  .t-ok{background:var(--ok-bg);color:var(--ok);}
+  .box{padding:16px 20px;margin:20px 0;border-radius:6px;font-size:14px;}
+  .box.warn{background:var(--warn-bg);border:1px solid #FDE68A;}
+  .box.bad{background:var(--bad-bg);border:1px solid #FECACA;}
+  .box.ok{background:var(--ok-bg);border:1px solid #A7F3D0;}
+  .box h4{margin:0 0 8px;font-size:14px;}
+  .box .t{font-weight:700;}
+  /* 耗时条 */
+  .bars{margin:20px 0;}
+  .bar{display:flex;align-items:center;margin:7px 0;font-size:13px;}
+  .bar .lbl{width:110px;flex-shrink:0;color:var(--muted);}
+  .bar .track{flex:1;height:22px;background:#F3F4F6;border-radius:3px;overflow:hidden;position:relative;}
+  .bar .fill{height:100%;background:var(--accent);border-radius:3px;}
+  .bar .fill.hot{background:#DC2626;}
+  .bar .fill.mid{background:#F59E0B;}
+  .bar .val{width:96px;flex-shrink:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;}
+  .cite{font-size:12px;color:var(--muted);}
+  .cite a{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent);}
+  .num-big{font-size:34px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
+  .stat{display:flex;gap:28px;margin:22px 0;flex-wrap:wrap;}
+  .stat div{flex:1;min-width:150px;}
+  .stat .cap{font-size:12px;color:var(--muted);margin-top:4px;}
+  .finding{border:1px solid var(--line);border-radius:8px;padding:20px 22px;margin:22px 0;
+    background:#fff;}
+  .finding .fh{font-size:15px;font-weight:700;margin-bottom:8px;}
+  .finding .fn{display:inline-block;background:var(--ink);color:#fff;font-size:11px;
+    padding:2px 8px;border-radius:3px;margin-right:8px;font-weight:600;}
+  footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--muted);}
+  code{background:#F3F4F6;padding:1px 5px;border-radius:3px;font-size:12.5px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">DOC/23 · 研究级架构评审</div>
+  <h1>把「书变视频」当成一个研究问题来解</h1>
+  <div class="sub">
+    以文献坐标校准技术架构 · 以实测基线定位效率杠杆 · 以认知科学重审初衷<br>
+    成文 2026-09-16 · 全部数字为本机实测或公开来源，口径见 §8
+  </div>
+</header>
+
+<div class="lead">
+  <strong>一句话结论：</strong>我们 65% 的算力花在「生成文字」上，只把 0.7% 花在「让人看懂」上——
+  而后者才是这个产品唯一的目的。这不是性能问题，是<strong>资源错配</strong>。
+  三条文献证据（认知科学冗余效应、T2V 能耗标度律、Paper2Video 评估方法论）
+  指向同一个结论：<strong>该搬的不是速度，是预算</strong>。
+</div>
+
+<!-- ══════════════ 1 ══════════════ -->
+<h2><span class="num">1</span>初衷重定义：我们到底在解决谁的什么问题</h2>
+
+<p>「把书变成视频」是<strong>方案</strong>，不是<strong>问题</strong>。用方案当问题，会导致所有优化都盲目——
+因为没有一个可证伪的成功标准。先把问题说清楚。</p>
+
+<h3>1.1 场景化：三类真实用户，只有一个是我们的</h3>
+
+<table>
+  <tr><th style="width:22%">人群</th><th style="width:26%">行为特征</th><th>我们的适配度</th></tr>
+  <tr>
+    <td><strong>深度阅读者</strong><br><span class="cite">年读 10 本+，占 13.5%</span></td>
+    <td>45.9% 仍最偏好纸质书；要的是沉浸与系统性</td>
+    <td><span class="tag t-bad">不服务</span> 视频对他们是降维，不是升维。他们会读书，不需要代餐</td>
+  </tr>
+  <tr>
+    <td><strong>听书族</strong><br><span class="cite">占 38.7%</span></td>
+    <td>已在用音频代餐，场景是通勤/家务</td>
+    <td><span class="tag t-warn">部分</span> 我们有配音，但没有听觉产品该有的时长设计（30 秒太短，撑不满通勤）</td>
+  </tr>
+  <tr>
+    <td><strong>想读但读不完的人</strong><br><span class="cite">占比最大，无直接统计</span></td>
+    <td>「没时间 / 没习惯」是制约阅读的<strong>首要因素</strong>；日均手机 109.5 分钟 vs 纸质 24.7 分钟</td>
+    <td><span class="tag t-ok">主战场</span> 他们不缺内容，缺的是<strong>低门槛的第一次接触</strong></td>
+  </tr>
+</table>
+
+<div class="box ok">
+  <h4>重定义后的初衷（可证伪版本）</h4>
+  <span class="t">不是</span>「让人不用读书」——那是自我否定（读了还想读才对）。<br>
+  <span class="t">而是</span>：<strong>在一个人决定是否值得为一本书投入 8 小时之前，用 30 秒给他足够的判断依据。</strong><br>
+  <span class="t">成功标准</span>：看完视频的人，能正确回答关于这本书核心主张的问题——
+  且显著高于"只看封面目录"的对照组。
+</div>
+
+<h3>1.2 为什么现在做：卡在增速最陡的那条曲线上</h3>
+
+<p>第二十三次全国国民阅读调查（2026-04-20 发布，样本 54.5 万，覆盖 31 省，推及 13.8 亿人）里，
+数字化阅读各形态的接触率变化：</p>
+
+<table>
+  <tr><th>形态</th><th>2024</th><th>2025</th><th>变化</th><th>相对增速</th></tr>
+  <tr><td>电脑端网络在线阅读</td><td>68.3%</td><td>66.4%</td><td style="color:var(--bad)">−1.9pp</td><td style="color:var(--bad)">−2.8%</td></tr>
+  <tr><td>电子阅读器</td><td>23.9%</td><td>21.3%</td><td style="color:var(--bad)">−2.6pp</td><td style="color:var(--bad)">−10.9%</td></tr>
+  <tr><td>听书</td><td>38.5%</td><td>38.7%</td><td>+0.2pp</td><td>+0.5%</td></tr>
+  <tr><td><strong>视频讲书</strong></td><td>5.7%</td><td><strong>6.3%</strong></td><td style="color:var(--ok)">+0.6pp</td><td style="color:var(--ok)"><strong>+10.5%</strong></td></tr>
+</table>
+
+<p>视频讲书基数只有 6.3%，却是<strong>唯一两位数相对增长</strong>的形态；同期电子阅读器在两位数下跌。
+我们不是在一个成熟市场里抢份额，是<strong>在一个刚抬头的曲线刚起步的位置</strong>。
+这个判断决定了策略：<span class="tag t-new">冷启动期</span>优先级是「被看见的次数」，不是单篇完读率。</p>
+
+<!-- ══════════════ 2 ══════════════ -->
+<h2><span class="num">2</span>文献坐标：这个领域已经有人把路标插好了</h2>
+
+<p>四个方向，每条都给出它对我们<strong>具体意味着什么</strong>，而不只是"知道有这么个东西"。</p>
+
+<h3>A · 任务定义与评估（我们最缺的一环）</h3>
+<table>
+  <tr><th style="width:26%">来源</th><th>核心贡献</th><th style="width:30%">对我们的含义</th></tr>
+  <tr>
+    <td><strong>Paper2Video</strong><br><span class="cite">NUS ShowLab · arXiv 2510.05096</span></td>
+    <td>首个 paper→presentation video 基准：<strong>101 篇论文</strong>配对作者真人演讲视频/幻灯片。
+      提出四个指标，其中 <strong>PresentQuiz</strong> 用「看完视频能否答对题」衡量信息传达率。
+      PaperTalker 多智能体：slide / subtitle / cursor / talker 四个 builder，
+      并<strong>按幻灯片并行</strong>生成以压缩总时长。</td>
+    <td><span class="tag t-bad">最大缺口</span>我们<strong>零评估指标</strong>。
+      PresentQuiz 可直接抄成迷你版——这是从"能出片"到"证明有用"的分水岭</td>
+  </tr>
+  <tr>
+    <td><strong>mPresenter</strong><br><span class="cite">ACL 2026 Findings · han-etal-2026-mpresenter</span></td>
+    <td>多智能体（Planner/Reviewer/Coder/Interpreter）分解：规划 → 受众导向批评 → 布局感知生成 → 跨语言图解释。
+      建 <strong>mPreBench</strong>：40 篇论文 × 5 语言 × 1600 道专家题。</td>
+    <td>它的 <strong>Reviewer 环节</strong>（受众导向批评）是我们完全没有的：
+      我们生成完就出片，<strong>从没有"这一版够不够清楚"的判断环</strong></td>
+  </tr>
+</table>
+
+<h3>B · 认知科学（直接约束画面层设计）</h3>
+<table>
+  <tr><th style="width:24%">效应</th><th>实证结论</th><th style="width:34%">我们是否违反</th></tr>
+  <tr>
+    <td><strong>冗余效应</strong><br><span class="cite">Redundancy Effect</span></td>
+    <td>画面上<strong>重复呈现</strong>口播已有的文字，学习表现<strong>显著更差</strong>。
+      （Pastore 2010，154 名大学生，冗余组在两个测验上均劣于非冗余组）</td>
+    <td><span class="tag t-bad">正在违反</span>见 §4.1，画面卡上印的是口播原句全文</td>
+  </tr>
+  <tr>
+    <td><strong>模态原则</strong><br><span class="cite">Modality Principle</span></td>
+    <td>图应配<strong>口语</strong>而非<strong>文字</strong>——让听觉与视觉通道各担一路，
+      避免注意力在两处文字间分裂（Mayer & Moreno；Tindall-Ford et al. 1997）</td>
+    <td><span class="tag t-bad">正在违反</span>同上：文字同时进了耳朵和眼睛</td>
+  </tr>
+  <tr>
+    <td><strong>双编码</strong><br><span class="cite">Paivio / Mayer</span></td>
+    <td>两条通道承载<strong>互补</strong>信息时记忆最强——注意是"互补"，
+      不是"同一内容的两次呈现"</td>
+    <td><span class="tag t-warn">未充分利用</span>第二通道目前在复读，没提供增量信息</td>
+  </tr>
+  <tr>
+    <td><strong>时间压缩</strong><br><span class="cite">Time-compressed speech</span></td>
+    <td>压缩 25% 学习无损；50% 是可懂度上限；
+      播放速度超过 <strong>2×</strong> 后理解显著下降（<em>Educational Psychology Review</em> 2024, 36:79）</td>
+    <td><span class="tag t-ok">可用</span>TTS 语速上调 20–25% 是免费提速，
+      且 30 秒时长本身在安全区</td>
+  </tr>
+</table>
+
+<h3>C · 能耗标度律（我们的技术路线有了学术级辩护）</h3>
+
+<div class="box ok">
+  <h4>关键事实：视频扩散模型「规模不经济」</h4>
+  <ul class="plain" style="margin:8px 0 0">
+    <li><strong>批处理几乎不省能</strong>：batch size 1 / 2 / 4 生成视频，单条能耗差异 <strong>&lt; 3.3%</strong>。
+      因为模型单条就已跑在 GPU 热设计功耗附近，没有空闲余量可填。</li>
+    <li><strong>加 GPU 不省能</strong>：GPU 数翻倍 → 时间减半但总功耗翻倍，加上通信开销甚至更差。</li>
+    <li><strong>量级</strong>：CogVideoX 5 秒视频 ≈ <strong>3.4×10⁶ 焦耳</strong>（Hugging Face 实测，CodeCarbon 计量），
+      约为高清出图的 <strong>700 倍</strong>；Sora 2.0 Pro 12 秒 1080p 估算 ≈ <strong>1313 Wh</strong>。</li>
+  </ul>
+  <p style="margin:10px 0 0"><span class="cite">来源：<em>Lights, Camera, Carbon: Architectural Scaling Laws for Video Generation Energy Consumption</em>
+    （arXiv 2607.04553，六个开源模型 / 三种 GPU 配置，拟合 MAPE &lt; 3%）</span></p>
+</div>
+
+<p><strong>这意味着什么</strong>：对外我们一直把"不烧显卡"讲成成本妥协（因为穷所以省钱）。
+文献给了更强的说法——<strong>扩散视频路线在规模化下没有边际成本递减</strong>，
+而我们的程序化画面路线有（渲染 12 张卡 <strong>0.54 秒</strong>，多一条片就是多 0.54 秒）。
+这不是"便宜的次品"，是<strong>唯一能规模化的架构</strong>。这个说法可以硬气地讲。</p>
+
+<h3>D · 本地推理优化（大部分对我们无效，要诚实）</h3>
+<table>
+  <tr><th>技术</th><th>典型收益</th><th>适用场景</th><th style="width:22%">我们能用吗</th></tr>
+  <tr><td>Q4 量化</td><td>内存 −50~75%，+56% 速度</td><td>通用</td><td><span class="tag t-ok">已用</span> qwen3:8b Q4_K_M</td></tr>
+  <tr><td>投机解码</td><td>2–3×（EAGLE3 实测）</td><td>decode 密集、有配套 draft 模型</td><td><span class="tag t-warn">待验</span>需确认 Ollama 侧支持度</td></tr>
+  <tr><td>Continuous batching</td><td>吞吐 3–10×</td><td><strong>多并发请求</strong></td><td><span class="tag t-bad">不适用</span>单用户 batch=1；本机已实测并发仅省 5%（噪声）</td></tr>
+  <tr><td>KV cache 量化</td><td>显存减半，质量损失 &lt;1%</td><td>长上下文</td><td><span class="tag t-warn">边际</span>我们 4K ctx 本就短</td></tr>
+  <tr><td><strong>Prefix caching</strong></td><td>跳过重复前缀的 prefill</td><td><strong>固定 system prompt + 变化输入</strong></td><td><span class="tag t-new">最匹配</span>我们的提示词模板每章固定，
+    只有 chunk 变——<strong>理论上直接有效，待实测</strong></td></tr>
+</table>
+
+<!-- ══════════════ 3 ══════════════ -->
+<h2><span class="num">3</span>实测基线：瓶颈只有一个，而且很明确</h2>
+
+<p>用新写的 <code>tools/profile_pipeline.py</code> 跑真实链路（强制关缓存，否则命中缓存会测出假象）。
+样本：348 页 PDF，第 3 章，2155 字切片，think=true：</p>
+
+<div class="bars">
+  <div class="bar"><span class="lbl">LLM 分镜</span><span class="track"><span class="fill hot" style="width:65.2%"></span></span><span class="val">49.76s · 65.2%</span></div>
+  <div class="bar"><span class="lbl">目录解析</span><span class="track"><span class="fill mid" style="width:12.6%"></span></span><span class="val">9.65s · 12.6%</span></div>
+  <div class="bar"><span class="lbl">PDF 抽页</span><span class="track"><span class="fill" style="width:8.6%"></span></span><span class="val">6.58s · 8.6%</span></div>
+  <div class="bar"><span class="lbl">FFmpeg 合成</span><span class="track"><span class="fill" style="width:8.1%"></span></span><span class="val">6.15s · 8.1%</span></div>
+  <div class="bar"><span class="lbl">TTS 配音</span><span class="track"><span class="fill" style="width:4.8%"></span></span><span class="val">3.68s · 4.8%</span></div>
+  <div class="bar"><span class="lbl">画面渲染</span><span class="track"><span class="fill" style="width:0.7%"></span></span><span class="val">0.54s · 0.7%</span></div>
+  <div class="bar"><span class="lbl">章节切片</span><span class="track"><span class="fill" style="width:0.1%"></span></span><span class="val">0.00s · 0.0%</span></div>
+</div>
+
+<div class="stat">
+  <div><div class="num-big">65.2%</div><div class="cap">单一环节（分镜）占总耗时</div></div>
+  <div><div class="num-big">0.7%</div><div class="cap">画面渲染占比——唯一直接服务"看懂"的环节</div></div>
+  <div><div class="num-big">76.4s</div><div class="cap">端到端单章（成片 36.7s / 660KB）</div></div>
+</div>
+
+<p><span class="cite">对照档：第 5 章 / 1378 字 / think=false → 分镜 26.16s（40.6%），总 64.4s。
+两档样本字数与章节不同，<strong>不可直接相减</strong>，但量级一致：分镜始终是最大块。</span></p>
+
+<div class="box warn">
+  <h4>顺带修掉的一个静默陷阱</h4>
+  <code>config.load()</code> 默认<strong>不读项目根 config.yaml</strong>，而内置 DEFAULT 里
+  <code>provider="rule"</code>。CLI 因为显式传了路径所以正常；但<strong>任何库调用方不传路径就会静默跑规则切句</strong>，
+  没有任何告警——实测分镜耗时 0.02s 就是这个症状。
+  本次评审因此新建的剖析脚本已强制要求显式 <code>--config</code>。<br>
+  <span class="cite">建议：把 DEFAULT 的 provider 与 config.yaml 对齐，或在未显式指定时打一行提示。属低优先级的卫生问题。</span>
+</div>
+
+<!-- ══════════════ 4 ══════════════ -->
+<h2><span class="num">4</span>三个反直觉发现</h2>
+
+<div class="finding">
+  <div class="fh"><span class="fn">发现 1</span>画面层正在做一件被实证为有害的事</div>
+  <p><code>visualizer.card()</code> 把 <code>scene.text</code>（口播原句<strong>全文</strong>）印在卡上，
+    同时这句又被 TTS 念出来。于是同一段文字<strong>同时进入耳朵和眼睛</strong>。</p>
+  <p>这同时撞上两个效应：<strong>冗余效应</strong>（重复呈现降低学习表现）
+    与<strong>模态原则</strong>（图应配口语，不应配文字）。认知科学的预测很明确：
+    这样做<strong>比只在画面放关键词更差</strong>。</p>
+  <p><strong>为什么这个发现值钱</strong>：它不需要新模型、不需要钱、不需要算力——
+    只改渲染逻辑。而且它是<strong>唯一直接提升"初衷达成度"</strong>的改动（其余都是提升速度）。
+    在 0.54 秒的渲染预算里，我们有充分的余地把画面从"复读机"改成"第二通道"。</p>
+</div>
+
+<div class="finding">
+  <div class="fh"><span class="fn">发现 2</span>资源错配：65% 花在生产文字，0.7% 花在让人看懂</div>
+  <p>把基线按"服务于哪个目标"重新归类：</p>
+  <table style="margin:12px 0">
+    <tr><th>目标</th><th>环节</th><th>合计占比</th></tr>
+    <tr><td>把长文压成短稿（<strong>手段</strong>）</td><td>分镜 65.2% + 切片 0.0% + 抽页 8.6% + 目录 12.6%</td><td><strong>86.4%</strong></td></tr>
+    <tr><td>让人看懂（<strong>目的</strong>）</td><td>画面 0.7% + 配音 4.8% + 合成 8.1%</td><td><strong>13.6%</strong></td></tr>
+  </table>
+  <p>86% 的资源在"<strong>说什么</strong>"，14% 在"<strong>怎么说</strong>"。
+  但产品的价值主张全在"怎么说"——同样是 12 句话，讲得清和讲不清是两个产品。
+  <strong>"极致架构"的第一刀不该砍在加速上，该砍在重新分配预算上。</strong></p>
+</div>
+
+<div class="finding">
+  <div class="fh"><span class="fn">发现 3</span>我们最该抄的不是架构，是评估</div>
+  <p>Paper2Video 与 mPresenter 的架构（多智能体、Beamer 渲染、说话人头像）我们<strong>都不能直接抄</strong>——
+  它们假设有云端大模型和付费 API，与零成本铁律冲突。</p>
+  <p>但它们共同的、<strong>零成本就能抄</strong>的东西是：
+  <strong>用「看完能否答题」衡量信息传达率</strong>（PresentQuiz / mPreBench）。
+  我们现在一条评估指标都没有——9 条 demo 片只能说明"能出片"，
+  回答不了"<strong>看完的人到底懂了没有</strong>"。</p>
+  <p>没有评估，所有优化都是盲调：改了提示词，不知道更好还是更差；
+  换了画面，不知道更清楚还是更花哨。<strong>这是从"玩具"到"研究级"的分水岭。</strong></p>
+</div>
+
+<!-- ══════════════ 5 ══════════════ -->
+<h2><span class="num">5</span>极致效率：杠杆排序（按实测 ROI）</h2>
+
+<table>
+  <tr><th style="width:6%">#</th><th style="width:24%">杠杆</th><th>预期收益</th><th style="width:14%">成本</th><th style="width:12%">置信度</th></tr>
+  <tr>
+    <td><strong>1</strong></td>
+    <td><strong>Prefix caching</strong><br><span class="cite">提示词模板固定，仅 chunk 变</span></td>
+    <td>每章省掉固定模板的重复 prefill。prefill 是 O(n)，我们模板 + concept 清单不短，
+      理论收益直接作用在<strong>占比 65% 的那一环</strong></td>
+    <td>低</td>
+    <td><span class="tag t-warn">待实测</span></td>
+  </tr>
+  <tr>
+    <td><strong>2</strong></td>
+    <td><strong>think 分档</strong><br><span class="cite">主链路 true / 批量初筛 false</span></td>
+    <td>同文本对照：think=true 94.8s vs false 16.9s（<strong>5.6×</strong>）。
+      现已支持 <code>--fast</code>，但<strong>没有按用途自动分档的策略</strong></td>
+    <td>低</td>
+    <td><span class="tag t-ok">已实测</span></td>
+  </tr>
+  <tr>
+    <td><strong>3</strong></td>
+    <td><strong>抽页 / 目录结果持久化</strong></td>
+    <td>首跑 16.2s（21.2%），已有 outline 缓存；
+      进一步可把<strong>抽页结果</strong>也按书指纹落盘，换章重跑不再重抽 348 页</td>
+    <td>低</td>
+    <td><span class="tag t-ok">已实测</span></td>
+  </tr>
+  <tr>
+    <td><strong>4</strong></td>
+    <td><strong>阶段流水线</strong><br><span class="cite">借鉴 PaperTalker 的 slide-wise 并行</span></td>
+    <td>当前：N 章 = N × (分镜 + 配音 + 合成)。
+      分镜受 Ollama 串行限制，但配音/渲染/合成是 IO/CPU 密集，<strong>可与下一章的分镜重叠</strong>。
+      理论把总时长从 Σ(全部) 压向 Σ(分镜) + 尾部</td>
+    <td>中</td>
+    <td><span class="tag t-warn">理论</span></td>
+  </tr>
+  <tr>
+    <td><strong>5</strong></td>
+    <td>TTS 语速 +20~25%</td>
+    <td>时间压缩 25% 内学习无损 → 成片更短（省合成时间 + 更符合短视频场景），
+      <strong>且可能提升完播</strong></td>
+    <td>极低</td>
+    <td><span class="tag t-ok">文献支撑</span></td>
+  </tr>
+  <tr style="opacity:.55">
+    <td>—</td>
+    <td>Ollama 并发</td>
+    <td>本机实测：串行 2.2s vs 并发 2.1s，省 5%＝噪声</td>
+    <td>—</td>
+    <td><span class="tag t-bad">已证伪</span></td>
+  </tr>
+  <tr style="opacity:.55">
+    <td>—</td>
+    <td>换更快的画面渲染</td>
+    <td>0.54s 已是噪声级，再快也没有意义</td>
+    <td>—</td>
+    <td><span class="tag t-bad">无价值</span></td>
+  </tr>
+</table>
+
+<!-- ══════════════ 6 ══════════════ -->
+<h2><span class="num">6</span>极致架构：三个提案（带取舍，不粉饰）</h2>
+
+<h3>提案 A · 画面层从「复读」改为「第二通道」</h3>
+<ul class="plain">
+  <li><strong>做什么</strong>：卡上不再印口播全文；保留关键词作为锚点，
+    其余画面预算给<strong>口播里没有的信息</strong>——结构关系、对比、进度、数据、图标语义。</li>
+  <li><strong>依据</strong>：冗余效应 + 模态原则 + 双编码（§2-B）。</li>
+  <li><strong>代价</strong>：画面信息密度上升，渲染逻辑复杂度上升；
+    「看画面就知道在讲什么」的冗余安全感会消失——对<strong>静音刷视频</strong>的用户是损失。</li>
+  <li><strong>怎么补</strong>：保留字幕轨（可选开关），静音场景靠字幕，有声场景靠听觉通道。</li>
+  <li><strong>ROI 判断</strong>：<span class="tag t-ok">最高</span>零新增成本，直击初衷，且预算充裕（0.54s → 哪怕涨到 5s 也只占 6%）</li>
+</ul>
+
+<h3>提案 B · 内置迷你 PresentQuiz 评估</h3>
+<ul class="plain">
+  <li><strong>做什么</strong>：出片时同步生成 3–5 道选择题（同一本地模型生成，成本可忽略），
+    攒成一个小 benchmark；对照组 = 只看目录 vs 看视频。</li>
+  <li><strong>依据</strong>：Paper2Video 的 PresentQuiz / mPresenter 的 mPreBench（§2-A）。</li>
+  <li><strong>代价</strong>：要人工校对题目质量，否则评估本身不可信；初期只能覆盖少量章节。</li>
+  <li><strong>ROI 判断</strong>：<span class="tag t-ok">最高（并列）</span>
+    <strong>没有它，A 和 C 的效果都无法证明。</strong>这是所有优化的前提设施，不是可选项</li>
+</ul>
+
+<h3>提案 C · 阶段流水线 + 提示词前缀复用</h3>
+<ul class="plain">
+  <li><strong>做什么</strong>：①把分镜阶段与（配音/渲染/合成）阶段解耦成流水线；
+    ②固定提示词模板走 prefix cache。</li>
+  <li><strong>依据</strong>：§2-D 与 §5 杠杆 1/4。</li>
+  <li><strong>代价</strong>：流水线会破坏当前"一章跑完再看下一章"的<strong>确定性输出顺序</strong>，
+    与"可复现"这条既有优势有张力；prefix cache 收益<strong>尚未实测</strong>，可能落空。</li>
+  <li><strong>ROI 判断</strong>：<span class="tag t-warn">中</span>
+    收益明确但依赖实测；<strong>建议等 B 建起来再做</strong>，否则不知道提速是否牺牲了质量</li>
+</ul>
+
+<!-- ══════════════ 7 ══════════════ -->
+<h2><span class="num">7</span>优先级建议</h2>
+
+<table>
+  <tr><th style="width:8%">顺序</th><th style="width:30%">动作</th><th>理由</th></tr>
+  <tr><td><strong>P0</strong></td><td>建迷你 PresentQuiz（提案 B）</td><td>没有度量，后面所有改动都是盲调。先有尺子，再动刀</td></tr>
+  <tr><td><strong>P1</strong></td><td>画面层去冗余（提案 A）</td><td>零成本、直击初衷、有实证支撑，且 0.54s 的预算里有大量空间</td></tr>
+  <tr><td><strong>P2</strong></td><td>think 分档策略化 + 抽页持久化</td><td>低风险提速，收益已实测</td></tr>
+  <tr><td><strong>P3</strong></td><td>流水线 / prefix cache（提案 C）</td><td>收益待实测，且要在 P0 之后才能验证"提速是否伤质量"</td></tr>
+</table>
+
+<div class="box bad">
+  <h4>需要拍板的两件事</h4>
+  <p style="margin:6px 0"><strong>① 静音场景要不要保？</strong>
+    提案 A 会削弱"静音刷视频也能看懂"的能力。
+    如果目标场景包含静音（通勤、办公室），需要保留字幕轨——这会让画面重新变拥挤，
+    部分抵消收益。<strong>这是产品定位问题，不是技术问题。</strong></p>
+  <p style="margin:6px 0 0"><strong>② 评估要不要做成人能看的？</strong>
+    迷你 PresentQuiz 可以先只做内部基准（不公开），也可以做成对外可讲的差异化卖点
+    （"我们每条片都自带理解度测试"）。后者更有传播力，但需要题库质量过硬。</p>
+</div>
+
+<!-- ══════════════ 8 ══════════════ -->
+<h2><span class="num">8</span>口径与诚实声明</h2>
+<ul class="plain">
+  <li><strong>实测数字</strong>均由本次新建的 <code>tools/profile_pipeline.py</code> 在本机跑出
+    （348 页 PDF，强制关缓存）。样本仅 2 个章节，<strong>单次采样，未做多轮取均值</strong>，
+    绝对值会有波动，但量级与环节排序稳定。</li>
+  <li><strong>think=true/false 的 5.6×</strong> 来自 47 字短输入对照，
+    长输入下思考 token 可能饱和，<strong>不可直接外推到 2155 字场景</strong>。</li>
+  <li><strong>prefix caching 与投机解码</strong>的收益是<strong>理论推断</strong>，
+    本机未实测，标记"待验"。不要当成已兑现的收益。</li>
+  <li><strong>认知科学结论</strong>均来自实验室情境的多媒体学习研究，
+    迁移到 30 秒短视频场景需谨慎；但冗余效应与模态原则在不同研究中重复验证，方向可信。</li>
+  <li><strong>未解决</strong>：本文没有回答"画面该放什么"的具体设计——
+    那需要提案 B 的评估结果来驱动，先有度量再谈设计。</li>
+</ul>
+
+<footer>
+  doc/23 · 研究级架构评审 · 2026-09-16<br>
+  配套工具：<code>tools/profile_pipeline.py</code>（环节耗时剖析，本次新建）<br>
+  前置阅读：<a href="16-项目总览.md" style="color:var(--accent)">doc/16 项目总览</a> ·
+  <a href="07-competitors.md" style="color:var(--accent)">doc/07 竞品</a> ·
+  <a href="08-画面资产策略.md" style="color:var(--accent)">doc/08 画面资产策略</a>
+</footer>
+
+</div>
+</body>
+</html>
