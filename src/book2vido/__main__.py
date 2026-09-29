@@ -97,12 +97,13 @@ def _run_cmd(a):
     if a.cache_dir:
         cfg["cache"]["dir"] = a.cache_dir
     think = False if a.fast else None
+    bg = list(a.bg) if getattr(a, "bg", None) else None
 
     # ⚠️ 判定必须用 `is not None`，**不能用 truthiness**：`--chapter 0` 会被判成"没给章参数"
     # 而静默走整本出片的老路径（退出码 0，用户拿到一条完全不对的片子却毫无提示）。
     # 这是本项目最忌讳的"静默走错分支"，故显式区分「没给」与「给了 0」。
     if a.chapter is None and a.chapters is None and not a.all:
-        r = pipeline.run(a.input, a.out, a.config, think=think)
+        r = pipeline.run(a.input, a.out, a.config, think=think, bg_images=bg)
         _cost_log(r["out"], r["scenes"], r["seconds"], r.get("cache", "off"))
         return 0
 
@@ -123,7 +124,7 @@ def _run_cmd(a):
     # 单章 + --out 以 .mp4 结尾 → 直接写那个文件；多章/--all → --out 视为目录
     single = bool(idx) and len(idx) == 1 and Path(a.out).suffix.lower() == ".mp4"
     r = pipeline.run_book(a.input, a.out, cfg, indices=idx, single_file=single,
-                          no_cache=a.no_cache, think=think)
+                          no_cache=a.no_cache, think=think, bg_images=bg)
     for x in r["ok"]:
         _cost_log(x["out"], x["scenes"], x["seconds"], x.get("cache", "miss"))
     # 「跳过」排在「失败」之前：前者是正常判断（料不够），后者才是要查的意外。
@@ -214,6 +215,8 @@ def main():
     run_p.add_argument("--jobs", type=int, help="TTS 并发度（默认取 config；只影响 TTS，不影响模型）")
     run_p.add_argument("--no-cache", action="store_true", help="关闭缓存，每次全新生成")
     run_p.add_argument("--cache-dir", help="缓存根目录（默认 <项目根>/cache）")
+    run_p.add_argument("--bg", action="append", dest="bg",
+                       help="背景图路径（可多次，循环铺底到各分镜卡）；支持 png/jpg/webp")
 
     bat_p = sub.add_parser("batch", parents=[common], help="批量目录转视频")
     bat_p.add_argument("--batch", required=True, help="输入目录（PDF/MD/TXT）")

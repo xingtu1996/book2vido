@@ -35,6 +35,28 @@ CONFIG_PATH = str(project_root() / "config.yaml")
 _current_doc = {"path": "", "text": ""}  # 当前上传文档，供 chat 用
 
 
+def _images_manifest() -> list:
+    """读取 uploads/manifest.json（用户上传图片清单）。缺失/损坏返回空列表。"""
+    p = project_root() / "uploads" / "manifest.json"
+    if p.exists():
+        try:
+            return json.loads(p.read_text(encoding="utf-8"))
+        except Exception:
+            return []
+    return []
+
+
+def _add_image(name: str, path: str) -> None:
+    """把一张上传图片登记进 manifest（供渲染时作铺底素材）。"""
+    p = project_root() / "uploads" / "manifest.json"
+    data = _images_manifest()
+    data.append({"name": name, "path": str(path)})
+    p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+IMG_EXTS = (".png", ".jpg", ".jpeg", ".webp", ".gif")
+
+
 # ── Environment checks ──
 
 
@@ -96,6 +118,11 @@ class GuiHandler(BaseHTTPRequestHandler):
         # Environment check (full dashboard version)
         if path == "/api/check-env":
             self._json(_check_env())
+            return
+
+        # Uploaded background images (铺底素材清单)
+        if path == "/api/images":
+            self._json({"ok": True, "images": _images_manifest()})
             return
 
         # Chapter outline
@@ -312,7 +339,15 @@ class GuiHandler(BaseHTTPRequestHandler):
             save_path = upload_dir / fname
             with open(save_path, "wb") as f:
                 f.write(file_data)
-            
+
+            # 图片类：登记为可铺底素材，不做文本抽取（chat 用的 _current_doc 保持空）
+            if fname.lower().endswith(IMG_EXTS):
+                _add_image(fname, str(save_path))
+                self._json({"ok": True, "path": str(save_path), "name": fname,
+                            "type": "image",
+                            "message": "已加入背景图素材，生成时自动铺底"})
+                return
+
             # 提取全文存到全局，供 chat 用
             chapters = []
             try:

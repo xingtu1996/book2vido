@@ -91,7 +91,7 @@ class PillowProvider:
                  w: int = 1080, h: int = 1920, brand: str = "行途 XingTu",
                  icons: bool = True, icon_dir: str | None = None,
                  icon_size: int = 430, allow_network: bool = True,
-                 theme: str = DEFAULT_THEME):
+                 theme: str = DEFAULT_THEME, bg_images: list | None = None):
         # 主题决定整套色板；`accent` 仅在 custom 主题下生效（见下）。
         # 为什么不让 accent 直接覆盖：单个色值撑不起一套体系，改一个不配套会撞对比度。
         if theme == "custom":
@@ -106,6 +106,8 @@ class PillowProvider:
         self.theme = theme
         self.accent = self.pal["accent"]
         self.w, self.h = w, h
+        # 用户上传的背景图（铺底素材）：循环使用到各分镜卡。空 = 纯色底。
+        self.bg_images = list(bg_images or [])
         self.brand = brand
         self.font = resolve_font(font)
         if not self.font:
@@ -129,8 +131,31 @@ class PillowProvider:
                 print(f"[warn] 字体加载失败 {self.font}: {e}")
         return ImageFont.load_default()
 
-    def card(self, scene, idx: int, out_dir) -> str:
-        img = Image.new("RGB", (self.w, self.h), self.pal["bg"])
+    def _load_bg(self, bg_path: str) -> Image.Image:
+        """用户上传图片 → cover 裁剪到画布尺寸 + 轻量压暗，保证白字可读。"""
+        im = Image.open(bg_path).convert("RGB")
+        iw, ih = im.size
+        scale = max(self.w / iw, self.h / ih)
+        nw, nh = int(iw * scale), int(ih * scale)
+        im = im.resize((nw, nh), Image.LANCZOS)
+        left, top = (nw - self.w) // 2, (nh - self.h) // 2
+        im = im.crop((left, top, left + self.w, top + self.h))
+        # 压暗：白字 + 红关键词在压暗照片上对比最强；alpha=130 ≈ 半透明黑蒙版。
+        scrim = Image.new("RGBA", (self.w, self.h), (0, 0, 0, 130))
+        return Image.alpha_composite(im.convert("RGBA"), scrim).convert("RGB")
+
+    def card(self, scene, idx: int, out_dir, bg_image: str | None = None) -> str:
+        # 铺底优先级：显式传入 > 轮询用户上传的背景图 > 主题纯色底。
+        bg_path = (bg_image or (self.bg_images[(idx - 1) % len(self.bg_images)]
+                                if self.bg_images else None))
+        if bg_path:
+            try:
+                img = self._load_bg(bg_path)
+            except Exception as e:
+                print(f"[warn] 背景图加载失败 {bg_path}: {e} —— 回退纯色底")
+                img = Image.new("RGB", (self.w, self.h), self.pal["bg"])
+        else:
+            img = Image.new("RGB", (self.w, self.h), self.pal["bg"])
         d = ImageDraw.Draw(img)
         cx = self.w // 2
 

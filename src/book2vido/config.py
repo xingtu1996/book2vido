@@ -13,7 +13,11 @@ DEFAULT = {
     # 色板 SSoT：`03_运营工具箱/02_排版与设计/行途公众号封面设计规则_V1.md` V1.2（黑红灰）。
     # ⚠️ 改 theme 必须同时确认它进了成片缓存键（cache.video_key）——否则「改了像没改」。
     "visual": {"theme": "ink", "accent": "#056DE8", "font": None, "w": 1080, "h": 1920,
-               "icons": True, "icon_dir": None, "icon_size": 430, "allow_network": True},
+               "icons": True, "icon_dir": None, "icon_size": 430, "allow_network": True,
+               # bg_images: 用户上传的图片路径列表，作为分镜卡铺底（循环使用）。
+               # 空 = 沿用主题纯色底。GUI 上传的图片会写入 uploads/manifest.json 并经
+               # 子进程环境变量 BOOK2VIDO_BG_IMAGES 注入；CLI 用 --bg 显式指定。
+               "bg_images": []},
     # max_chars: 送本地模型的正文上限。4K ctx 是硬约束——超了模型会截断你的输入，
     # 还不如自己按「首/中/尾均匀采样」主动裁（见 segmenter.py）。
     "limits": {"max_sentences": 12, "max_chars": 2500},

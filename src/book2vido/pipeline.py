@@ -141,7 +141,8 @@ def run_chapter(pages, doc, ch: Chapter, cfg: dict, out_path, c,
 
 
 def run_book(input_path: str, out_root, cfg: dict, indices=None, single_file: bool = False,
-             no_cache: bool = False, think: bool | None = None) -> dict:
+             no_cache: bool = False, think: bool | None = None,
+             bg_images: list | None = None) -> dict:
     """按章批量出片。
 
     章级**串行**、章内并行：实测给 Ollama 加并发无效（服务端串行，省 5%＝噪声），
@@ -150,6 +151,10 @@ def run_book(input_path: str, out_root, cfg: dict, indices=None, single_file: bo
     c = cache_mod.Cache(input_path, cfg, root=cfg["cache"].get("dir"),
                         enabled=bool(cfg["cache"]["enabled"]))
     use_cache = bool(c.enabled) and not no_cache
+
+    # 背景图铺底：上传图片循环作分镜卡底，providers.build 会用 **cfg["visual"] 传入 viz。
+    if bg_images:
+        cfg["visual"]["bg_images"] = list(bg_images)
 
     # 大纲优先读缓存：①省 ~6s 全书解析 ②让 outline.json 成为**真正生效**的人工改口
     # （此前每次都重建，落盘文件白存——与 video_key 同类的"改了不生效"缺陷）。
@@ -202,7 +207,8 @@ def run_book(input_path: str, out_root, cfg: dict, indices=None, single_file: bo
             "cost": round(0.03 * sec / 3600 * 0.6, 5)}
 
 
-def run(input_path: str, out_path: str, config_path=None, think: bool | None = None) -> dict:
+def run(input_path: str, out_path: str, config_path=None, think: bool | None = None,
+        bg_images: list | None = None) -> dict:
     """T2V-001 兼容入口：整篇当一章、单文件输出。**签名与语义保持不变。**
 
     刻意不走新链路：①不读目录（整本即一章）②不启用缓存（保持旧副作用面，
@@ -212,6 +218,8 @@ def run(input_path: str, out_path: str, config_path=None, think: bool | None = N
     cfg = load(config_path)
     if think is not None:
         cfg["llm"]["think"] = think
+    if bg_images:
+        cfg["visual"]["bg_images"] = list(bg_images)
     pages = extractor.extract_pages(input_path)
     full = "\n".join(pages)
     p = Path(input_path)

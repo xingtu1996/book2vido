@@ -1,6 +1,7 @@
 """Background pipeline execution — job queue + run loop."""
 from __future__ import annotations
 
+import json
 import time
 import threading
 from pathlib import Path
@@ -65,6 +66,19 @@ def _run_pipeline(job_id: str, input_path: str, chapter_indices: list, voice: st
         log(f"Chapters: {chapter_indices}")
 
         cfg = load(CONFIG_PATH)
+
+        # 用户上传的背景图（铺底素材）：从 uploads/manifest.json 取出，
+        # 既写入内存 cfg（供非子进程路径），也通过环境变量交给子进程。
+        manifest = project_root() / "uploads" / "manifest.json"
+        bg_paths = []
+        if manifest.exists():
+            try:
+                bg_paths = [m["path"] for m in json.loads(manifest.read_text(encoding="utf-8"))]
+            except Exception:
+                bg_paths = []
+        if bg_paths:
+            cfg["visual"]["bg_images"] = bg_paths
+
         if voice:
             # 映射界面名 → edge-tts voice ID
             voice_map = {
@@ -102,13 +116,16 @@ def _run_pipeline(job_id: str, input_path: str, chapter_indices: list, voice: st
             py = sys.executable
             env = dict(os.environ)
             env["PYTHONPATH"] = str(GUI_DIR.parent.parent)  # src/
+            # 背景图铺底经环境变量交给子进程（子进程重新 load config，内存 cfg 不生效）
+            env["BOOK2VIDO_BG_IMAGES"] = json.dumps(bg_paths)
             cmd = [
                 py, "-c",
                 f"""
-import sys, json
+import sys, json, os
 sys.path.insert(0, '{str(GUI_DIR.parent.parent)}')
 from book2vido import pipeline
-r = pipeline.run('{input_path}', '{str(output_path)}', '{CONFIG_PATH}', think=None)
+bg = json.loads(os.environ.get("BOOK2VIDO_BG_IMAGES", "[]")) or None
+r = pipeline.run('{input_path}', '{str(output_path)}', '{CONFIG_PATH}', think=None, bg_images=bg)
 print(json.dumps({{'scenes': r['scenes'], 'seconds': r['seconds']}}))
 """
             ]
