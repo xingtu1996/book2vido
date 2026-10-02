@@ -250,3 +250,11 @@ python tests/verify_prompt.py
 
 决策选项、依赖许可审计（FFmpeg / edge-tts / 图标集 / 字体的分发义务）与理由：
 [`doc/12-交付形态与许可决策.html`](doc/12-交付形态与许可决策.html)。
+
+## 关于作者 · 行途
+
+我是**行途**，一线 AI 工程化实践者 · 仍在写代码。book2vido 来自「把书和长文做成竖屏短视频」的真实需求——全链本地，不花一分钱。
+
+- 🔔 公众号 **「行途技术手记」**（长文首发，微信搜索关注）
+- 🐙 GitHub / X：`@xingtu1996` ｜ 博客：https://xingtu1996.github.io
+- 🧰 同门项目：[md2wechat](https://github.com/xingtu1996/md2wechat)（排版）· [article2pod](https://github.com/xingtu1996/article2pod)（播客）
