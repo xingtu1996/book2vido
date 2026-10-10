@@ -24,7 +24,7 @@
 > 这里**不写"N 条"** —— 权威清单是 [`CONSTITUTION.md`](./CONSTITUTION.md)，
 > 硬编码的数字每次增删都会静默过期（同类坑见 `doc/lessons` 计数漂移条目）。
 
-1. **禁用任何公司 API key**（CodeMax / DeepSeek 公司身份 / 一切公司订阅服务）。只用本地 Ollama + 免费匿名（edge-tts）+ 完全本地（`say`/FFmpeg）。详见 `CONSTITUTION.md` 铁律一。
+1. **禁用任何公司 API key**（内部 AI 平台 / DeepSeek 公司身份 / 一切公司订阅服务）。只用本地 Ollama + 免费匿名（edge-tts）+ 完全本地（`say`/FFmpeg）。详见 `CONSTITUTION.md` 铁律一。
 2. **改代码后必清缓存**：`rm -rf src/book2vido/__pycache__`，否则跑旧字节码、静默回退 rule。
 3. **对外动作先拍板**：`git push` / GitHub 建仓 / 公开发布 —— 必须先找 boss 确认。
    本仓库**当前为私有**；`LICENSE` 待裁决，**不要在任何对外渠道分发源码**（见 `doc/12`）。

@@ -257,7 +257,7 @@ EOF
 
 | # | 检查项 | 命令 | 预期 |
 |---|--------|---------|------|
-| 1 | 零公司 key（宪法铁律一） | 全仓检索 `codemax\|codeMax\|公司\s*key\|api_key=sk-` | 零命中；`config.yaml` 无任何 key 字段 |
+| 1 | 零公司 key（宪法铁律一） | 全仓检索 `内部 AI 平台\|内部 AI 平台\|公司\s*key\|api_key=sk-` | 零命中；`config.yaml` 无任何 key 字段 |
 | 2 | 无付费 API 调用 | 检索 `requests\.\|httpx\|openai\|anthropic` | 仅 `urllib.request` 打 `localhost:11434`；无外部付费端点 |
 | 3 | 断网可出片（铁律一） | TTS 切 `say`：`config.yaml → tts.provider: say` 后 `run` | 产出合法 mp4（无网） |
 | 4 | 成本仍为 ≈¥0 | 看 CLI 成本日志 | 打印 `≈ ¥0.000x（仅电费）` |

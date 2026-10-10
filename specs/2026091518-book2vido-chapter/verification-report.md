@@ -51,7 +51,7 @@
 | AC-12 MediaClip 契约 | ✅ | 见 §三·6 脚本 | 旧三元组 `("a.png","b.mp3",1.5)` → `index=0 image=a.png audio=b.mp3 dur=1.5`；dict → `index=2 dur=2.5`；`frozen` 生效（改字段抛 `FrozenInstanceError`）。**附核**：`compositor.compose` 用 `enumerate` 排序、**不依赖 `index`**，故元组给 `index=0` 无害 |
 | AC-13 models 零同包 import | ✅ | `ast` 解析 `models.py` | `imports = ['__future__','dataclasses','datetime','json']`；`同包 import = 无` |
 | AC-14 旧 CLI 行为不变 | ✅ | `run --input <pdf> --out <mp4>`（**不带任何新参数**） | `口播句数 12 / 耗时 73.0 s`（基线 ~75s）；`h264 1080×1920 + aac`，33.97s，652KB；产物落旧式 `samples/.work_<stem>/`；**未改 `cache/`**（`.keys.json` mtime 不变）；临时产物已清理 |
-| AC-15 零 key + 离线可出片 | ⚠️ 部分 | `grep -rniE "codemax\|openai_api_key\|ANTHROPIC_API_KEY\|sk-[A-Za-z0-9]{16,}\|api\.deepseek\|dashscope\|volcengine" src/ config.yaml` | **无命中** ✅。外部端点仅 `http://localhost`（Ollama）×3、`https://api.iconify.design`（免费图标 CDN）、`https://github.com/xingtu1996/book2vido`（自有仓）。pipeline 有 `say` 回退分支（`pipeline.py` TTS 异常 → `SayProvider`）。**未能验证**：真断网实测（未真拔网跑） |
+| AC-15 零 key + 离线可出片 | ⚠️ 部分 | `grep -rniE "内部 AI 平台\|openai_api_key\|ANTHROPIC_API_KEY\|sk-[A-Za-z0-9]{16,}\|api\.deepseek\|dashscope\|volcengine" src/ config.yaml` | **无命中** ✅。外部端点仅 `http://localhost`（Ollama）×3、`https://api.iconify.design`（免费图标 CDN）、`https://github.com/xingtu1996/book2vido`（自有仓）。pipeline 有 `say` 回退分支（`pipeline.py` TTS 异常 → `SayProvider`）。**未能验证**：真断网实测（未真拔网跑） |
 | AC-16 模块 ≤200 行 | ✅ | `wc -l src/book2vido/*.py` | 最大非豁免项 = `outline.py` **200**；`pipeline.py` 193、`__main__.py` 166、`cache.py` 151、`segmenter.py` 150、`providers.py` 35；仅 `icons.py` 311（spec 豁免） |
 
 ### 附加核验（spec `05_validator` §三 数据一致性）
