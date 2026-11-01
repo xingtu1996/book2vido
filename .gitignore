@@ -54,3 +54,5 @@ dist/*.bak-*/
 samples/books/
 # ── 初心物证（微信截图，含真实姓名 → 禁入库，见 SECURITY.md）──
 doc/assets/origin/
+
+*.bak
