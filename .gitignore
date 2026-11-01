@@ -56,3 +56,5 @@ samples/books/
 doc/assets/origin/
 
 *.bak
+
+*.bak*
