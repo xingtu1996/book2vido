@@ -1305,3 +1305,10 @@ boss：「文件优先是中文，也要有英文的自述文件。」与 backlo
 - specs/20260921-gui-v3-layout/03_测试报告_v3.4.md
 - specs/20260921-gui-v3-layout/04_Backlog回写_20260921.md
 - specs/20260921-gui-v3-layout/05_技术分享_TTS与参赛方向.md
+
+## 2026-11-02 全仓同步（CHANGELOG 补齐）
+
+### 本次完成
+- 本轮合入巡检第28轮门面统一（公众号「行途技术手记」钩子/双语称谓）与 api-sync README 口径整改。
+- .gitignore 已含 dist/*.bak-*/、*.bak 与 *.bak* 三层规则，巡检备份不入库。
+- 本条目由 doubao 在 2026-11-02 全仓同步时追加，HEAD 与 origin/main 一致。
